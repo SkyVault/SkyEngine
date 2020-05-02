@@ -106,10 +106,12 @@ int main() {
 #endif
 
     while (!WindowShouldClose() && game->state == STATE_RUNNING) {
+        update_game(game);
+
         for (int i = 0; i < ecs->max_num_entities; i++) {
             if (!is_ent_alive(ecs, i)) continue;
             update_billboard(ecs, i);
-            update_player(ecs, assets, &camera, i);
+            update_player(ecs, assets, game, i);
             update_doors(ecs, i);
         }
 

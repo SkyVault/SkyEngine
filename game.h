@@ -19,8 +19,12 @@ typedef struct {
     EcsWorld* ecs;
 
     Model skybox;
+
+    bool lock_camera;
 } Game;
 
 Game* create_game(Assets* assets, Camera* camera, EcsWorld* ent_world);
+
+void update_game(Game* game);
 
 #endif//BENIS_GAME_H

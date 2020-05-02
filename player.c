@@ -46,12 +46,14 @@ void set_camera_mode(Camera camera, int mode) {
     CAMERA.mode = mode;
 }
 
-void update_player(EcsWorld* ecs, Assets* ass, Camera* camera, EntId id) {
+void update_player(EcsWorld* ecs, Assets* ass, Game* game, EntId id) {
     EntStruct* self = get_ent(ecs, id);
 
     if (!has_comp(ecs, self, Player) ||
         !has_comp(ecs, self, Transform) ||
         !has_comp(ecs, self, Physics)) return;
+
+    Camera* camera = game->camera;
 
     Transform* transform = get_comp(ecs, self, Transform);
     Physics* physics = get_comp(ecs, self, Physics);
@@ -145,17 +147,21 @@ void update_player(EcsWorld* ecs, Assets* ass, Camera* camera, EntId id) {
     Matrix m_rotation = MatrixRotateXYZ((Vector3){ PI*2 - CAMERA.angle.y, PI*2 - CAMERA.angle.x, 0 });
     Matrix m_transform = MatrixMultiply(m_translation, m_rotation);
 
-    camera->position = transform->translation;
+    if (game->lock_camera) {
+        return;
+    }
 
-    camera->target.x = camera->position.x - m_transform.m12;
-    camera->target.y = camera->position.y - m_transform.m13;
-    camera->target.z = camera->position.z - m_transform.m14;
+	camera->position = transform->translation;
+
+	camera->target.x = camera->position.x - m_transform.m12;
+	camera->target.y = camera->position.y - m_transform.m13;
+	camera->target.z = camera->position.z - m_transform.m14;
 
     if (isMoving) swingCounter++;
 
     // Camera position update
     // NOTE: On CAMERA_FIRST_PERSON player Y-movement is limited to player 'eyes position'
-    transform->translation.y = CAMERA.playerEyesPosition - sinf(swingCounter/CAMERA_FIRST_PERSON_STEP_TRIGONOMETRIC_DIVIDER)/CAMERA_FIRST_PERSON_STEP_DIVIDER;
+    transform->translation.y = CAMERA.playerEyesPosition - sinf(swingCounter/CAMERA_FIRST_PERSON_STEP_TRIGONOMETRIC_DIVIDER)/CAMERA_FIRST_PERSON_STEP_DIVIDER; 
 
     camera->up.x = sinf(swingCounter/(CAMERA_FIRST_PERSON_STEP_TRIGONOMETRIC_DIVIDER*2))/CAMERA_FIRST_PERSON_WAVING_DIVIDER;
     camera->up.z = -sinf(swingCounter/(CAMERA_FIRST_PERSON_STEP_TRIGONOMETRIC_DIVIDER*2))/CAMERA_FIRST_PERSON_WAVING_DIVIDER;

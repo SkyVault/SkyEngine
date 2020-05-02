@@ -23,8 +23,10 @@ void update_editor(Ed* self, Game* game) {
     if (IsKeyPressed(KEY_BACKSLASH))
         self->open = !self->open;
 
-    if (!self->open) return;
+    game->lock_camera = self->open;
 
+    if (!self->open) return;
+ 
 }
 
 void render_editor(Ed* self, Game* game) {
