@@ -63,6 +63,9 @@
     <ClInclude Include="assets.h">
       <Filter>Source Files</Filter>
     </ClInclude>
+    <ClInclude Include="editor.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="components.c">
@@ -96,6 +99,9 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="assets.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="editor.c">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

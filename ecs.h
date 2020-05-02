@@ -117,7 +117,7 @@ void add_ent_at(EcsWorld* world, EntStruct* ent, EntId where);
 int kill_ent(EntStruct* ent); // Sets the status to dying
 int destroy_ent(EcsWorld* world, EntStruct* ent); // Cleans up the memory
 
-EcsWorld* make_ecs_world();
+EcsWorld* create_ecs_world();
 
 void update_and_cleanup_ecs_world(EcsWorld* world);
 

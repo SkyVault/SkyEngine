@@ -102,7 +102,7 @@ EntId create_ent(EcsWorld* world) {
     }
 }
 
-EcsWorld* make_ecs_world() {
+EcsWorld* create_ecs_world() {
     EcsWorld* world = malloc(sizeof(EcsWorld));
     *world = (EcsWorld) {
         .max_num_entities = NUM_ENT_CHUNK,

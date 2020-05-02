@@ -146,6 +146,7 @@
     <ClInclude Include="components.h" />
     <ClInclude Include="comps.h" />
     <ClInclude Include="ecs.h" />
+    <ClInclude Include="editor.h" />
     <ClInclude Include="game.h" />
     <ClInclude Include="map.h" />
     <ClInclude Include="map_def.h" />
@@ -162,6 +163,7 @@
     <ClCompile Include="assets.c" />
     <ClCompile Include="components.c" />
     <ClCompile Include="ecs.c" />
+    <ClCompile Include="editor.c" />
     <ClCompile Include="game.c" />
     <ClCompile Include="main.c" />
     <ClCompile Include="map.c" />

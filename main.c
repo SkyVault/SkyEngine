@@ -14,6 +14,7 @@
 #include "game.h"
 #include "map.h"
 #include "assets.h"
+#include "editor.h"
 
 #if defined(PLATFORM_DESKTOP)
 #define GLSL_VERSION 330
@@ -51,7 +52,7 @@ int main() {
     camera.type = CAMERA_PERSPECTIVE;
 
     Assets* assets = create_and_load_assets();
-    EcsWorld* ecs = make_ecs_world();
+    EcsWorld* ecs = create_ecs_world();
 
     Game* game = create_game(assets, &camera, ecs);
     GfxState* gfx = create_gfx_state();
@@ -100,28 +101,9 @@ int main() {
         add_comp_obj(ecs, player, Physics, create_physics());
     }
 
-    /* // Create some entities */
-    /* { */
-    /*     EntId anibae_id = create_ent(ecs); */
-    /*     EntStruct* anibae = get_ent(ecs, anibae_id); */
-
-    /*     add_comp(ecs, anibae, Transform, .translation=(Vector3){camera.position.x, 0, camera.position.z - 5}); */
-    /*     add_comp(ecs, anibae, Billboard, .texture = assets->textures[TEX_EWW], .material = (Material){0}); */
-    /*     add_comp_obj(ecs, anibae, Physics, create_physics()); */
-
-    /*     get_comp(ecs, anibae, Transform)->translation.y = -ACTOR_HEIGHT/4; */
-    /* } */
-
-    /* { */
-    /*     EntId anibae_id = create_ent(ecs); */
-    /*     EntStruct* anibae = get_ent(ecs, anibae_id); */
-
-    /*     add_comp(ecs, anibae, Transform, .translation=(Vector3){camera.position.x - 2, 0, camera.position.z - 5}); */
-    /*     add_comp(ecs, anibae, Billboard, .texture = assets->textures[TEX_EWW2], .material = (Material){0}); */
-    /*     add_comp_obj(ecs, anibae, Physics, create_physics()); */
-
-    /*     get_comp(ecs, anibae, Transform)->translation.y = -ACTOR_HEIGHT/4; */
-    /* } */
+#if defined _DEBUG
+    Ed* editor = create_editor();
+#endif
 
     while (!WindowShouldClose() && game->state == STATE_RUNNING) {
         for (int i = 0; i < ecs->max_num_entities; i++) {
@@ -132,6 +114,10 @@ int main() {
         }
 
         update_map(map, game);
+
+#if defined _DEBUG
+        update_editor(editor, game);
+#endif
 
         for (int i = 0; i < MAX_LIGHTS; i++) {
             lights[i].position = camera.position;
@@ -166,6 +152,10 @@ int main() {
                 flush_graphics(gfx, &camera);
 
             EndMode3D();
+
+#if defined _DEBUG
+			render_editor_ui(editor, game);
+#endif
 
         EndDrawing();
     }
