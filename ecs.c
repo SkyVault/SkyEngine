@@ -131,8 +131,23 @@ int find_free_comp(struct CompList* list) {
     }
 
     int prev = list->number;
+
+    void* new = realloc(list->list, sizeof(void*) * (list->number * 2));
+
+    if (list->list == NULL) {
+        printf("Failed to reallocate memory for the component list\n");
+        return prev;
+    }
+
+    list->list = new; 
     list->number *= 2;
-    list->list = realloc(list->list, sizeof(void*) * list->number);
+
+    printf("Allocated more memory for component\n");
+
+    for (int i = prev; i < list->number; i++) {
+        list->list[i] = NULL;
+    }
+
     return prev;
 }
 
