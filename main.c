@@ -118,7 +118,7 @@ int main() {
         update_map(map, game);
 
 #if defined _DEBUG
-        update_editor(editor, game);
+        update_editor(editor, map, game);
 #endif
 
         for (int i = 0; i < MAX_LIGHTS; i++) {
@@ -150,13 +150,16 @@ int main() {
 
 				DrawModel(game->skybox, (Vector3){0, 0, 0}, 100.0f, WHITE);
 
+
                 // Do the final draw to the screen
-                flush_graphics(gfx, &camera);
+                flush_graphics(gfx, &camera); 
+
+                render_editor(editor, map, game);
 
             EndMode3D();
 
 #if defined _DEBUG
-			render_editor_ui(editor, game);
+			render_editor_ui(editor, map, game);
 #endif
 
         EndDrawing();

@@ -43,6 +43,7 @@ static CameraData CAMERA = {
     .panControl = 2
 };
 
-void update_player(EcsWorld* ecs, Assets* ass, Camera* camera, EntId self);
+void update_player(EcsWorld* ecs, Assets* ass, Game* camera, EntId self);
+void draw_player_gui(Game* game, Map* map);
 
 #endif//BENIS_PLAYER_H

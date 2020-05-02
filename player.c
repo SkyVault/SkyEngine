@@ -166,3 +166,7 @@ void update_player(EcsWorld* ecs, Assets* ass, Game* game, EntId id) {
     camera->up.x = sinf(swingCounter/(CAMERA_FIRST_PERSON_STEP_TRIGONOMETRIC_DIVIDER*2))/CAMERA_FIRST_PERSON_WAVING_DIVIDER;
     camera->up.z = -sinf(swingCounter/(CAMERA_FIRST_PERSON_STEP_TRIGONOMETRIC_DIVIDER*2))/CAMERA_FIRST_PERSON_WAVING_DIVIDER;
 }
+
+void draw_player_gui(Game* game, Map* map) {
+
+}
