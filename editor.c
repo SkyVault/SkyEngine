@@ -14,7 +14,7 @@ Ed* create_editor() {
         exit(EXIT_FAILURE); 
     }
 
-
+    editor->open = false;
 
     return editor;
 }
