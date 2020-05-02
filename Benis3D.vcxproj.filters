@@ -1,0 +1,154 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="Source Files">
+      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
+      <Extensions>cpp;c;cc;cxx;c++;def;odl;idl;hpj;bat;asm;asmx</Extensions>
+    </Filter>
+    <Filter Include="Header Files">
+      <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
+      <Extensions>h;hh;hpp;hxx;h++;hm;inl;inc;ipp;xsd</Extensions>
+    </Filter>
+    <Filter Include="Resource Files">
+      <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
+      <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="billboard.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="components.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="comps.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="ecs.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="game.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="map.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="map_def.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="maths.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="models.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="physics.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="physics_type.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="player.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="raymath.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="rlgl.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="rlights.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="assets.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="components.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="ecs.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="game.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="main.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="map.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="maths.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="models.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="physics.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="physics_type.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="player.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="assets.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="resources\skybox_1.hdr">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="resources\skybox_2.hdr">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="resources\skybox_fs.glsl">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="resources\skybox_vs.glsl">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="resources\cubemap_fs.glsl">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="resources\cubemap_vs.glsl">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="resources\dresden_square.hdr">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="resources\phong_fs.glsl">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="resources\phong_vs.glsl">
+      <Filter>Resource Files</Filter>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="resources\wall_1.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="resources\char.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="resources\eww.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="resources\eww_n.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="resources\eww2.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="resources\floor_1.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="resources\salami.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+  </ItemGroup>
+</Project>
