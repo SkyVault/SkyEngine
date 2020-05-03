@@ -52,6 +52,20 @@ bool is_number(const char *str) {
     return true;
 }
 
+void zero_out_map(Map *result) {
+    for (int layer = 0; layer < MAX_NUM_LAYERS; layer++) {
+        for (int i = 0; i < MAX_MAP_WIDTH * MAX_MAP_HEIGHT; i++) {
+            if (layer == 0) {
+                result->walls[layer][i].active = 0;
+                result->walls[layer][i].model = 0;
+            } else {
+                result->walls[layer][i].active = 0;
+                result->walls[layer][i].model = 0;
+            }
+        }
+    }
+}
+
 Map *load_map_from_file(const char *path, Game *game) {
     FILE *o = fopen(path, "r");
 
@@ -64,6 +78,23 @@ Map *load_map_from_file(const char *path, Game *game) {
     Map *result = malloc(sizeof(Map));
     result->current_map = -1;
     result->num_layers = 0;
+
+    zero_out_map(result);
+
+    Model default_wall = LoadModelFromMesh(game->assets->meshes[MESH_CUBE]);
+    default_wall.materials[0].maps[MAP_DIFFUSE].texture =
+        game->assets->textures[TEX_WALL_1];
+    default_wall.materials[0].shader =
+        game->assets->shaders[SHADER_PHONG_LIGHTING];
+
+    Model default_wall_2 = LoadModelFromMesh(game->assets->meshes[MESH_CUBE]);
+    default_wall_2.materials[0].maps[MAP_DIFFUSE].texture =
+        game->assets->textures[TEX_FLOOR_1];
+    default_wall_2.materials[0].shader =
+        game->assets->shaders[SHADER_PHONG_LIGHTING];
+
+    result->models[0] = default_wall;
+    result->models[1] = default_wall_2;
 
     int w = 0;
     int h = 0;
@@ -91,13 +122,9 @@ Map *load_map_from_file(const char *path, Game *game) {
                             return result;
                         }
 
-                        struct LvlData *data = malloc(sizeof(struct LvlData));
-                        data->w = 0;
-                        data->h = 0;
-                        data->d = malloc(w * h);
-                        data->next_layer = NULL;
+                        int layer = atoi(name);
 
-                        for (int y = 0; y < data->h; y++) {
+                        for (int y = 0; y < result->height; y++) {
                             read = getline(&line, &slen, o);
 
                             if (slen == 0) {
@@ -106,10 +133,14 @@ Map *load_map_from_file(const char *path, Game *game) {
                                 return result;
                             }
 
-                            for (int x = 0; x < data->w; x++) {
+                            for (int x = 0; x < result->width; x++) {
+                                if (line[x] == '#')
+                                    result->walls[layer][x + y * result->width]
+                                        .active = 1;
                             }
                         }
                     } else if (strcmp(name, "entities")) {
+                        // Parse the entities layer
                     }
                 }
 
@@ -128,8 +159,8 @@ Map *load_map_from_file(const char *path, Game *game) {
                         sscanf(line, "%s %s %d %d", name, type, &x, &y);
 
                         if (strcmp(name, "size") == 0) {
-                            w = x;
-                            h = y;
+                            result->width = x;
+                            result->height = y;
                             size_set = true;
                         } else {
                             printf("Unknown constant %s\n", name);
@@ -142,6 +173,13 @@ Map *load_map_from_file(const char *path, Game *game) {
         }
     }
 
+    result->floor_tile_models[0] =
+        LoadModelFromMesh(game->assets->meshes[MESH_CUBE]);
+    result->floor_tile_models[0].materials[0].maps[MAP_DIFFUSE].texture =
+        game->assets->textures[TEX_FLOOR_1];
+    result->floor_tile_models[0].materials[0].shader =
+        game->assets->shaders[SHADER_PHONG_LIGHTING];
+
     return result;
 }
 
@@ -149,17 +187,12 @@ Map *load_map(int map, Game *game) {
     Map *result = malloc(sizeof(Map));
     result->current_map = map;
 
-    for (int layer = 0; layer < MAX_NUM_LAYERS; layer++)
-        for (int i = 0; i < MAX_MAP_WIDTH * MAX_MAP_HEIGHT; i++)
-            if (layer == 0) {
-                result->walls[layer][i].active = 0;
-                result->walls[layer][i].model = 0;
-            } else {
-                result->walls[layer][i].active = 1;
-                result->walls[layer][i].model = 0;
-            }
+    zero_out_map(result);
 
     const struct LvlData *data = &map_data[result->current_map];
+
+    result->width = data->w;
+    result->height = data->h;
 
     Model default_wall = LoadModelFromMesh(game->assets->meshes[MESH_CUBE]);
     default_wall.materials[0].maps[MAP_DIFFUSE].texture =
@@ -220,11 +253,9 @@ Map *load_map(int map, Game *game) {
 void update_map(Map *map, Game *game) {}
 
 void draw_map(Map *map, Game *game) {
-    const struct LvlData *data = &map_data[map->current_map];
-
     for (int layer = 0; layer < MAX_NUM_LAYERS; layer++) {
-        for (int z = 0; z < data->h; z++) {
-            for (int x = 0; x < data->w; x++) {
+        for (int z = 0; z < map->height; z++) {
+            for (int x = 0; x < map->width; x++) {
                 Vector3 pos =
                     (Vector3){x * CUBE_SIZE, layer * CUBE_SIZE, z * CUBE_SIZE};
 
@@ -235,10 +266,10 @@ void draw_map(Map *map, Game *game) {
                         CUBE_SIZE, RAYWHITE);
                 }
 
-                if (map->walls[layer][x + z * data->w].active) {
-                    DrawModel(
-                        map->models[map->walls[layer][x + z * data->w].model],
-                        pos, CUBE_SIZE, RAYWHITE);
+                if (map->walls[layer][x + z * map->width].active) {
+                    DrawModel(map->models[map->walls[layer][x + z * map->width]
+                                              .model],
+                              pos, CUBE_SIZE, RAYWHITE);
                 }
             }
         }

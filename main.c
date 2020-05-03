@@ -92,8 +92,8 @@ int main() {
     // UnloadTexture(skybox_texture);
     // UnloadShader(*cubemap_shader);
 
-    Map *map = load_map(0, game);
-    // Map *map = load_map_from_file("resources/maps/level1.map", game);
+    // Map *map = load_map(0, game);
+    Map *map = load_map_from_file("resources/maps/level1.map", game);
 
     // Create player
     {
