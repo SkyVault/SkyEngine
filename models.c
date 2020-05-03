@@ -8,9 +8,7 @@ GfxState* create_gfx_state() {
     return gfx;
 }
 
-void update_billboard(EcsWorld* ecs, EntId ent) {
-
-}
+void update_billboard(EcsWorld* ecs, EntId ent) {}
 
 void draw_billboard(GfxState* gfx, Camera* camera, EcsWorld* ecs, EntId ent) {
     EntStruct* self = get_ent(ecs, ent);
@@ -19,7 +17,7 @@ void draw_billboard(GfxState* gfx, Camera* camera, EcsWorld* ecs, EntId ent) {
         return;
 
     if (gfx->num_drawables < MAX_NUMBER_OF_DRAWABLES) {
-        gfx->drawables[gfx->num_drawables++] = (Drawable) {
+        gfx->drawables[gfx->num_drawables++] = (Drawable){
             .type = DrawType_Billboard,
             .flags = DrawFlag_Active,
             .transform = *get_comp(ecs, self, Transform),
@@ -29,19 +27,16 @@ void draw_billboard(GfxState* gfx, Camera* camera, EcsWorld* ecs, EntId ent) {
     }
 }
 
-void update_models(EcsWorld* ecs, EntId ent) {
-
-}    
+void update_models(EcsWorld* ecs, EntId ent) {}
 
 void draw_models(GfxState* gfx, EcsWorld* ecs, EntId ent) {
     EntStruct* self = get_ent(ecs, ent);
 
-    if (!has_comp(ecs, self, Model) ||
-        !has_comp(ecs, self, Transform)) return;
+    if (!has_comp(ecs, self, Model) || !has_comp(ecs, self, Transform)) return;
 
     if (gfx->num_drawables < MAX_NUMBER_OF_DRAWABLES) {
         Model* model = get_comp(ecs, self, Model);
-        gfx->drawables[gfx->num_drawables++] = (Drawable) {
+        gfx->drawables[gfx->num_drawables++] = (Drawable){
             .type = DrawType_Model,
             .flags = DrawFlag_Active,
             .transform = *get_comp(ecs, self, Transform),
@@ -52,23 +47,25 @@ void draw_models(GfxState* gfx, EcsWorld* ecs, EntId ent) {
 }
 
 void flush_graphics(GfxState* gfx, Camera* camera) {
-
-    //for (int i = MAX_NUMBER_OF_DRAWABLES - 1; i >= 0; i--) {
+    // for (int i = MAX_NUMBER_OF_DRAWABLES - 1; i >= 0; i--) {
     for (int i = 0; i <= MAX_NUMBER_OF_DRAWABLES; i++) {
-        if (!(gfx->drawables[i].flags & DrawFlag_Active))
-            continue;
+        if (!(gfx->drawables[i].flags & DrawFlag_Active)) continue;
 
         Drawable* d = &gfx->drawables[i];
 
+        Vector3 pos = d->transform.translation;
+
+        Matrix m = MatrixIdentity();
+        m = MatrixMultiply(m, QuaternionToMatrix(d->transform.rotation));
+        m = MatrixMultiply(m, MatrixTranslate(pos.x, pos.y, pos.z));
+
         if (d->type == DrawType_Billboard) {
-            DrawBillboard(*camera, d->billboard.texture, d->transform.translation, ACTOR_HEIGHT, d->diffuse);
+            DrawBillboard(*camera, d->billboard.texture,
+                          d->transform.translation, ACTOR_HEIGHT, d->diffuse);
 
         } else if (d->type == DrawType_Model) {
-            DrawModel(
-                d->model,
-                d->transform.translation,
-                1,
-                d->diffuse);
+            d->model.transform = m;
+            DrawModel(d->model, d->transform.translation, 1, d->diffuse);
         }
     }
 

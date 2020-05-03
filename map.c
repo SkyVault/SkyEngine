@@ -66,21 +66,7 @@ void zero_out_map(Map *result) {
     }
 }
 
-Map *load_map_from_file(const char *path, Game *game) {
-    FILE *o = fopen(path, "r");
-
-    fseek(o, SEEK_END, 0);
-    size_t len = ftell(o);
-    fseek(o, SEEK_SET, 0);
-
-    printf("%lu\n", len);
-
-    Map *result = malloc(sizeof(Map));
-    result->current_map = -1;
-    result->num_layers = 0;
-
-    zero_out_map(result);
-
+void load_models(Map *result, Game *game) {
     Model default_wall = LoadModelFromMesh(game->assets->meshes[MESH_CUBE]);
     default_wall.materials[0].maps[MAP_DIFFUSE].texture =
         game->assets->textures[TEX_WALL_1];
@@ -95,6 +81,28 @@ Map *load_map_from_file(const char *path, Game *game) {
 
     result->models[0] = default_wall;
     result->models[1] = default_wall_2;
+
+    result->floor_tile_models[0] =
+        LoadModelFromMesh(game->assets->meshes[MESH_CUBE]);
+    result->floor_tile_models[0].materials[0].maps[MAP_DIFFUSE].texture =
+        game->assets->textures[TEX_FLOOR_1];
+    result->floor_tile_models[0].materials[0].shader =
+        game->assets->shaders[SHADER_PHONG_LIGHTING];
+}
+
+Map *load_map_from_file(const char *path, Game *game) {
+    FILE *o = fopen(path, "r");
+
+    fseek(o, SEEK_END, 0);
+    size_t len = ftell(o);
+    fseek(o, SEEK_SET, 0);
+
+    Map *result = malloc(sizeof(Map));
+    result->current_map = -1;
+    result->num_layers = 0;
+
+    zero_out_map(result);
+    load_models(result, game);
 
     int w = 0;
     int h = 0;
@@ -173,13 +181,6 @@ Map *load_map_from_file(const char *path, Game *game) {
         }
     }
 
-    result->floor_tile_models[0] =
-        LoadModelFromMesh(game->assets->meshes[MESH_CUBE]);
-    result->floor_tile_models[0].materials[0].maps[MAP_DIFFUSE].texture =
-        game->assets->textures[TEX_FLOOR_1];
-    result->floor_tile_models[0].materials[0].shader =
-        game->assets->shaders[SHADER_PHONG_LIGHTING];
-
     return result;
 }
 
@@ -188,34 +189,20 @@ Map *load_map(int map, Game *game) {
     result->current_map = map;
 
     zero_out_map(result);
+    load_models(result, game);
 
     const struct LvlData *data = &map_data[result->current_map];
 
     result->width = data->w;
     result->height = data->h;
 
-    Model default_wall = LoadModelFromMesh(game->assets->meshes[MESH_CUBE]);
-    default_wall.materials[0].maps[MAP_DIFFUSE].texture =
-        game->assets->textures[TEX_WALL_1];
-    default_wall.materials[0].shader =
-        game->assets->shaders[SHADER_PHONG_LIGHTING];
-
-    Model default_wall_2 = LoadModelFromMesh(game->assets->meshes[MESH_CUBE]);
-    default_wall_2.materials[0].maps[MAP_DIFFUSE].texture =
-        game->assets->textures[TEX_FLOOR_1];
-    default_wall_2.materials[0].shader =
-        game->assets->shaders[SHADER_PHONG_LIGHTING];
-
-    result->models[0] = default_wall;
-    result->models[1] = default_wall_2;
-
     for (int z = 0; z < data->h; z++) {
         for (int x = 0; x < data->w; x++) {
             char chr = data->d[x + z * data->w];
 
             // Load the entities and tiles
-            Vector3 pos =
-                (Vector3){.x = x * CUBE_SIZE, .y = 0, .z = z * CUBE_SIZE};
+            Vector3 pos = (Vector3){
+                .x = (float)x * CUBE_SIZE, .y = 0.f, .z = (float)z * CUBE_SIZE};
 
             switch (chr) {
                 case '|':
@@ -239,13 +226,6 @@ Map *load_map(int map, Game *game) {
             }
         }
     }
-
-    result->floor_tile_models[0] =
-        LoadModelFromMesh(game->assets->meshes[MESH_CUBE]);
-    result->floor_tile_models[0].materials[0].maps[MAP_DIFFUSE].texture =
-        game->assets->textures[TEX_FLOOR_1];
-    result->floor_tile_models[0].materials[0].shader =
-        game->assets->shaders[SHADER_PHONG_LIGHTING];
 
     return result;
 }

@@ -5,9 +5,10 @@
 
 #include <stdlib.h>
 
+#include "billboard.h"
 #include "ecs.h"
 #include "raylib.h"
-#include "billboard.h"
+#include "raymath.h"
 
 #define MAX_NUMBER_OF_DRAWABLES (1000)
 
@@ -45,9 +46,9 @@ GfxState* create_gfx_state();
 void update_billboard(EcsWorld* ecs, EntId ent);
 void draw_billboard(GfxState* gfx, Camera* camera, EcsWorld* ecs, EntId ent);
 
-void update_models(EcsWorld* ecs, EntId ent); // Animations?
+void update_models(EcsWorld* ecs, EntId ent);  // Animations?
 void draw_models(GfxState* gfx, EcsWorld* ecs, EntId ent);
 
 void flush_graphics(GfxState* gfx, Camera* camera);
 
-#endif//BENIS_MODELS_H
+#endif  // BENIS_MODELS_H

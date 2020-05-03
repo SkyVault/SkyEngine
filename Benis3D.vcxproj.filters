@@ -72,10 +72,13 @@
     <ClInclude Include="utils.h">
       <Filter>Source Files</Filter>
     </ClInclude>
-    <ClInclude Include="janet.h">
+    <ClInclude Include="assembler.h">
       <Filter>Source Files</Filter>
     </ClInclude>
-    <ClInclude Include="janetconf.h">
+    <ClInclude Include="behaviours.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="entity_types.h">
       <Filter>Source Files</Filter>
     </ClInclude>
   </ItemGroup>
@@ -119,7 +122,10 @@
     <ClCompile Include="utils.c">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="janet.c">
+    <ClCompile Include="assembler.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="behaviours.c">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

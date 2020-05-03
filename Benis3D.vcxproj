@@ -141,12 +141,15 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="assembler.h" />
     <ClInclude Include="assets.h" />
+    <ClInclude Include="behaviours.h" />
     <ClInclude Include="billboard.h" />
     <ClInclude Include="components.h" />
     <ClInclude Include="comps.h" />
     <ClInclude Include="ecs.h" />
     <ClInclude Include="editor.h" />
+    <ClInclude Include="entity_types.h" />
     <ClInclude Include="game.h" />
     <ClInclude Include="map.h" />
     <ClInclude Include="map_def.h" />
@@ -161,7 +164,9 @@
     <ClInclude Include="utils.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="assembler.c" />
     <ClCompile Include="assets.c" />
+    <ClCompile Include="behaviours.c" />
     <ClCompile Include="components.c" />
     <ClCompile Include="ecs.c" />
     <ClCompile Include="editor.c" />

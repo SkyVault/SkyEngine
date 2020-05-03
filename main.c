@@ -5,14 +5,13 @@
 #include "rlgl.h"
 
 #define RLIGHTS_IMPLEMENTATION
+#include "assembler.h"
 #include "assets.h"
 #include "ecs.h"
 #include "editor.h"
 #include "game.h"
 #include "map.h"
 #include "models.h"
-#include "physics.h"
-#include "player.h"
 #include "rlights.h"
 
 #if defined(PLATFORM_DESKTOP)
@@ -96,15 +95,8 @@ int main() {
     Map *map = load_map_from_file("resources/maps/level1.map", game);
 
     // Create player
-    {
-        EntId player_id = create_ent(ecs);
-        EntStruct *player = get_ent(ecs, player_id);
-
-        add_comp(ecs, player, Transform,
-                 .translation = (Vector3){10.0f, 1.0f, 20.0f});
-        add_comp(ecs, player, Player, .n = 0);
-        add_comp_obj(ecs, player, Physics, create_physics());
-    }
+    assemble(PLAYER, game, 10, 10, 0, 0);
+    assemble(END_TARGET, game, 2, 2, 0, 0);
 
 #if defined _DEBUG
     Ed *editor = create_editor();
@@ -118,6 +110,7 @@ int main() {
             update_billboard(ecs, i);
             update_player(ecs, assets, game, i);
             update_doors(ecs, i);
+            update_behaviours(ecs, i);
         }
 
         update_map(map, game);
