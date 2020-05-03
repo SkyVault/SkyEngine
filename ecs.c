@@ -1,30 +1,5 @@
 #include "ecs.h"
 
-/*
-int binarySearch(int arr[], int l, int r, int x) 
-{ 
-    while (l <= r) { 
-        int m = l + (r - l) / 2; 
-  
-        // Check if x is present at mid 
-        if (arr[m] == x) 
-            return m; 
-  
-        // If x greater, ignore left half 
-        if (arr[m] < x) 
-            l = m + 1; 
-  
-        // If x is smaller, ignore right half 
-        else
-            r = m - 1; 
-    } 
-  
-    // if we reach here, then element was 
-    // not present 
-    return -1; 
-} 
-*/ 
-
 int get_uuid() {
     static int uuid = 0;
     return uuid++;
@@ -32,18 +7,18 @@ int get_uuid() {
 
 EntStruct* make_ent() {
     EntStruct* ent = malloc(sizeof(EntStruct));
-    *ent = (EntStruct) {
+    *ent = (EntStruct){
         .component_indexes = {0},
         .status = ES_ALIVE,
         .uuid = get_uuid(),
         .id = -1,
     };
-    memset(ent->component_indexes, -1, sizeof(int)*CT_NumComponentTypes);
+    memset(ent->component_indexes, -1, sizeof(int) * CT_NumComponentTypes);
     return ent;
 }
 
 EntId get_free_space(EcsWorld* world) {
-    //if (!is_ent_alive(world, world->free_spot)) return world->free_spot;
+    // if (!is_ent_alive(world, world->free_spot)) return world->free_spot;
 
     /*
     if (world->entities[world->free_spot] != NULL &&
@@ -52,8 +27,8 @@ EntId get_free_space(EcsWorld* world) {
     */
 
     for (int i = 0; i < world->max_num_entities; i++) {
-        if (world->entities[i] == NULL || world->entities[i]->status == ES_DEAD) {
-
+        if (world->entities[i] == NULL ||
+            world->entities[i]->status == ES_DEAD) {
             /*
             if (i < world->max_num_entities - 1)
                 if (!is_ent_alive(world, i+1)) world->free_spot = i + 1;
@@ -65,8 +40,9 @@ EntId get_free_space(EcsWorld* world) {
 
     int n = world->max_num_entities;
     world->max_num_entities *= 2;
-    world->entities = realloc(world->entities, sizeof(EntStruct*) * world->max_num_entities);
-    memset(world->entities+n, 0, sizeof(EntStruct*)*n);
+    world->entities =
+        realloc(world->entities, sizeof(EntStruct*) * world->max_num_entities);
+    memset(world->entities + n, 0, sizeof(EntStruct*) * n);
     world->free_spot = n + 1;
 
     return n;
@@ -92,19 +68,21 @@ EntId create_ent(EcsWorld* world) {
         EntStruct* ent = make_ent();
         return add_ent(world, ent);
     } else {
-        memset(world->entities[n]->component_indexes, -1, CT_NumComponentTypes*sizeof(int));
+        memset(world->entities[n]->component_indexes, -1,
+               CT_NumComponentTypes * sizeof(int));
         world->entities[n]->status = ES_ALIVE;
         world->entities[n]->uuid = get_uuid();
         world->entities[n]->id = n;
         world->num_entities++;
-        printf("Reusing memory id: %d uuid: id: %d \n", n, world->entities[n]->uuid);
+        printf("Reusing memory id: %d uuid: id: %d \n", n,
+               world->entities[n]->uuid);
         return n;
     }
 }
 
 EcsWorld* create_ecs_world() {
     EcsWorld* world = malloc(sizeof(EcsWorld));
-    *world = (EcsWorld) {
+    *world = (EcsWorld){
         .max_num_entities = NUM_ENT_CHUNK,
         .entities = NULL,
         .free_spot = 0,
@@ -123,7 +101,7 @@ EcsWorld* create_ecs_world() {
 }
 
 int find_free_comp(struct CompList* list) {
-    //TODO(Dustin): Use binary search, not linear
+    // TODO(Dustin): Use binary search, not linear
     for (int i = 0; i < list->number; i++) {
         if (list->list[i] == NULL) {
             return i;
@@ -139,10 +117,10 @@ int find_free_comp(struct CompList* list) {
         return prev;
     }
 
-    list->list = new; 
+    list->list = new;
     list->number *= 2;
 
-    printf("Allocated more memory for component\n");
+    printf("Allocated more memory for component (%d)\n", list->number);
 
     for (int i = prev; i < list->number; i++) {
         list->list[i] = NULL;
@@ -151,9 +129,7 @@ int find_free_comp(struct CompList* list) {
     return prev;
 }
 
-int has_comp_(EntStruct* e, int c1) {
-    return e->component_indexes[c1] >= 0;
-}
+int has_comp_(EntStruct* e, int c1) { return e->component_indexes[c1] >= 0; }
 
 int has_all_comps_(EntStruct* e, int* arr, int n) {
     for (int i = 0; i < n; i++) {
@@ -163,9 +139,12 @@ int has_all_comps_(EntStruct* e, int* arr, int n) {
 }
 
 int is_ent_alive(EcsWorld* world, EntId ent) {
-    if (ent < 0) return 0;
-    else if (world->entities[ent] == NULL) return 0;
-    else return world->entities[ent]->status != ES_DEAD;
+    if (ent < 0)
+        return 0;
+    else if (world->entities[ent] == NULL)
+        return 0;
+    else
+        return world->entities[ent]->status != ES_DEAD;
 }
 
 int kill_ent(EntStruct* ent) {
@@ -196,11 +175,10 @@ int destroy_ent(EcsWorld* world, EntStruct* ent) {
     return 1;
 }
 
-EntId get_first_with_(EcsWorld* world, int comp){
+EntId get_first_with_(EcsWorld* world, int comp) {
     for (int i = 0; i < world->max_num_entities; i++) {
         if (is_ent_alive(world, i)) {
-            if (world->entities[i]->component_indexes[comp] >= 0)
-                return i;
+            if (world->entities[i]->component_indexes[comp] >= 0) return i;
         }
     }
     return -1;

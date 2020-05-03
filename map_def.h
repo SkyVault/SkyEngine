@@ -9,15 +9,25 @@
 #define MAX_MAP_WIDTH (100)
 #define MAX_MAP_HEIGHT (100)
 
+#define MAX_NUM_LAYERS (4)
+
 typedef struct {
     int active;
-    Model model;
+    int model;
 } Wall;
 
 typedef struct {
     int current_map;
-    Wall walls[MAX_MAP_WIDTH*MAX_MAP_HEIGHT];
+    int num_layers;
+
+    Wall walls[MAX_NUM_LAYERS][MAX_MAP_WIDTH * MAX_MAP_HEIGHT];
+
     Model floor_tile_models[1];
+    Model models[100];
+
+    int width;
+    int height;
+
 } Map;
 
-#endif//BENIS_MAP_DEF_H
+#endif  // BENIS_MAP_DEF_H

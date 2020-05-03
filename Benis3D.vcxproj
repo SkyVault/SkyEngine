@@ -158,6 +158,7 @@
     <ClInclude Include="raymath.h" />
     <ClInclude Include="rlgl.h" />
     <ClInclude Include="rlights.h" />
+    <ClInclude Include="utils.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="assets.c" />
@@ -172,11 +173,13 @@
     <ClCompile Include="physics.c" />
     <ClCompile Include="physics_type.c" />
     <ClCompile Include="player.c" />
+    <ClCompile Include="utils.c" />
   </ItemGroup>
   <ItemGroup>
     <None Include="resources\cubemap_fs.glsl" />
     <None Include="resources\cubemap_vs.glsl" />
     <None Include="resources\dresden_square.hdr" />
+    <None Include="resources\maps\level1.map" />
     <None Include="resources\phong_fs.glsl" />
     <None Include="resources\phong_vs.glsl" />
     <None Include="resources\skybox_1.hdr" />

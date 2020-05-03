@@ -2,6 +2,9 @@
 #define BENIS_MAP_H
 
 #include <stdlib.h>
+#include <stdio.h>
+#include <string.h>
+#include <ctype.h>
 
 #include "game.h"
 #include "components.h"
@@ -12,12 +15,15 @@
 #include "raymath.h"
 #include "map_def.h"
 
-struct LvlData {
+struct LvlData
+{
     int w, h;
-    char* d;
+    char *d;
+
+    struct LvlData *next_layer;
 };
 
-static const struct LvlData map_data[] = {
+static const struct LvlData map_data[100] = {
     [0] = {
         .w = 18,
         .h = 10,
@@ -30,12 +36,14 @@ static const struct LvlData map_data[] = {
              "#        #####   #"
              "#    #   #       #"
              "#        #       #"
-             "############ #####" }
-};
+             "############ #####",
+        .next_layer = NULL}};
 
-Map* load_map(int map, Game* game);
+Map *load_map_from_file(const char *path, Game *game);
 
-void update_map(Map* map, Game* game);
-void draw_map(Map* map, Game* game);
+Map *load_map(int map, Game *game);
 
-#endif//BENIS_MAP_H
+void update_map(Map *map, Game *game);
+void draw_map(Map *map, Game *game);
+
+#endif //BENIS_MAP_H

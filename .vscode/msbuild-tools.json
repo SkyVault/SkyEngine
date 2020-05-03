@@ -1,0 +1,33 @@
+{
+  "solution": "${workspaceRoot}/Benis3D.sln",
+  "variables": {
+    "MSBUILD": "C:/Program Files (x86)/Microsoft Visual Studio/2019/Community/MSBuild/Current/Bin/MSBuild.exe",
+    "DEVENV": "C:/Program Files (x86)/Microsoft Visual Studio/2019/Community/Common7/IDE/devenv.com"
+  },
+  "buildConfigurations": ["Debug", "Release"],
+  "platformConfigurations": ["x64", "x86"],
+  "preBuildTasks": [
+    {
+      "name": "Print a message",
+      "program": "cmd",
+      "args": ["/c", "echo [pre-build task]: MESSAGE"],
+      "cwd": "${workspaceRoot}"
+    }
+  ],
+  "postBuildTasks": [
+    {
+      "name": "Print another message",
+      "program": "cmd",
+      "args": ["/c", "echo [post-build task]: ANOTHER MESSAGE"],
+      "cwd": "${workspaceRoot}"
+    }
+  ],
+  "debugConfigurations": [
+    {
+      "name": "test",
+      "cwd": "${workspaceRoot}",
+      "program": "${workspaceRoot}/x64/${buildConfig}/Benis3D.exe",
+      "args": []
+    }
+  ]
+}

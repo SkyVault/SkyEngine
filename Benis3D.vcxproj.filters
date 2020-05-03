@@ -13,6 +13,9 @@
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
+    <Filter Include="Resource Files\Maps">
+      <UniqueIdentifier>{f43a3719-58e7-4d54-a87c-b3b2cfe9ec3c}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="billboard.h">
@@ -66,6 +69,15 @@
     <ClInclude Include="editor.h">
       <Filter>Source Files</Filter>
     </ClInclude>
+    <ClInclude Include="utils.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="janet.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="janetconf.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="components.c">
@@ -104,6 +116,12 @@
     <ClCompile Include="editor.c">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="utils.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="janet.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="resources\skybox_1.hdr">
@@ -132,6 +150,9 @@
     </None>
     <None Include="resources\phong_vs.glsl">
       <Filter>Resource Files</Filter>
+    </None>
+    <None Include="resources\maps\level1.map">
+      <Filter>Resource Files\Maps</Filter>
     </None>
   </ItemGroup>
   <ItemGroup>
