@@ -78,7 +78,7 @@ void main()
     finalColor += texelColor*(ambient/10.0);
     
     // Gamma correction
-    finalColor = pow(finalColor, vec4(1.0/2.2));
+    finalColor = pow(finalColor, vec4(1.0/2.2)); 
 
     // Fog
     float dist = length(viewPos - fragPosition);
@@ -91,4 +91,7 @@ void main()
     fogFactor = clamp(fogFactor, 0.0, 1.0);
 
     finalColor = mix(fogColor, finalColor, fogFactor);
+    finalColor.a = colDiffuse.a;
+
+    // if (finalColor.a < 0.1) discard;
 }

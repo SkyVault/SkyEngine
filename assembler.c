@@ -87,7 +87,8 @@ EntId END_TARGET_C(Game* game, float x, float y, float vx, float vy) {
     Model* model = get_comp(game->ecs, self, Model);
     Transform* trans = get_comp(game->ecs, self, Transform);
 
-    model->materials[0].maps[MAP_DIFFUSE].color = GREEN;
+    model->materials[0].maps[MAP_DIFFUSE].color = (Color){0, 255, 255, 100};
+    model->materials[0].shader = game->assets->shaders[SHADER_PHONG_LIGHTING];
 
     trans->rotation = QuaternionFromAxisAngle((Vector3){0, 1, 0}, 45.f);
 

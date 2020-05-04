@@ -77,7 +77,7 @@ void load_models(Map *result, Game *game) {
 
     Model default_wall_2 = LoadModelFromMesh(game->assets->meshes[MESH_CUBE]);
     default_wall_2.materials[0].maps[MAP_DIFFUSE].texture =
-        game->assets->textures[TEX_FLOOR_1];
+        game->assets->textures[TEX_WALL_2];
     default_wall_2.materials[0].shader =
         game->assets->shaders[SHADER_PHONG_LIGHTING];
 
@@ -156,14 +156,21 @@ Map *load_map_from_file(const char *path, Game *game) {
                                     case '-':
                                         create_x_door(pos, game);
                                         break;
-                                    case '#':
+                                    case ' ':
+                                    case '.':
+                                        break;
+
+                                    default:
                                         result
                                             ->walls[layer]
                                                    [x + y * result->width]
                                             .active = 1;
-                                        break;
-                                    case ' ':
-                                        break;
+                                        const char buff[] = {line[x], '\0'};
+                                        int i = atoi(buff) - 1;
+                                        result
+                                            ->walls[layer]
+                                                   [x + y * result->width]
+                                            .model = i;
                                 }
                             }
                         }

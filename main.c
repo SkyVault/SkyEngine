@@ -1,3 +1,4 @@
+#include <GL/glew.h>
 #include <stdio.h>
 
 #include "raylib.h"
@@ -7,6 +8,7 @@
 #define RLIGHTS_IMPLEMENTATION
 #include "assembler.h"
 #include "assets.h"
+#include "behaviours.h"
 #include "ecs.h"
 #include "editor.h"
 #include "game.h"
@@ -35,6 +37,12 @@ int main() {
 
     InitWindow(SCREEN_WIDTH, SCREEN_HEIGHT, "DevWindow");
     SetTargetFPS(60);
+
+    // glew
+    GLenum err = glewInit();
+    if (err != GLEW_OK) {
+        fprintf(stderr, "Error: %s\n", glewGetErrorString(err));
+    }
 
     // glBlendEquation(GL_FUNC_ADD);
     // glBendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
@@ -89,7 +97,7 @@ int main() {
     Map *map = load_map_from_file("resources/maps/level1.map", game);
 
     assemble(PLAYER, game, 5, 5, 0, 0);
-    assemble(END_TARGET, game, 2, 2, 0, 0);
+    assemble(END_TARGET, game, 10, 10, 0, 0);
     assemble(GIRL_1, game, 5 * CUBE_SIZE, 5 * CUBE_SIZE, 0, 0);
     assemble(GIRL_2, game, 2 * CUBE_SIZE, 1 * CUBE_SIZE, 0, 0);
     assemble(GIRL_3, game, 2 * CUBE_SIZE, 4 * CUBE_SIZE, 0, 0);
@@ -98,6 +106,12 @@ int main() {
 #if defined _DEBUG
     Ed *editor = create_editor();
 #endif
+
+    rlEnableBackfaceCulling();
+    rlEnableDepthTest();
+
+    glEnable(GL_BLEND);
+    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
     while (!WindowShouldClose() && game->state == STATE_RUNNING) {
         update_game(game);
@@ -108,6 +122,7 @@ int main() {
             update_player(ecs, assets, game, i);
             update_doors(ecs, i);
             update_behaviours(ecs, i);
+            update_physics(map, ecs, game, i);
         }
 
         update_map(map, game);
@@ -143,7 +158,9 @@ int main() {
             draw_models(gfx, ecs, i);
         }
 
+        glDisable(GL_CULL_FACE);
         DrawModel(game->skybox, (Vector3){0, 0, 0}, 100.0f, WHITE);
+        glEnable(GL_CULL_FACE);
 
         // Do the final draw to the screen
         flush_graphics(gfx, &camera);
@@ -153,12 +170,6 @@ int main() {
 #endif
 
         EndMode3D();
-
-        // TODO(Dustin): Move this back to the update
-        for (int i = 0; i < ecs->max_num_entities; i++) {
-            if (!is_ent_alive(ecs, i)) continue;
-            update_physics(map, ecs, game, i);
-        }
 
 #if defined _DEBUG
         render_editor_ui(editor, map, game);

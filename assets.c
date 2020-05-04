@@ -14,6 +14,7 @@ Assets* create_and_load_assets() {
         .textures =
             {
                 [TEX_WALL_1] = LoadTexture("resources/wall_1.png"),
+                [TEX_WALL_2] = LoadTexture("resources/wall_2.png"),
                 [TEX_FLOOR_1] = LoadTexture("resources/floor_1.png"),
                 [TEX_CHAR_1] = LoadTexture("resources/char.png"),
                 [TEX_SALAMI] = LoadTexture("resources/salami.png"),

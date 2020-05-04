@@ -7,6 +7,8 @@
 
 enum Textures {
     TEX_WALL_1,
+    TEX_WALL_2,
+
     TEX_FLOOR_1,
     TEX_CHAR_1,
 

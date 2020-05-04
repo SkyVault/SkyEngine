@@ -54,6 +54,7 @@ int sorting(const void* _a, const void* _b) {
 
     if (scamera == NULL) return 0;
 
+    // Cache this?
     float ad = Vector3Distance(a->transform.translation, scamera->position);
     float bd = Vector3Distance(b->transform.translation, scamera->position);
 
@@ -76,7 +77,41 @@ void flush_graphics(GfxState* gfx, Camera* camera) {
         m = MatrixMultiply(m, QuaternionToMatrix(d->transform.rotation));
         m = MatrixMultiply(m, MatrixTranslate(pos.x, pos.y, pos.z));
 
+        const Vector4 fogColor = (Vector4){0.f, 0.f, 0.f, 1.0f};
+        const float fogDensity = 0.015;
+
         if (d->type == DrawType_Billboard) {
+            Vector3 f = {d->diffuse.r / 255.f, d->diffuse.g / 255.f,
+                         d->diffuse.b / 255.f};
+
+            Vector2 sub = (Vector2){
+                d->transform.translation.x,
+                d->transform.translation.z,
+            };
+
+            float dist = Vector2Distance(
+                sub, (Vector2){camera->position.x, camera->position.z});
+
+            float fogFactor =
+                1.0f / exp((dist * fogDensity * 8) * (dist * fogDensity));
+
+            fogFactor =
+                fogFactor < 0 ? 0 : (fogFactor > 1.0f ? 1.0f : fogFactor);
+
+            f.x = (f.x + (f.x * fogFactor)) - 1.0f;
+            f.y = (f.y + (f.y * fogFactor)) - 1.0f;
+            f.z = (f.z + (f.z * fogFactor)) - 1.0f;
+
+            if (f.x < 0) f.x = 0;
+            if (f.y < 0) f.y = 0;
+            if (f.z < 0) f.z = 0;
+
+            if (f.x > 1) f.x = 1;
+            if (f.y > 1) f.y = 1;
+            if (f.z > 1) f.z = 1;
+
+            d->diffuse = (Color){f.x * 255, f.y * 255, f.z * 255, 255};
+
             DrawBillboard(*camera, d->billboard.texture, pos,
                           d->billboard.scale, d->diffuse);
 
