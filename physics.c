@@ -5,29 +5,63 @@
 
 void update_physics(Map* map, EcsWorld* ecs, Game* game, EntId ent) {
     EntStruct* self = get_ent(ecs, ent);
-    if (!has_comp(ecs, self, Physics) ||
-        !has_comp(ecs, self, Transform)) {
-
+    if (!has_comp(ecs, self, Physics) || !has_comp(ecs, self, Transform)) {
         return;
     }
+
+    const float dt = GetFrameTime();
 
     Physics* physics = get_comp(ecs, self, Physics);
     Transform* trans = get_comp(ecs, self, Transform);
 
-    trans->translation.x += physics->velocity.x * GetFrameTime();
-    trans->translation.y += physics->velocity.y * GetFrameTime();
-    trans->translation.z += physics->velocity.z * GetFrameTime(); 
+    // Collision checking
+    float tot_h = map->height * CUBE_SIZE;
+    float tot_w = map->width * CUBE_SIZE;
+    for (int y = 0; y < map->height; y++) {
+        for (int x = 0; x < map->width; x++) {
+            bool active = map->walls[0][x + y * map->width].active;
+
+            if (active) {
+                Rectangle wall = (Rectangle){x * CUBE_SIZE, y * CUBE_SIZE,
+                                             CUBE_SIZE, CUBE_SIZE};
+                Rectangle body =
+                    (Rectangle){trans->translation.x, trans->translation.z,
+                                CUBE_SIZE, CUBE_SIZE};
+
+                Vector2 pos = {trans->translation.x, trans->translation.z};
+
+                DrawRectangleRec(wall, RED);
+                DrawCircle(body.x, body.y, CUBE_SIZE / 2, BLUE);
+
+                if (CheckCollisionCircleRec(
+                        (Vector2){body.x + physics->velocity.x * dt, body.y},
+                        0.2f, wall)) {
+                    physics->velocity.x = 0;
+                }
+
+                if (CheckCollisionCircleRec(
+                        (Vector2){body.x, body.y + physics->velocity.z * dt},
+                        0.2f, wall)) {
+                    physics->velocity.z = 0;
+                }
+            }
+        }
+    }
+
+    trans->translation.x += physics->velocity.x * dt;
+    trans->translation.y += physics->velocity.y * dt;
+    trans->translation.z += physics->velocity.z * dt;
 
     if (trans->translation.y <= GROUND) {
         trans->translation.y = GROUND;
         physics->velocity.y = 0.0f;
         physics->grounded = true;
+    } else {
+        trans->translation.y -= physics->gravity_scale * GRAVITY * dt;
     }
-    else { 
-		trans->translation.y -= physics->gravity_scale * GRAVITY * GetFrameTime(); 
-    } 
 
-    if (physics->grounded && physics->bounce_factor > 0.1f && trans->translation.y <= GROUND) {
+    if (physics->grounded && physics->bounce_factor > 0.1f &&
+        trans->translation.y <= GROUND) {
         physics->velocity.y = GRAVITY * physics->bounce_factor * 2.0f;
         physics->bounce_factor *= powf(0.001f, GetFrameTime());
     }

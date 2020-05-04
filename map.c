@@ -1,5 +1,6 @@
 #include "map.h"
 
+#include "rlgl.h"
 #include "utils.h"
 
 EntStruct *create_door(Vector3 pos, Game *game) {
@@ -252,17 +253,19 @@ Map *load_map(int map, Game *game) {
 void update_map(Map *map, Game *game) {}
 
 void draw_map(Map *map, Game *game) {
+    rlEnableBackfaceCulling();
+    rlEnableDepthTest();
     for (int layer = 0; layer < MAX_NUM_LAYERS; layer++) {
         for (int z = 0; z < map->height; z++) {
             for (int x = 0; x < map->width; x++) {
                 Vector3 pos =
-                    (Vector3){x * CUBE_SIZE, layer * CUBE_SIZE, z * CUBE_SIZE};
+                    (Vector3){x * CUBE_SIZE + CUBE_SIZE / 2, layer * CUBE_SIZE,
+                              z * CUBE_SIZE + CUBE_SIZE / 2};
 
                 if (layer == 0) {
-                    DrawModel(
-                        map->floor_tile_models[0],
-                        (Vector3){x * CUBE_SIZE, -CUBE_SIZE, z * CUBE_SIZE},
-                        CUBE_SIZE, RAYWHITE);
+                    DrawModel(map->floor_tile_models[0],
+                              (Vector3){pos.x, -CUBE_SIZE, pos.z}, CUBE_SIZE,
+                              RAYWHITE);
                 }
 
                 if (map->walls[layer][x + z * map->width].active) {

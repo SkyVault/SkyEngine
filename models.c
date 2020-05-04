@@ -46,7 +46,24 @@ void draw_models(GfxState* gfx, EcsWorld* ecs, EntId ent) {
     }
 }
 
+static Camera* scamera = NULL;
+
+int sorting(const void* _a, const void* _b) {
+    Drawable* a = (Drawable*)_a;
+    Drawable* b = (Drawable*)_b;
+
+    if (scamera == NULL) return 0;
+
+    float ad = Vector3Distance(a->transform.translation, scamera->position);
+    float bd = Vector3Distance(b->transform.translation, scamera->position);
+
+    return (ad < bd) ? 1 : -1;
+}
+
 void flush_graphics(GfxState* gfx, Camera* camera) {
+    scamera = camera;
+
+    qsort(gfx->drawables, gfx->num_drawables, sizeof(Drawable), sorting);
     // for (int i = MAX_NUMBER_OF_DRAWABLES - 1; i >= 0; i--) {
     for (int i = 0; i <= MAX_NUMBER_OF_DRAWABLES; i++) {
         if (!(gfx->drawables[i].flags & DrawFlag_Active)) continue;

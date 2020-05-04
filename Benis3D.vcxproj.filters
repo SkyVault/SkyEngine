@@ -16,6 +16,9 @@
     <Filter Include="Resource Files\Maps">
       <UniqueIdentifier>{f43a3719-58e7-4d54-a87c-b3b2cfe9ec3c}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Resource Files\Girls">
+      <UniqueIdentifier>{779f54df-046d-408b-a391-0504827d9aa2}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="billboard.h">
@@ -182,6 +185,18 @@
     </Image>
     <Image Include="resources\salami.png">
       <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="resources\girls\girl_2.png">
+      <Filter>Resource Files\Girls</Filter>
+    </Image>
+    <Image Include="resources\girls\girl_3.png">
+      <Filter>Resource Files\Girls</Filter>
+    </Image>
+    <Image Include="resources\girls\girl_4.png">
+      <Filter>Resource Files\Girls</Filter>
+    </Image>
+    <Image Include="resources\girls\girl_1.png">
+      <Filter>Resource Files\Girls</Filter>
     </Image>
   </ItemGroup>
 </Project>

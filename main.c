@@ -38,8 +38,6 @@ int main() {
 
     // glBlendEquation(GL_FUNC_ADD);
     // glBendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-    rlEnableBackfaceCulling();
-    rlEnableDepthTest();
 
     // Define the camera to look into our 3d world (position, target, up vector)
     Camera camera = {0};
@@ -88,16 +86,10 @@ int main() {
     game->skybox.materials[0].maps[MAP_CUBEMAP].texture =
         GenTextureCubemap(*cubemap_shader, skybox_texture, 512);
 
-    // UnloadTexture(skybox_texture);
-    // UnloadShader(*cubemap_shader);
-
-    // Map *map = load_map(0, game);
     Map *map = load_map_from_file("resources/maps/level1.map", game);
 
-    // Create player
-    assemble(PLAYER, game, 10, 10, 0, 0);
+    assemble(PLAYER, game, 5, 5, 0, 0);
     assemble(END_TARGET, game, 2, 2, 0, 0);
-
     assemble(GIRL_1, game, 5 * CUBE_SIZE, 5 * CUBE_SIZE, 0, 0);
     assemble(GIRL_2, game, 2 * CUBE_SIZE, 1 * CUBE_SIZE, 0, 0);
     assemble(GIRL_3, game, 2 * CUBE_SIZE, 4 * CUBE_SIZE, 0, 0);
@@ -148,7 +140,6 @@ int main() {
         for (int i = 0; i < ecs->max_num_entities; i++) {
             if (!is_ent_alive(ecs, i)) continue;
             draw_billboard(gfx, &camera, ecs, i);
-            update_physics(map, ecs, game, i);
             draw_models(gfx, ecs, i);
         }
 
@@ -157,13 +148,23 @@ int main() {
         // Do the final draw to the screen
         flush_graphics(gfx, &camera);
 
+#if defined _DEBUG
         render_editor(editor, map, game);
+#endif
 
         EndMode3D();
+
+        // TODO(Dustin): Move this back to the update
+        for (int i = 0; i < ecs->max_num_entities; i++) {
+            if (!is_ent_alive(ecs, i)) continue;
+            update_physics(map, ecs, game, i);
+        }
 
 #if defined _DEBUG
         render_editor_ui(editor, map, game);
 #endif
+
+        DrawFPS(10, 10);
 
         EndDrawing();
     }
