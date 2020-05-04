@@ -25,7 +25,10 @@ EntId GIRL_4_C(Game* game, float x, float y, float vx, float vy);
 EntId END_TARGET_C(Game* game, float x, float y, float vx, float vy);
 EntId NUM_ENTITY_TYPES_C(Game* game, float x, float y, float vx, float vy);
 
+#ifndef ASSEMBLERS
+#define ASSEMBLERS
 static const Ass assemblers[NUM_ENTITY_TYPES + 1] = {ENTITY_TYPES(TO_ASS)};
+#endif  // ASSEMBLERS
 
 EntId assemble(int which, Game* game, float x, float y, float vx, float vy);
 

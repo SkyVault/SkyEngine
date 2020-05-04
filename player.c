@@ -195,4 +195,17 @@ void update_player(EcsWorld* ecs, Assets* ass, Game* game, EntId id) {
                    CAMERA_FIRST_PERSON_WAVING_DIVIDER;
 }
 
-void draw_player_gui(Game* game, Map* map) {}
+void draw_player_gui(Game* game, Map* map) {
+    //
+    Texture2D holding = game->assets->textures[TEX_PINEAPPLE];
+
+    float scale = 0.4f;
+    float w = ((holding.width * scale) / 2.f);
+    float h = ((holding.height * scale) / 2.f);
+
+    float x = -w / 2;
+    float y = -h / 2;
+
+    // DrawTextureEx(holding, (Vector2){x, y}, 0.0f, scale, RAYWHITE);
+    // DrawRectangle(0, 0, 100, 100, (Color){255, 255, 0, 100});
+}

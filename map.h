@@ -6,6 +6,7 @@
 #include <stdlib.h>
 #include <string.h>
 
+#include "assembler.h"
 #include "assets.h"
 #include "components.h"
 #include "ecs.h"

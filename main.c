@@ -97,7 +97,9 @@ int main() {
     Map *map = load_map_from_file("resources/maps/level1.map", game);
 
     assemble(PLAYER, game, 5, 5, 0, 0);
-    assemble(END_TARGET, game, 10, 10, 0, 0);
+
+    // for (int i = 0; i < 100; i++) assemble(END_TARGET, game, i, i, 0, 0);
+
     assemble(GIRL_1, game, 5 * CUBE_SIZE, 5 * CUBE_SIZE, 0, 0);
     assemble(GIRL_2, game, 2 * CUBE_SIZE, 1 * CUBE_SIZE, 0, 0);
     assemble(GIRL_3, game, 2 * CUBE_SIZE, 4 * CUBE_SIZE, 0, 0);
@@ -171,6 +173,7 @@ int main() {
 
         EndMode3D();
 
+        draw_player_gui(game, map);
 #if defined _DEBUG
         render_editor_ui(editor, map, game);
 #endif

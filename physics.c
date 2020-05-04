@@ -14,12 +14,23 @@ void update_physics(Map* map, EcsWorld* ecs, Game* game, EntId ent) {
     Physics* physics = get_comp(ecs, self, Physics);
     Transform* trans = get_comp(ecs, self, Transform);
 
+#if defined _DEBUG
+    static bool clipping = false;
+    if (IsKeyPressed(KEY_C)) {
+        clipping = !clipping;
+    }
+#endif
+
     // Collision checking
     float tot_h = map->height * CUBE_SIZE;
     float tot_w = map->width * CUBE_SIZE;
     for (int y = 0; y < map->height; y++) {
         for (int x = 0; x < map->width; x++) {
             bool active = map->walls[0][x + y * map->width].active;
+
+#if defined _DEBUG
+            if (clipping) continue;
+#endif
 
             if (active) {
                 Rectangle wall = (Rectangle){x * CUBE_SIZE, y * CUBE_SIZE,

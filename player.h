@@ -4,13 +4,17 @@
 #include <math.h>
 
 #include "assets.h"
+#include "ecs.h"
 #include "models.h"
 #include "physics.h"
-#include "raymath.h"
-#include "ecs.h"
 #include "raylib.h"
+#include "raymath.h"
 
-typedef struct { int n; } Player;
+typedef struct {
+    int n;
+
+    Texture2D holding;
+} Player;
 
 typedef enum {
     MOVE_FRONT = 0,
@@ -22,28 +26,27 @@ typedef enum {
 } CameraMove;
 
 typedef struct {
-    int mode;                     // Current camera mode
-    float targetDistance;         // Camera distance from position to target
-    float playerEyesPosition;     // Default player eyes position from ground (in meters)
-    Vector2 angle;                // Camera angle in plane XZ
+    int mode;                  // Current camera mode
+    float targetDistance;      // Camera distance from position to target
+    float playerEyesPosition;  // Default player eyes position from ground (in
+                               // meters)
+    Vector2 angle;             // Camera angle in plane XZ
     int moveControl[6];
-    int smoothZoomControl;        // raylib: KEY_LEFT_CONTROL
-    int altControl;               // raylib: KEY_LEFT_ALT
-    int panControl;               // raylib: MOUSE_MIDDLE_BUTTON
+    int smoothZoomControl;  // raylib: KEY_LEFT_CONTROL
+    int altControl;         // raylib: KEY_LEFT_ALT
+    int panControl;         // raylib: MOUSE_MIDDLE_BUTTON
 } CameraData;
 
-static CameraData CAMERA = {
-    .mode = 0,
-    .targetDistance = 0,
-    .playerEyesPosition = 1.85f,
-    .angle = { 0 },
-    .moveControl = { KEY_W, 'S', 'D', 'A', 'E', 'Q' },
-    .smoothZoomControl = 341,
-    .altControl = 342,
-    .panControl = 2
-};
+static CameraData CAMERA = {.mode = 0,
+                            .targetDistance = 0,
+                            .playerEyesPosition = 1.85f,
+                            .angle = {0},
+                            .moveControl = {KEY_W, 'S', 'D', 'A', 'E', 'Q'},
+                            .smoothZoomControl = 341,
+                            .altControl = 342,
+                            .panControl = 2};
 
 void update_player(EcsWorld* ecs, Assets* ass, Game* camera, EntId self);
 void draw_player_gui(Game* game, Map* map);
 
-#endif//BENIS_PLAYER_H
+#endif  // BENIS_PLAYER_H
