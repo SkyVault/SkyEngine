@@ -1,7 +1,7 @@
 #ifndef BENIS_MODELS_H
 #define BENIS_MODELS_H
 
-#define ACTOR_HEIGHT (1.8)
+#define ACTOR_HEIGHT (1.8f)
 
 #include <stdlib.h>
 

@@ -7,7 +7,8 @@ EntStruct *create_door(Vector3 pos, Game *game) {
     EntId id = create_ent(ecs);
     EntStruct *self = get_ent(ecs, id);
     add_comp_obj(ecs, self, Physics, create_physics());
-    add_comp(ecs, self, Transform, .translation = pos);
+    add_comp(ecs, self, Transform, .translation = pos,
+             .rotation = QuaternionIdentity());
     add_comp(ecs, self, Door, .facing = Facing_X, .state = Door_Closed,
              .timer = 0);
     get_comp(ecs, self, Physics)->friction = 0.2f;
@@ -142,9 +143,27 @@ Map *load_map_from_file(const char *path, Game *game) {
                             }
 
                             for (int x = 0; x < result->width; x++) {
-                                if (line[x] == '#')
-                                    result->walls[layer][x + y * result->width]
-                                        .active = 1;
+                                Vector3 pos =
+                                    (Vector3){.x = (float)x * CUBE_SIZE,
+                                              .y = 0.f,
+                                              .z = (float)y * CUBE_SIZE};
+
+                                switch (line[x]) {
+                                    case '|':
+                                        create_z_door(pos, game);
+                                        break;
+                                    case '-':
+                                        create_x_door(pos, game);
+                                        break;
+                                    case '#':
+                                        result
+                                            ->walls[layer]
+                                                   [x + y * result->width]
+                                            .active = 1;
+                                        break;
+                                    case ' ':
+                                        break;
+                                }
                             }
                         }
                     } else if (strcmp(name, "entities")) {

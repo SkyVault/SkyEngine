@@ -60,8 +60,8 @@ void flush_graphics(GfxState* gfx, Camera* camera) {
         m = MatrixMultiply(m, MatrixTranslate(pos.x, pos.y, pos.z));
 
         if (d->type == DrawType_Billboard) {
-            DrawBillboard(*camera, d->billboard.texture,
-                          d->transform.translation, ACTOR_HEIGHT, d->diffuse);
+            DrawBillboard(*camera, d->billboard.texture, pos,
+                          d->billboard.scale, d->diffuse);
 
         } else if (d->type == DrawType_Model) {
             d->model.transform = m;

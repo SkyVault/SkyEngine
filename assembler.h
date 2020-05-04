@@ -16,7 +16,12 @@ typedef EntId (*Ass)(Game*, float, float, float, float);
 
 EntId PLAYER_C(Game* game, float x, float y, float vx, float vy);
 EntId PINEAPPLE_BOMB_C(Game* game, float x, float y, float vx, float vy);
-EntId GIRL_C(Game* game, float x, float y, float vx, float vy);
+
+EntId GIRL_1_C(Game* game, float x, float y, float vx, float vy);
+EntId GIRL_2_C(Game* game, float x, float y, float vx, float vy);
+EntId GIRL_3_C(Game* game, float x, float y, float vx, float vy);
+EntId GIRL_4_C(Game* game, float x, float y, float vx, float vy);
+
 EntId END_TARGET_C(Game* game, float x, float y, float vx, float vy);
 EntId NUM_ENTITY_TYPES_C(Game* game, float x, float y, float vx, float vy);
 

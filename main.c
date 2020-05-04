@@ -98,6 +98,11 @@ int main() {
     assemble(PLAYER, game, 10, 10, 0, 0);
     assemble(END_TARGET, game, 2, 2, 0, 0);
 
+    assemble(GIRL_1, game, 5 * CUBE_SIZE, 5 * CUBE_SIZE, 0, 0);
+    assemble(GIRL_2, game, 2 * CUBE_SIZE, 1 * CUBE_SIZE, 0, 0);
+    assemble(GIRL_3, game, 2 * CUBE_SIZE, 4 * CUBE_SIZE, 0, 0);
+    assemble(GIRL_4, game, 4 * CUBE_SIZE, 2 * CUBE_SIZE, 0, 0);
+
 #if defined _DEBUG
     Ed *editor = create_editor();
 #endif

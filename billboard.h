@@ -6,6 +6,8 @@
 typedef struct {
     Texture2D texture;
     Material material;
+
+    float scale;
 } Billboard;
 
-#endif//BENIS_BILLBOARD_H
+#endif  // BENIS_BILLBOARD_H

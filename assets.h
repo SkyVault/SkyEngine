@@ -9,19 +9,21 @@ enum Textures {
     TEX_WALL_1,
     TEX_FLOOR_1,
     TEX_CHAR_1,
+
     TEX_SALAMI,
+
     TEX_PINEAPPLE,
-    TEX_EWW,
-    TEX_EWW2,
+    TEX_ORANGE,
+
+    TEX_GIRL_1,
+    TEX_GIRL_2,
+    TEX_GIRL_3,
+    TEX_GIRL_4,
+
     TEX_NUM_TEXTURES,
 };
 
-enum Meshes {
-    MESH_CUBE,
-    MESH_SKYBOX,
-    MESH_PLANE,
-    MESH_NUM_MESHES
-};
+enum Meshes { MESH_CUBE, MESH_SKYBOX, MESH_PLANE, MESH_NUM_MESHES };
 
 enum Shaders {
     SHADER_PHONG_LIGHTING,
@@ -38,4 +40,4 @@ typedef struct {
 
 Assets* create_and_load_assets();
 
-#endif//BENIS_ASSETS_H
+#endif  // BENIS_ASSETS_H

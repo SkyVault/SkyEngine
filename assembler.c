@@ -18,7 +18,61 @@ EntId PINEAPPLE_BOMB_C(Game* game, float x, float y, float vx, float vy) {
     return bullet_id;
 }
 
-EntId GIRL_C(Game* game, float x, float y, float vx, float vy) { return -1; }
+EntId GIRL_1_C(Game* game, float x, float y, float vx, float vy) {
+    EntId self_id = create_ent(game->ecs);
+    EntStruct* self = get_ent(game->ecs, self_id);
+
+    add_comp(game->ecs, self, Transform, .translation = (Vector3){x, 0, y},
+             .rotation = QuaternionIdentity());
+
+    add_comp(game->ecs, self, Billboard,
+             .texture = game->assets->textures[TEX_GIRL_1],
+             .material = (Material){0}, .scale = 6);
+
+    return self_id;
+}
+
+EntId GIRL_2_C(Game* game, float x, float y, float vx, float vy) {
+    EntId self_id = create_ent(game->ecs);
+    EntStruct* self = get_ent(game->ecs, self_id);
+
+    add_comp(game->ecs, self, Transform, .translation = (Vector3){x, 0, y},
+             .rotation = QuaternionIdentity());
+
+    add_comp(game->ecs, self, Billboard,
+             .texture = game->assets->textures[TEX_GIRL_2],
+             .material = (Material){0}, .scale = 6);
+
+    return self_id;
+}
+
+EntId GIRL_3_C(Game* game, float x, float y, float vx, float vy) {
+    EntId self_id = create_ent(game->ecs);
+    EntStruct* self = get_ent(game->ecs, self_id);
+
+    add_comp(game->ecs, self, Transform, .translation = (Vector3){x, 0, y},
+             .rotation = QuaternionIdentity());
+
+    add_comp(game->ecs, self, Billboard,
+             .texture = game->assets->textures[TEX_GIRL_3],
+             .material = (Material){0}, .scale = 6);
+
+    return self_id;
+}
+
+EntId GIRL_4_C(Game* game, float x, float y, float vx, float vy) {
+    EntId self_id = create_ent(game->ecs);
+    EntStruct* self = get_ent(game->ecs, self_id);
+
+    add_comp(game->ecs, self, Transform, .translation = (Vector3){x, 0, y},
+             .rotation = QuaternionIdentity());
+
+    add_comp(game->ecs, self, Billboard,
+             .texture = game->assets->textures[TEX_GIRL_4],
+             .material = (Material){0}, .scale = 6);
+
+    return self_id;
+}
 
 EntId END_TARGET_C(Game* game, float x, float y, float vx, float vy) {
     EntId self_id = create_ent(game->ecs);
