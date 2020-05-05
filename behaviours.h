@@ -1,6 +1,7 @@
 #ifndef BENIS_BEHAVIOURS_H
 #define BENIS_BEHAVIOURS_H
 
+#include "components.h"
 #include "ecs.h"
 #include "entity_types.h"
 #include "game.h"

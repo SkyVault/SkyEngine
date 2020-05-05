@@ -17,6 +17,7 @@ V2 center(Body* b);
 
 typedef struct {
     float time_left;
+    bool done;
 } TimedDestroy;
 
 enum Facing {
@@ -24,7 +25,10 @@ enum Facing {
     Facing_Z,
 };
 
-enum DoorState { Door_Open, Door_Closed, };
+enum DoorState {
+    Door_Open,
+    Door_Closed,
+};
 
 typedef struct {
     int facing;
@@ -36,4 +40,4 @@ typedef struct {
 void update_timed_destroy(EcsWorld* world, EntId id);
 void update_doors(EcsWorld* world, EntId id);
 
-#endif//VAULT_COMPONENTS_H
+#endif  // VAULT_COMPONENTS_H

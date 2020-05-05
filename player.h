@@ -4,7 +4,9 @@
 #include <math.h>
 
 #include "assets.h"
+#include "components.h"
 #include "ecs.h"
+#include "entity_types.h"
 #include "models.h"
 #include "physics.h"
 #include "raylib.h"

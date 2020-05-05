@@ -110,7 +110,7 @@ int find_free_comp(struct CompList* list) {
 
     int prev = list->number;
 
-    void* new = realloc(list->list, sizeof(void*) * (list->number * 2));
+    void* new = realloc(list->list, sizeof(void*) * (prev * 2));
 
     if (list->list == NULL) {
         printf("Failed to reallocate memory for the component list\n");
@@ -165,6 +165,7 @@ int destroy_ent(EcsWorld* world, EntStruct* ent) {
     for (int i = 0; i < CT_NumComponentTypes; i++) {
         if (world->entities[id]->component_indexes[i] >= 0) {
             int cid = world->entities[id]->component_indexes[i];
+            world->entities[id]->component_indexes[i] = -1;
             free(world->components[i].list[cid]);
             world->components[i].list[cid] = NULL;
         }

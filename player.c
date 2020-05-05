@@ -80,10 +80,13 @@ void update_player(EcsWorld* ecs, Assets* ass, Game* game, EntId id) {
 
         add_comp(ecs, bullet, Transform, .translation = pos);
         add_comp_obj(ecs, bullet, Physics, create_physics());
+        add_comp(ecs, bullet, Actor, .type = PINEAPPLE_BOMB, .state = IDLE);
 
         add_comp(ecs, bullet, Billboard,
                  .texture = ass->textures[TEX_PINEAPPLE],
                  .material = (Material){0}, .scale = 1.8);
+
+        add_comp(ecs, bullet, TimedDestroy, .time_left = 2.0f, .done = false);
 
         Physics* physics = get_comp(ecs, bullet, Physics);
         physics->velocity.x = cosf(angle) * 600.0f * GetFrameTime();
@@ -199,13 +202,15 @@ void draw_player_gui(Game* game, Map* map) {
     //
     Texture2D holding = game->assets->textures[TEX_PINEAPPLE];
 
-    float scale = 0.4f;
-    float w = ((holding.width * scale) / 2.f);
-    float h = ((holding.height * scale) / 2.f);
+    const float timer = GetTime();
 
-    float x = -w / 2;
-    float y = -h / 2;
+    const float width = 512;
+    const float height = 512;
 
-    // DrawTextureEx(holding, (Vector2){x, y}, 0.0f, scale, RAYWHITE);
-    // DrawRectangle(0, 0, 100, 100, (Color){255, 255, 0, 100});
+    float x = GetScreenWidth() - (width * 0.8f) + cosf(timer * 3.0f) * 70.0f;
+    float y = GetScreenHeight() - (height * 0.8f) + sinf(timer * 2.5f) * 90.0f;
+
+    DrawTexturePro(holding, (Rectangle){0, 0, holding.width, holding.height},
+                   (Rectangle){x, y, width, height}, Vector2Zero(), 0.f,
+                   RAYWHITE);
 }
