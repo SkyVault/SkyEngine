@@ -164,6 +164,7 @@
     <ClInclude Include="map_def.h" />
     <ClInclude Include="maths.h" />
     <ClInclude Include="models.h" />
+    <ClInclude Include="particles.h" />
     <ClInclude Include="physics.h" />
     <ClInclude Include="physics_type.h" />
     <ClInclude Include="player.h" />
@@ -184,6 +185,7 @@
     <ClCompile Include="map.c" />
     <ClCompile Include="maths.c" />
     <ClCompile Include="models.c" />
+    <ClCompile Include="particles.c" />
     <ClCompile Include="physics.c" />
     <ClCompile Include="physics_type.c" />
     <ClCompile Include="player.c" />

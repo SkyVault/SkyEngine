@@ -84,6 +84,9 @@
     <ClInclude Include="entity_types.h">
       <Filter>Source Files</Filter>
     </ClInclude>
+    <ClInclude Include="particles.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="components.c">
@@ -129,6 +132,9 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="behaviours.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="particles.c">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
