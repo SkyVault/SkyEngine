@@ -52,6 +52,58 @@ void set_camera_mode(Camera camera, int mode) {
     CAMERA.mode = mode;
 }
 
+void throw_orange(EcsWorld* ecs, Vector3 pos, float angle, Assets* ass) {
+    EntId bullet_id = create_ent(ecs);
+    EntStruct* bullet = get_ent(ecs, bullet_id);
+
+    pos.x += cosf(angle);
+    pos.z += sinf(angle);
+    pos.y -= 0.5f;
+
+    add_comp(ecs, bullet, Transform, .translation = pos);
+    add_comp_obj(ecs, bullet, Physics, create_physics());
+    add_comp(ecs, bullet, Actor, .type = TOSSED_ORANGE, .state = IDLE);
+
+    add_comp(ecs, bullet, Billboard, .texture = ass->textures[TEX_ORANGE],
+             .material = (Material){0}, .scale = 1.0);
+
+    add_comp(ecs, bullet, TimedDestroy, .time_left = 2.0f, .done = false);
+
+    Physics* physics = get_comp(ecs, bullet, Physics);
+    physics->velocity.x = cosf(angle) * 800.0f * GetFrameTime();
+    physics->velocity.z = sinf(angle) * 800.0f * GetFrameTime();
+    physics->velocity.y = 900.0f * GetFrameTime();
+    physics->friction = 0.5f;
+    physics->gravity_scale = 0.8f;
+    physics->bounce_factor = 0.8f;
+}
+
+void throw_pineapple(EcsWorld* ecs, Vector3 pos, float angle, Assets* ass) {
+    EntId bullet_id = create_ent(ecs);
+    EntStruct* bullet = get_ent(ecs, bullet_id);
+
+    pos.x += cosf(angle);
+    pos.z += sinf(angle);
+    pos.y -= 0.5f;
+
+    add_comp(ecs, bullet, Transform, .translation = pos);
+    add_comp_obj(ecs, bullet, Physics, create_physics());
+    add_comp(ecs, bullet, Actor, .type = PINEAPPLE_BOMB, .state = IDLE);
+
+    add_comp(ecs, bullet, Billboard, .texture = ass->textures[TEX_PINEAPPLE],
+             .material = (Material){0}, .scale = 1.8);
+
+    add_comp(ecs, bullet, TimedDestroy, .time_left = 2.0f, .done = false);
+
+    Physics* physics = get_comp(ecs, bullet, Physics);
+    physics->velocity.x = cosf(angle) * 600.0f * GetFrameTime();
+    physics->velocity.z = sinf(angle) * 600.0f * GetFrameTime();
+    physics->velocity.y = 980.0f * GetFrameTime();
+    physics->friction = 0.5f;
+    physics->gravity_scale = 1.0f;
+    physics->bounce_factor = 0.8f;
+}
+
 void update_player(EcsWorld* ecs, Assets* ass, Game* game, EntId id) {
     EntStruct* self = get_ent(ecs, id);
 
@@ -69,32 +121,9 @@ void update_player(EcsWorld* ecs, Assets* ass, Game* game, EntId id) {
 
     // Shoot
     if (IsMouseButtonPressed(MOUSE_LEFT_BUTTON)) {
-        EntId bullet_id = create_ent(ecs);
-        EntStruct* bullet = get_ent(ecs, bullet_id);
-
         Vector3 pos = transform->translation;
-
-        pos.x += cosf(angle);
-        pos.z += sinf(angle);
-        pos.y -= 0.5f;
-
-        add_comp(ecs, bullet, Transform, .translation = pos);
-        add_comp_obj(ecs, bullet, Physics, create_physics());
-        add_comp(ecs, bullet, Actor, .type = PINEAPPLE_BOMB, .state = IDLE);
-
-        add_comp(ecs, bullet, Billboard,
-                 .texture = ass->textures[TEX_PINEAPPLE],
-                 .material = (Material){0}, .scale = 1.8);
-
-        add_comp(ecs, bullet, TimedDestroy, .time_left = 2.0f, .done = false);
-
-        Physics* physics = get_comp(ecs, bullet, Physics);
-        physics->velocity.x = cosf(angle) * 600.0f * GetFrameTime();
-        physics->velocity.z = sinf(angle) * 600.0f * GetFrameTime();
-        physics->velocity.y = 980.0f * GetFrameTime();
-        physics->friction = 0.5f;
-        physics->gravity_scale = 1.0f;
-        physics->bounce_factor = 0.8f;
+        // throw_pineapple(ecs, pos, angle, ass);
+        throw_orange(ecs, pos, angle, ass);
     }
 
     static int first = 0;

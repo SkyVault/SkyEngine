@@ -116,9 +116,8 @@ int main() {
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
     while (!WindowShouldClose() && game->state == STATE_RUNNING) {
-        update_game(game);
-
         update_and_cleanup_ecs_world(ecs);
+        update_game(game);
 
         for (int i = 0; i < ecs->max_num_entities; i++) {
             if (!is_ent_alive(ecs, i)) continue;

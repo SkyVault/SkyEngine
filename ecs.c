@@ -18,22 +18,9 @@ EntStruct* make_ent() {
 }
 
 EntId get_free_space(EcsWorld* world) {
-    // if (!is_ent_alive(world, world->free_spot)) return world->free_spot;
-
-    /*
-    if (world->entities[world->free_spot] != NULL &&
-        world->entities[world->free_spot]->status == ES_DEAD)
-        return world->free_spot;
-    */
-
     for (int i = 0; i < world->max_num_entities; i++) {
         if (world->entities[i] == NULL ||
             world->entities[i]->status == ES_DEAD) {
-            /*
-            if (i < world->max_num_entities - 1)
-                if (!is_ent_alive(world, i+1)) world->free_spot = i + 1;
-            */
-
             return i;
         }
     }
@@ -166,6 +153,7 @@ int destroy_ent(EcsWorld* world, EntStruct* ent) {
         if (world->entities[id]->component_indexes[i] >= 0) {
             int cid = world->entities[id]->component_indexes[i];
             world->entities[id]->component_indexes[i] = -1;
+
             free(world->components[i].list[cid]);
             world->components[i].list[cid] = NULL;
         }

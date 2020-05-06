@@ -18,6 +18,10 @@ EntId PINEAPPLE_BOMB_C(Game* game, float x, float y, float vx, float vy) {
     return bullet_id;
 }
 
+EntId TOSSED_ORANGE_C(Game* game, float x, float y, float vx, float vy) {
+    return -1;
+}
+
 EntId GIRL_1_C(Game* game, float x, float y, float vx, float vy) {
     EntId self_id = create_ent(game->ecs);
     EntStruct* self = get_ent(game->ecs, self_id);

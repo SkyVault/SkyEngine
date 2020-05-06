@@ -6,6 +6,7 @@
 #define ENTITY_TYPES(I) \
     I(PLAYER)           \
     I(PINEAPPLE_BOMB)   \
+    I(TOSSED_ORANGE)    \
     I(GIRL_1)           \
     I(GIRL_2)           \
     I(GIRL_3)           \
