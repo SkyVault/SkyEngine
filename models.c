@@ -13,6 +13,8 @@ void update_billboard(EcsWorld* ecs, EntId ent) {}
 void draw_billboard(GfxState* gfx, Camera* camera, EcsWorld* ecs, EntId ent) {
     EntStruct* self = get_ent(ecs, ent);
 
+    if (ent < 0 || self == NULL) return;
+
     if (!has_comp(ecs, self, Billboard) || !has_comp(ecs, self, Transform))
         return;
 
@@ -31,6 +33,8 @@ void update_models(EcsWorld* ecs, EntId ent) {}
 
 void draw_models(GfxState* gfx, EcsWorld* ecs, EntId ent) {
     EntStruct* self = get_ent(ecs, ent);
+
+    if (ent < 0 || self == NULL) return;
 
     if (!has_comp(ecs, self, Model) || !has_comp(ecs, self, Transform)) return;
 
@@ -119,6 +123,8 @@ void flush_graphics(GfxState* gfx, Camera* camera) {
             d->model.transform = m;
             DrawModel(d->model, d->transform.translation, 1, d->diffuse);
         }
+
+        gfx->drawables[i] = (Drawable){0};
     }
 
     gfx->num_drawables = 0;
