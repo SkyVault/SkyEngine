@@ -47,7 +47,7 @@ void update_physics(Map* map, EcsWorld* ecs, Game* game, EntId ent) {
                 if (CheckCollisionCircleRec(
                         (Vector2){body.x + physics->velocity.x * dt, body.y},
                         0.2f, wall)) {
-                    physics->velocity.x = 0;
+                    physics->velocity.x = 0.f;
                 }
 
                 if (CheckCollisionCircleRec(

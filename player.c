@@ -121,9 +121,11 @@ void update_player(EcsWorld* ecs, Assets* ass, Game* game, EntId id) {
 
     // Shoot
     if (IsMouseButtonPressed(MOUSE_LEFT_BUTTON)) {
-        Vector3 pos = transform->translation;
-        // throw_pineapple(ecs, pos, angle, ass);
-        throw_orange(ecs, pos, angle, ass);
+        throw_orange(ecs, transform->translation, angle, ass);
+    }
+
+    if (IsMouseButtonPressed(MOUSE_RIGHT_BUTTON)) {
+        throw_pineapple(ecs, transform->translation, angle, ass);
     }
 
     static int first = 0;
@@ -242,4 +244,8 @@ void draw_player_gui(Game* game, Map* map) {
     DrawTexturePro(holding, (Rectangle){0, 0, holding.width, holding.height},
                    (Rectangle){x, y, width, height}, Vector2Zero(), 0.f,
                    RAYWHITE);
+
+    DrawText("W/A/S/D to move", 10, 100, 20, RAYWHITE);
+    DrawText("Left click -> throw orange", 10, 130, 20, RAYWHITE);
+    DrawText("Right click -> throw pineapple bomb", 10, 160, 20, RAYWHITE);
 }
