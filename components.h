@@ -20,6 +20,10 @@ typedef struct {
     bool done;
 } TimedDestroy;
 
+typedef struct {
+    float damage;
+} PlayerHit;
+
 enum Facing {
     Facing_X,
     Facing_Z,

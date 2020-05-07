@@ -14,6 +14,7 @@
 #include "game.h"
 #include "map.h"
 #include "models.h"
+#include "particles.h"
 #include "rlights.h"
 
 #if defined(PLATFORM_DESKTOP)
@@ -94,16 +95,18 @@ int main() {
     game->skybox.materials[0].maps[MAP_CUBEMAP].texture =
         GenTextureCubemap(*cubemap_shader, skybox_texture, 512);
 
+    ParticleSystem *particle_sys = create_particle_system();
+
     Map *map = load_map_from_file("resources/maps/level1.map", game);
 
-    assemble(PLAYER, game, 5, 5, 0, 0);
+    assemble(ACTOR_PLAYER, game, 5, 5, 0, 0);
 
     // for (int i = 0; i < 100; i++) assemble(END_TARGET, game, i, i, 0, 0);
 
-    assemble(GIRL_1, game, 5 * CUBE_SIZE, 5 * CUBE_SIZE, 0, 0);
-    assemble(GIRL_2, game, 2 * CUBE_SIZE, 1 * CUBE_SIZE, 0, 0);
-    assemble(GIRL_3, game, 2 * CUBE_SIZE, 4 * CUBE_SIZE, 0, 0);
-    assemble(GIRL_4, game, 4 * CUBE_SIZE, 2 * CUBE_SIZE, 0, 0);
+    assemble(ACTOR_GIRL_1, game, 5 * CUBE_SIZE, 5 * CUBE_SIZE, 0, 0);
+    assemble(ACTOR_GIRL_2, game, 2 * CUBE_SIZE, 1 * CUBE_SIZE, 0, 0);
+    assemble(ACTOR_GIRL_3, game, 2 * CUBE_SIZE, 4 * CUBE_SIZE, 0, 0);
+    assemble(ACTOR_GIRL_4, game, 4 * CUBE_SIZE, 2 * CUBE_SIZE, 0, 0);
 
 #if defined _DEBUG
     Ed *editor = create_editor();
@@ -118,6 +121,7 @@ int main() {
     while (!WindowShouldClose() && game->state == STATE_RUNNING) {
         update_and_cleanup_ecs_world(ecs);
         update_game(game);
+        update_particle_system(particle_sys);
 
         for (int i = 0; i < ecs->max_num_entities; i++) {
             if (!is_ent_alive(ecs, i)) continue;
@@ -162,6 +166,8 @@ int main() {
             draw_billboard(gfx, &camera, ecs, i);
             draw_models(gfx, ecs, i);
         }
+
+        render_particle_system(particle_sys);
 
         glDisable(GL_CULL_FACE);
         DrawModel(game->skybox, (Vector3){0, 0, 0}, 100.0f, WHITE);

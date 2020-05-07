@@ -1,6 +1,6 @@
 #include "assembler.h"
 
-EntId PLAYER_C(Game* game, float x, float y, float vx, float vy) {
+EntId ACTOR_PLAYER_C(Game* game, float x, float y, float vx, float vy) {
     EntId player_id = create_ent(game->ecs);
     EntStruct* player = get_ent(game->ecs, player_id);
 
@@ -11,18 +11,18 @@ EntId PLAYER_C(Game* game, float x, float y, float vx, float vy) {
     return player_id;
 }
 
-EntId PINEAPPLE_BOMB_C(Game* game, float x, float y, float vx, float vy) {
+EntId ACTOR_PINEAPPLE_BOMB_C(Game* game, float x, float y, float vx, float vy) {
     EntId bullet_id = create_ent(game->ecs);
     EntStruct* bullet = get_ent(game->ecs, bullet_id);
 
     return bullet_id;
 }
 
-EntId TOSSED_ORANGE_C(Game* game, float x, float y, float vx, float vy) {
+EntId ACTOR_TOSSED_ORANGE_C(Game* game, float x, float y, float vx, float vy) {
     return -1;
 }
 
-EntId GIRL_1_C(Game* game, float x, float y, float vx, float vy) {
+EntId ACTOR_GIRL_1_C(Game* game, float x, float y, float vx, float vy) {
     EntId self_id = create_ent(game->ecs);
     EntStruct* self = get_ent(game->ecs, self_id);
 
@@ -33,10 +33,12 @@ EntId GIRL_1_C(Game* game, float x, float y, float vx, float vy) {
              .texture = game->assets->textures[TEX_GIRL_1],
              .material = (Material){0}, .scale = 6);
 
+    add_comp_obj(game->ecs, self, Actor, create_enemy_actor(ACTOR_GIRL_1));
+
     return self_id;
 }
 
-EntId GIRL_2_C(Game* game, float x, float y, float vx, float vy) {
+EntId ACTOR_GIRL_2_C(Game* game, float x, float y, float vx, float vy) {
     EntId self_id = create_ent(game->ecs);
     EntStruct* self = get_ent(game->ecs, self_id);
 
@@ -47,10 +49,12 @@ EntId GIRL_2_C(Game* game, float x, float y, float vx, float vy) {
              .texture = game->assets->textures[TEX_GIRL_2],
              .material = (Material){0}, .scale = 6);
 
+    add_comp_obj(game->ecs, self, Actor, create_enemy_actor(ACTOR_GIRL_2));
+
     return self_id;
 }
 
-EntId GIRL_3_C(Game* game, float x, float y, float vx, float vy) {
+EntId ACTOR_GIRL_3_C(Game* game, float x, float y, float vx, float vy) {
     EntId self_id = create_ent(game->ecs);
     EntStruct* self = get_ent(game->ecs, self_id);
 
@@ -61,10 +65,12 @@ EntId GIRL_3_C(Game* game, float x, float y, float vx, float vy) {
              .texture = game->assets->textures[TEX_GIRL_3],
              .material = (Material){0}, .scale = 6);
 
+    add_comp_obj(game->ecs, self, Actor, create_enemy_actor(ACTOR_GIRL_3));
+
     return self_id;
 }
 
-EntId GIRL_4_C(Game* game, float x, float y, float vx, float vy) {
+EntId ACTOR_GIRL_4_C(Game* game, float x, float y, float vx, float vy) {
     EntId self_id = create_ent(game->ecs);
     EntStruct* self = get_ent(game->ecs, self_id);
 
@@ -75,15 +81,17 @@ EntId GIRL_4_C(Game* game, float x, float y, float vx, float vy) {
              .texture = game->assets->textures[TEX_GIRL_4],
              .material = (Material){0}, .scale = 6);
 
+    add_comp_obj(game->ecs, self, Actor, create_enemy_actor(ACTOR_GIRL_4));
+
     return self_id;
 }
 
-EntId END_TARGET_C(Game* game, float x, float y, float vx, float vy) {
+EntId ACTOR_END_TARGET_C(Game* game, float x, float y, float vx, float vy) {
     EntId self_id = create_ent(game->ecs);
     EntStruct* self = get_ent(game->ecs, self_id);
 
     add_comp(game->ecs, self, Transform, .translation = (Vector3){x, 0.0f, y});
-    add_comp(game->ecs, self, Actor, .type = END_TARGET);
+    add_comp(game->ecs, self, Actor, .type = ACTOR_END_TARGET);
 
     add_comp_obj(game->ecs, self, Model,
                  LoadModelFromMesh(game->assets->meshes[MESH_CUBE]));
@@ -99,7 +107,8 @@ EntId END_TARGET_C(Game* game, float x, float y, float vx, float vy) {
     return self_id;
 }
 
-EntId NUM_ENTITY_TYPES_C(Game* game, float x, float y, float vx, float vy) {
+EntId ACTOR_NUM_ENTITY_TYPES_C(Game* game, float x, float y, float vx,
+                               float vy) {
     return -1;
 }
 

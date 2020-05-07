@@ -161,8 +161,8 @@ Map *load_map_from_file(const char *path, Game *game) {
                                         break;
 
                                     case 'E': {
-                                        assemble(END_TARGET, game, pos.x, pos.z,
-                                                 0, 0);
+                                        assemble(ACTOR_END_TARGET, game, pos.x,
+                                                 pos.z, 0, 0);
                                         break;
                                     }
 

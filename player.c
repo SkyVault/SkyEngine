@@ -62,12 +62,13 @@ void throw_orange(EcsWorld* ecs, Vector3 pos, float angle, Assets* ass) {
 
     add_comp(ecs, bullet, Transform, .translation = pos);
     add_comp_obj(ecs, bullet, Physics, create_physics());
-    add_comp(ecs, bullet, Actor, .type = TOSSED_ORANGE, .state = IDLE);
+    add_comp(ecs, bullet, Actor, .type = ACTOR_TOSSED_ORANGE, .state = IDLE);
 
     add_comp(ecs, bullet, Billboard, .texture = ass->textures[TEX_ORANGE],
              .material = (Material){0}, .scale = 1.0);
 
     add_comp(ecs, bullet, TimedDestroy, .time_left = 2.0f, .done = false);
+    add_comp(ecs, bullet, PlayerHit, .damage = 1.0f);
 
     Physics* physics = get_comp(ecs, bullet, Physics);
     physics->velocity.x = cosf(angle) * 800.0f * GetFrameTime();
@@ -88,12 +89,13 @@ void throw_pineapple(EcsWorld* ecs, Vector3 pos, float angle, Assets* ass) {
 
     add_comp(ecs, bullet, Transform, .translation = pos);
     add_comp_obj(ecs, bullet, Physics, create_physics());
-    add_comp(ecs, bullet, Actor, .type = PINEAPPLE_BOMB, .state = IDLE);
+    add_comp(ecs, bullet, Actor, .type = ACTOR_PINEAPPLE_BOMB, .state = IDLE);
 
     add_comp(ecs, bullet, Billboard, .texture = ass->textures[TEX_PINEAPPLE],
              .material = (Material){0}, .scale = 1.8);
 
     add_comp(ecs, bullet, TimedDestroy, .time_left = 2.0f, .done = false);
+    add_comp(ecs, bullet, PlayerHit, .damage = 1.0f);
 
     Physics* physics = get_comp(ecs, bullet, Physics);
     physics->velocity.x = cosf(angle) * 600.0f * GetFrameTime();
