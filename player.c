@@ -52,7 +52,8 @@ void set_camera_mode(Camera camera, int mode) {
     CAMERA.mode = mode;
 }
 
-void throw_orange(EcsWorld* ecs, Vector3 pos, float angle, Assets* ass) {
+void throw_orange(EcsWorld* ecs, Vector3 pos, float angle, float yaw,
+                  Assets* ass) {
     EntId bullet_id = create_ent(ecs);
     EntStruct* bullet = get_ent(ecs, bullet_id);
 
@@ -73,13 +74,14 @@ void throw_orange(EcsWorld* ecs, Vector3 pos, float angle, Assets* ass) {
     Physics* physics = get_comp(ecs, bullet, Physics);
     physics->velocity.x = cosf(angle) * 800.0f * GetFrameTime();
     physics->velocity.z = sinf(angle) * 800.0f * GetFrameTime();
-    physics->velocity.y = 900.0f * GetFrameTime();
+    physics->velocity.y = 15.0f * yaw + 900.0f * GetFrameTime();
     physics->friction = 0.5f;
     physics->gravity_scale = 0.8f;
     physics->bounce_factor = 0.8f;
 }
 
-void throw_pineapple(EcsWorld* ecs, Vector3 pos, float angle, Assets* ass) {
+void throw_pineapple(EcsWorld* ecs, Vector3 pos, float angle, float yaw,
+                     Assets* ass) {
     EntId bullet_id = create_ent(ecs);
     EntStruct* bullet = get_ent(ecs, bullet_id);
 
@@ -123,11 +125,12 @@ void update_player(EcsWorld* ecs, Assets* ass, Game* game, EntId id) {
 
     // Shoot
     if (IsMouseButtonPressed(MOUSE_LEFT_BUTTON)) {
-        throw_orange(ecs, transform->translation, angle, ass);
+        throw_orange(ecs, transform->translation, angle, CAMERA.angle.y, ass);
     }
 
     if (IsMouseButtonPressed(MOUSE_RIGHT_BUTTON)) {
-        throw_pineapple(ecs, transform->translation, angle, ass);
+        throw_pineapple(ecs, transform->translation, angle, CAMERA.angle.y,
+                        ass);
     }
 
     static int first = 0;
