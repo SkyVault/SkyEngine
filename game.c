@@ -3,6 +3,7 @@
 Game* create_game(Assets* assets, Camera* camera, EcsWorld* ecs) {
     Game* game = malloc(sizeof(Game));
     game->state = STATE_RUNNING;
+    game->scene = SCENE_GAME;
     game->assets = assets;
     game->camera = camera;
     game->ecs = ecs;
@@ -13,8 +14,7 @@ Game* create_game(Assets* assets, Camera* camera, EcsWorld* ecs) {
 void update_game(Game* game) {
     if (game->lock_camera) {
         EnableCursor();
-    }
-    else {
+    } else {
         DisableCursor();
     }
 }

@@ -204,7 +204,7 @@ Map *load_map_from_file(const char *path, Game *game) {
                             result->height = y;
                             size_set = true;
                         } else {
-                            printf("Unknown constant %s\n", name);
+                            // printf("Unknown constant %s\n", name);
                         }
 
                         break;

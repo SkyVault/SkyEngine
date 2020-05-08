@@ -68,7 +68,7 @@ void throw_orange(EcsWorld* ecs, Vector3 pos, float angle, float yaw,
     add_comp(ecs, bullet, Billboard, .texture = ass->textures[TEX_ORANGE],
              .material = (Material){0}, .scale = 1.0);
 
-    add_comp(ecs, bullet, TimedDestroy, .time_left = 2.0f, .done = false);
+    add_comp(ecs, bullet, TimedDestroy, .time_left = 4.0f, .done = false);
     add_comp(ecs, bullet, PlayerHit, .damage = 1.0f);
 
     Physics* physics = get_comp(ecs, bullet, Physics);
@@ -96,13 +96,13 @@ void throw_pineapple(EcsWorld* ecs, Vector3 pos, float angle, float yaw,
     add_comp(ecs, bullet, Billboard, .texture = ass->textures[TEX_PINEAPPLE],
              .material = (Material){0}, .scale = 1.8);
 
-    add_comp(ecs, bullet, TimedDestroy, .time_left = 2.0f, .done = false);
+    add_comp(ecs, bullet, TimedDestroy, .time_left = 4.0f, .done = false);
     add_comp(ecs, bullet, PlayerHit, .damage = 1.0f);
 
     Physics* physics = get_comp(ecs, bullet, Physics);
     physics->velocity.x = cosf(angle) * 600.0f * GetFrameTime();
     physics->velocity.z = sinf(angle) * 600.0f * GetFrameTime();
-    physics->velocity.y = 980.0f * GetFrameTime();
+    physics->velocity.y = 15.0f * yaw + 980.0f * GetFrameTime();
     physics->friction = 0.5f;
     physics->gravity_scale = 1.0f;
     physics->bounce_factor = 0.8f;
@@ -240,17 +240,21 @@ void draw_player_gui(Game* game, Map* map) {
 
     const float timer = GetTime();
 
-    const float width = 512;
-    const float height = 512;
-
-    float x = GetScreenWidth() - (width * 0.8f) + cosf(timer * 3.0f) * 70.0f;
-    float y = GetScreenHeight() - (height * 0.8f) + sinf(timer * 2.5f) * 90.0f;
-
-    DrawTexturePro(holding, (Rectangle){0, 0, holding.width, holding.height},
-                   (Rectangle){x, y, width, height}, Vector2Zero(), 0.f,
-                   RAYWHITE);
-
     DrawText("W/A/S/D to move", 10, 100, 20, RAYWHITE);
     DrawText("Left click -> throw orange", 10, 130, 20, RAYWHITE);
     DrawText("Right click -> throw pineapple bomb", 10, 160, 20, RAYWHITE);
+
+    const int sw = GetScreenWidth();
+    const int sh = GetScreenHeight();
+    const int size = 128;
+    const int border = 4;
+
+    // Cross
+    Color color = (Color){255, 255, 255, 200};
+    DrawLine(sw / 2 - 10, sh / 2, sw / 2 + 10, sh / 2, color);
+    DrawLine(sw / 2, sh / 2 - 10, sw / 2, sh / 2 + 10, color);
+
+    DrawRectangle(0, (sh - size), size, size, RAYWHITE);
+    DrawRectangle(border, (sh - size) + border, size - border * 2,
+                  size - border * 2, BLACK);
 }

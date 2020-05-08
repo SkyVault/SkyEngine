@@ -24,17 +24,108 @@
 #endif
 
 #define SCREEN_WIDTH (1280)
-#define SCREEN_HEIGHT ((SCREEN_WIDTH) * (160.0 / 240.0))
+#define SCREEN_HEIGHT ((int)((SCREEN_WIDTH) * (160.0 / 240.0)))
 #define MAX_COLUMNS (20)
 
-void custom_logger(int msg_type, const char *text, va_list args) {
-    // TODO(Dustin): Route this information somewhere
+static Light lights[MAX_LIGHTS] = {0};
+
+void custom_logger(int msg_type, const char *text, va_list args) {}
+
+void update_and_render_menu_scene(Game *game, EcsWorld *ecs,
+                                  ParticleSystem *particle_sys, Map *map,
+                                  GfxState *gfx) {
+    Assets *assets = game->assets;
+    Camera *camera = game->camera;
+
+    Shader *shader = &assets->shaders[SHADER_PHONG_LIGHTING];
+
+}
+
+void update_and_render_game_scene(Game *game, EcsWorld *ecs,
+                                  ParticleSystem *particle_sys, Map *map,
+                                  GfxState *gfx) {
+    Assets *assets = game->assets;
+    Camera *camera = game->camera;
+
+    Shader *shader = &assets->shaders[SHADER_PHONG_LIGHTING];
+
+    update_and_cleanup_ecs_world(ecs);
+    update_game(game);
+    update_particle_system(particle_sys);
+
+    for (int i = 0; i < ecs->max_num_entities; i++) {
+        if (!is_ent_alive(ecs, i)) continue;
+
+        update_billboard(ecs, i);
+        update_player(ecs, assets, game, i);
+        update_doors(ecs, i);
+        update_behaviours(ecs, i);
+        update_timed_destroy(ecs, i);
+        update_physics(map, ecs, game, i);
+    }
+
+    update_map(map, game);
+
+#if defined _DEBUG
+    // update_editor(editor, map, game);
+#endif
+
+    for (int i = 0; i < MAX_LIGHTS; i++) {
+        lights[i].position = camera->position;
+        UpdateLightValues(*shader, lights[i]);
+    }
+
+    SetShaderValue(*shader, shader->locs[LOC_VECTOR_VIEW], &camera->position,
+                   UNIFORM_VEC3);
+
+    BeginDrawing();
+    ClearBackground((Color){100, 210, 255, 255});
+
+    if (IsKeyDown(KEY_TAB)) {
+        rlEnableWireMode();
+    } else {
+        rlDisableWireMode();
+    }
+
+    BeginMode3D(*camera);
+
+    draw_map(map, game);
+
+    for (int i = 0; i < ecs->max_num_entities; i++) {
+        if (!is_ent_alive(ecs, i)) continue;
+        draw_billboard(gfx, camera, ecs, i);
+        draw_models(gfx, ecs, i);
+    }
+
+    render_particle_system(particle_sys);
+
+    glDisable(GL_CULL_FACE);
+    DrawModel(game->skybox, (Vector3){0, 0, 0}, 100.0f, WHITE);
+    glEnable(GL_CULL_FACE);
+
+    // Do the final draw to the screen
+    flush_graphics(gfx, camera);
+
+#if defined _DEBUG
+    // render_editor(editor, map, game);
+#endif
+
+    EndMode3D();
+
+    draw_player_gui(game, map);
+#if defined _DEBUG
+    // render_editor_ui(editor, map, game);
+#endif
+
+    DrawFPS(10, 10);
+
+    EndDrawing();
 }
 
 int main() {
     SetConfigFlags(FLAG_WINDOW_RESIZABLE | FLAG_MSAA_4X_HINT);
     // SetTraceLogLevel(0);
-    // SetTraceLogCallback(custom_logger);
+    SetTraceLogCallback(custom_logger);
 
     InitWindow(SCREEN_WIDTH, SCREEN_HEIGHT, "DevWindow");
     SetTargetFPS(60);
@@ -44,9 +135,6 @@ int main() {
     if (err != GLEW_OK) {
         fprintf(stderr, "Error: %s\n", glewGetErrorString(err));
     }
-
-    // glBlendEquation(GL_FUNC_ADD);
-    // glBendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
     // Define the camera to look into our 3d world (position, target, up vector)
     Camera camera = {0};
@@ -70,7 +158,6 @@ int main() {
     SetShaderValue(*shader, ambientLoc, (float[4]){0.2f, 0.2f, 0.2f, 1.0f},
                    UNIFORM_VEC4);
 
-    Light lights[MAX_LIGHTS] = {0};
     lights[0] = CreateLight(LIGHT_POINT, (Vector3){-10, 0, -10}, (Vector3){0},
                             WHITE, *shader);
 
@@ -119,77 +206,18 @@ int main() {
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
     while (!WindowShouldClose() && game->state == STATE_RUNNING) {
-        update_and_cleanup_ecs_world(ecs);
-        update_game(game);
-        update_particle_system(particle_sys);
+        switch (game->scene) {
+            case SCENE_GAME: {
+                update_and_render_game_scene(game, ecs, particle_sys, map, gfx);
+                break;
+            }
 
-        for (int i = 0; i < ecs->max_num_entities; i++) {
-            if (!is_ent_alive(ecs, i)) continue;
-
-            update_billboard(ecs, i);
-            update_player(ecs, assets, game, i);
-            update_doors(ecs, i);
-            update_behaviours(ecs, i);
-            update_timed_destroy(ecs, i);
-            update_physics(map, ecs, game, i);
+            case SCENE_MAIN_MENU: {
+                break;
+            }
         }
 
-        update_map(map, game);
-
-#if defined _DEBUG
-        update_editor(editor, map, game);
-#endif
-
-        for (int i = 0; i < MAX_LIGHTS; i++) {
-            lights[i].position = camera.position;
-            UpdateLightValues(*shader, lights[i]);
-        }
-
-        SetShaderValue(*shader, shader->locs[LOC_VECTOR_VIEW], &camera.position,
-                       UNIFORM_VEC3);
-
-        BeginDrawing();
-        ClearBackground((Color){100, 210, 255, 255});
-
-        if (IsKeyDown(KEY_TAB)) {
-            rlEnableWireMode();
-        } else {
-            rlDisableWireMode();
-        }
-
-        BeginMode3D(camera);
-
-        draw_map(map, game);
-
-        for (int i = 0; i < ecs->max_num_entities; i++) {
-            if (!is_ent_alive(ecs, i)) continue;
-            draw_billboard(gfx, &camera, ecs, i);
-            draw_models(gfx, ecs, i);
-        }
-
-        render_particle_system(particle_sys);
-
-        glDisable(GL_CULL_FACE);
-        DrawModel(game->skybox, (Vector3){0, 0, 0}, 100.0f, WHITE);
-        glEnable(GL_CULL_FACE);
-
-        // Do the final draw to the screen
-        flush_graphics(gfx, &camera);
-
-#if defined _DEBUG
-        render_editor(editor, map, game);
-#endif
-
-        EndMode3D();
-
-        draw_player_gui(game, map);
-#if defined _DEBUG
-        render_editor_ui(editor, map, game);
-#endif
-
-        DrawFPS(10, 10);
-
-        EndDrawing();
+        tmem_reset();
     }
 
     CloseWindow();

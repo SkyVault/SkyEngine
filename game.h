@@ -3,17 +3,13 @@
 
 #include <stdlib.h>
 
-#include "ecs.h"
 #include "assets.h"
+#include "ecs.h"
 
-enum State {
-    STATE_RUNNING,
-    STATE_PAUSED,
-    STATE_QUITTING
-};
+enum State { STATE_RUNNING, STATE_PAUSED, STATE_QUITTING };
+enum Scenes { SCENE_MAIN_MENU, SCENE_GAME, SCENE_SETTINGS };
 
 typedef struct {
-    int state;
     Assets* assets;
     Camera* camera;
     EcsWorld* ecs;
@@ -21,10 +17,12 @@ typedef struct {
     Model skybox;
 
     bool lock_camera;
+    int state;
+    int scene;
 } Game;
 
 Game* create_game(Assets* assets, Camera* camera, EcsWorld* ent_world);
 
 void update_game(Game* game);
 
-#endif//BENIS_GAME_H
+#endif  // BENIS_GAME_H
