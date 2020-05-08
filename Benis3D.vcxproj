@@ -172,6 +172,7 @@
     <ClInclude Include="rlgl.h" />
     <ClInclude Include="rlights.h" />
     <ClInclude Include="utils.h" />
+    <ClInclude Include="tween.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="assembler.c" />
@@ -190,6 +191,7 @@
     <ClCompile Include="physics_type.c" />
     <ClCompile Include="player.c" />
     <ClCompile Include="utils.c" />
+    <ClCompile Include="tween.c" />
   </ItemGroup>
   <ItemGroup>
     <None Include="resources\cubemap_fs.glsl" />

@@ -24,6 +24,9 @@
     <ClInclude Include="billboard.h">
       <Filter>Source Files</Filter>
     </ClInclude>
+    <ClInclude Include="tween.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
     <ClInclude Include="components.h">
       <Filter>Source Files</Filter>
     </ClInclude>

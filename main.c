@@ -16,6 +16,7 @@
 #include "models.h"
 #include "particles.h"
 #include "rlights.h"
+#include "tween.h"
 
 #if defined(PLATFORM_DESKTOP)
 #define GLSL_VERSION 330
@@ -31,6 +32,8 @@ static Light lights[MAX_LIGHTS] = {0};
 
 void custom_logger(int msg_type, const char *text, va_list args) {}
 
+float timer = 0.0f;
+
 void update_and_render_menu_scene(Game *game, EcsWorld *ecs,
                                   ParticleSystem *particle_sys, Map *map,
                                   GfxState *gfx) {
@@ -39,6 +42,34 @@ void update_and_render_menu_scene(Game *game, EcsWorld *ecs,
 
     Shader *shader = &assets->shaders[SHADER_PHONG_LIGHTING];
 
+    timer += GetFrameTime() * 0.2f;
+    if (timer > 1.0f) {
+        timer = 1.0f;
+    }
+
+    // TWEEN_SCHUBRING1,  // terry schubring's formula 1
+    float rot =
+        360 - ((ease(TWEEN_BOUNCEOUT, timer) * 180.0f) - 180) - (45 / 2);
+
+    if (IsKeyPressed(KEY_ENTER)) {
+        game->scene = SCENE_GAME;
+    }
+
+    BeginDrawing();
+    ClearBackground(DARKPURPLE);
+
+    Texture2D t = assets->textures[TEX_GIRL_1];
+
+    float x = GetScreenWidth() - 20;
+    float y = GetScreenHeight() - 20;
+
+    DrawTexturePro(t, (Rectangle){0, 0, t.width, t.height},
+                   (Rectangle){x, y, 500, 500}, (Vector2){250, 500}, rot,
+                   RAYWHITE);
+
+    // Buttons
+
+    EndDrawing();
 }
 
 void update_and_render_game_scene(Game *game, EcsWorld *ecs,
@@ -213,6 +244,7 @@ int main() {
             }
 
             case SCENE_MAIN_MENU: {
+                update_and_render_menu_scene(game, ecs, particle_sys, map, gfx);
                 break;
             }
         }

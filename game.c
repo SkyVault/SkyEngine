@@ -3,7 +3,7 @@
 Game* create_game(Assets* assets, Camera* camera, EcsWorld* ecs) {
     Game* game = malloc(sizeof(Game));
     game->state = STATE_RUNNING;
-    game->scene = SCENE_GAME;
+    game->scene = SCENE_MAIN_MENU;
     game->assets = assets;
     game->camera = camera;
     game->ecs = ecs;
