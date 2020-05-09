@@ -1,4 +1,5 @@
 #include <GL/glew.h>
+#include <janet.h>
 #include <stdio.h>
 
 #include "raylib.h"
@@ -12,6 +13,7 @@
 #include "ecs.h"
 #include "editor.h"
 #include "game.h"
+#include "gui.h"
 #include "map.h"
 #include "models.h"
 #include "particles.h"
@@ -30,7 +32,10 @@
 
 static Light lights[MAX_LIGHTS] = {0};
 
-void custom_logger(int msg_type, const char *text, va_list args) {}
+void custom_logger(int msg_type, const char *text, va_list args) {
+    printf(text, args);
+    printf("\n");
+}
 
 float timer = 0.0f;
 
@@ -56,7 +61,7 @@ void update_and_render_menu_scene(Game *game, EcsWorld *ecs,
     }
 
     BeginDrawing();
-    ClearBackground(DARKPURPLE);
+    ClearBackground((Color){10, 20, 21, 255});
 
     Texture2D t = assets->textures[TEX_GIRL_1];
 
@@ -67,14 +72,115 @@ void update_and_render_menu_scene(Game *game, EcsWorld *ecs,
                    (Rectangle){x, y, 500, 500}, (Vector2){250, 500}, rot,
                    RAYWHITE);
 
+    const float shw = GetScreenWidth() / 2;
+    const float shh = GetScreenHeight() / 2;
+
+    DoCenterXLabel(100, GetScreenWidth(), 30, 50, "Benis Shooter 3D");
+
     // Buttons
+    int id = 0;
+    const float btn_w = GetScreenWidth() / 2.2f;
+    const float btn_h = 80.0f;
+    const float margin = 30.0f;
+    const float tot_h = (btn_h + margin) * 4;
+    const float oy = 0.0f;
+
+    static float timer = 0.0f;
+    timer += GetFrameTime() * 0.3f;
+    if (timer > 1.0f) timer = 1.0f;
+
+    static float scaler_t = 0.0f;
+
+    const int EASING = TWEEN_BOUNCEOUT;
+
+#define GEASE(scale)                                                         \
+    float t = timer * scale;                                                 \
+    if (t > 1.0f) t = 1.0f;                                                  \
+    float mo = Hot(id) ? (float)ease(TWEEN_LINEAR, scaler_t) * 30.0f : 0.0f; \
+    const float xx = -btn_w + (float)ease(EASING, t) * btn_w
+
+#define DO_BTN(txt)                                                    \
+    DoBtn(id, shw + xx - btn_w / 2 - mo / 2,                           \
+          (btn_h + margin) * id + tot_h / 2 + oy - mo / 2, btn_w + mo, \
+          btn_h + mo, txt)
+
+#define DO_SCALING() \
+    if (Hot(id)) scaler_t += GetFrameTime() * 2.0f
+
+    bool shrink = true;
+
+    {
+        DO_SCALING();
+        GEASE(1.0f);
+        if (DO_BTN("Start New Game :)")) {
+            game->scene = SCENE_GAME;
+        }
+        if (Hot(id)) shrink = false;
+        ++id;
+    }
+
+    {
+        DO_SCALING();
+        GEASE(1.1f);
+        if (DO_BTN("Load Game")) {
+        }
+        if (Hot(id)) shrink = false;
+        ++id;
+    }
+
+    {
+        DO_SCALING();
+        GEASE(1.2f);
+        if (DO_BTN("Settings")) {
+        }
+        if (Hot(id)) shrink = false;
+        ++id;
+    }
+
+    static bool do_exit_modal = false;
+
+    {
+        DO_SCALING();
+        GEASE(1.3f);
+        if (DO_BTN("Exit :(")) {
+            // CloseWindow();
+            do_exit_modal = true;
+        }
+        if (Hot(id)) shrink = false;
+        ++id;
+    }
+
+    if (shrink) scaler_t -= GetFrameTime();
+    if (scaler_t > 1.0f) scaler_t = 1.0f;
+    if (scaler_t < 0.0f) scaler_t = 0.0f;
+
+    if (do_exit_modal) {
+        DoModal();
+
+        Unlock();
+        const float x = shw - 50;
+        const float y = shh - 100;
+        DoCenterXLabel(++id, (float)GetScreenWidth(), 200, 60, "Are you sure?");
+        if (DoBtn(++id, x - 55, y, 100, 100, "YES")) {
+            do_exit_modal = false;
+            game->state = STATE_QUITTING;
+        }
+        if (DoBtn(id + 1, x + 55, y, 100, 100, "NO")) do_exit_modal = false;
+        Lock();
+    } else {
+        Unlock();
+    }
 
     EndDrawing();
+
+#undef GEASE
+#undef DO_BTN
+#undef DO_SCALING
 }
 
 void update_and_render_game_scene(Game *game, EcsWorld *ecs,
                                   ParticleSystem *particle_sys, Map *map,
-                                  GfxState *gfx) {
+                                  GfxState *gfx, Ed *editor) {
     Assets *assets = game->assets;
     Camera *camera = game->camera;
 
@@ -98,7 +204,7 @@ void update_and_render_game_scene(Game *game, EcsWorld *ecs,
     update_map(map, game);
 
 #if defined _DEBUG
-    // update_editor(editor, map, game);
+    update_editor(editor, map, game);
 #endif
 
     for (int i = 0; i < MAX_LIGHTS; i++) {
@@ -138,14 +244,14 @@ void update_and_render_game_scene(Game *game, EcsWorld *ecs,
     flush_graphics(gfx, camera);
 
 #if defined _DEBUG
-    // render_editor(editor, map, game);
+    render_editor(editor, map, game);
 #endif
 
     EndMode3D();
 
     draw_player_gui(game, map);
 #if defined _DEBUG
-    // render_editor_ui(editor, map, game);
+    render_editor_ui(editor, map, game);
 #endif
 
     DrawFPS(10, 10);
@@ -156,7 +262,7 @@ void update_and_render_game_scene(Game *game, EcsWorld *ecs,
 int main() {
     SetConfigFlags(FLAG_WINDOW_RESIZABLE | FLAG_MSAA_4X_HINT);
     // SetTraceLogLevel(0);
-    SetTraceLogCallback(custom_logger);
+    // SetTraceLogCallback(custom_logger);
 
     InitWindow(SCREEN_WIDTH, SCREEN_HEIGHT, "DevWindow");
     SetTargetFPS(60);
@@ -166,6 +272,12 @@ int main() {
     if (err != GLEW_OK) {
         fprintf(stderr, "Error: %s\n", glewGetErrorString(err));
     }
+
+    // Init scripting language
+    janet_init();
+
+    JanetTable *env = janet_core_env(NULL);
+    janet_dostring(env, "(print `Initializing Janet`)", "main", NULL);
 
     // Define the camera to look into our 3d world (position, target, up vector)
     Camera camera = {0};
@@ -178,7 +290,7 @@ int main() {
     Assets *assets = create_and_load_assets();
     EcsWorld *ecs = create_ecs_world();
 
-    Game *game = create_game(assets, &camera, ecs);
+    Game *game = create_game(assets, &camera, ecs, env);
     GfxState *gfx = create_gfx_state();
 
     Shader *shader = &assets->shaders[SHADER_PHONG_LIGHTING];
@@ -215,9 +327,12 @@ int main() {
 
     ParticleSystem *particle_sys = create_particle_system();
 
-    Map *map = load_map_from_file("resources/maps/level1.map", game);
+    InitGui();
 
-    assemble(ACTOR_PLAYER, game, 5, 5, 0, 0);
+    // Map *map = load_map_from_file("resources/maps/level1.map", game);
+    Map *map = load_map_from_script("resources/maps/leveltest.janet", game);
+
+    assemble(ACTOR_PLAYER, game, map->player_x, map->player_y, 0, 0);
 
     // for (int i = 0; i < 100; i++) assemble(END_TARGET, game, i, i, 0, 0);
 
@@ -239,7 +354,8 @@ int main() {
     while (!WindowShouldClose() && game->state == STATE_RUNNING) {
         switch (game->scene) {
             case SCENE_GAME: {
-                update_and_render_game_scene(game, ecs, particle_sys, map, gfx);
+                update_and_render_game_scene(game, ecs, particle_sys, map, gfx,
+                                             editor);
                 break;
             }
 
@@ -252,5 +368,6 @@ int main() {
         tmem_reset();
     }
 
+    janet_deinit();
     CloseWindow();
 }

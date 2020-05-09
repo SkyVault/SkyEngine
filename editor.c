@@ -57,7 +57,9 @@ void render_editor(Ed* self, Map* map, Game* game) {
 
     DrawLine3D(game->camera->position, loc, RED);
 
-    printf("%f %f %f\n", loc.x, loc.y, loc.z);
+    if (IsMouseButtonPressed(MOUSE_LEFT_BUTTON)) {
+        // Try to intersect
+    }
 }
 
 void render_editor_ui(Ed* self, Map* map, Game* game) {

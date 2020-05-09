@@ -27,6 +27,9 @@
     <ClInclude Include="tween.h">
       <Filter>Source Files</Filter>
     </ClInclude>
+    <ClInclude Include="gui.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
     <ClInclude Include="components.h">
       <Filter>Source Files</Filter>
     </ClInclude>
@@ -98,6 +101,12 @@
     <ClCompile Include="ecs.c">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="tween.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="gui.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
     <ClCompile Include="game.c">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -138,6 +147,9 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="particles.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="janet.c">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

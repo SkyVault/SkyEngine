@@ -1,6 +1,7 @@
 #include "game.h"
 
-Game* create_game(Assets* assets, Camera* camera, EcsWorld* ecs) {
+Game* create_game(Assets* assets, Camera* camera, EcsWorld* ecs,
+                  JanetTable* env) {
     Game* game = malloc(sizeof(Game));
     game->state = STATE_RUNNING;
     game->scene = SCENE_MAIN_MENU;
@@ -8,6 +9,7 @@ Game* create_game(Assets* assets, Camera* camera, EcsWorld* ecs) {
     game->camera = camera;
     game->ecs = ecs;
     game->lock_camera = false;
+    game->env = env;
     return game;
 }
 

@@ -1,6 +1,7 @@
 #ifndef BENIS_GAME_H
 #define BENIS_GAME_H
 
+#include <janet.h>
 #include <stdlib.h>
 
 #include "assets.h"
@@ -14,6 +15,8 @@ typedef struct {
     Camera* camera;
     EcsWorld* ecs;
 
+    JanetTable* env;
+
     Model skybox;
 
     bool lock_camera;
@@ -21,7 +24,8 @@ typedef struct {
     int scene;
 } Game;
 
-Game* create_game(Assets* assets, Camera* camera, EcsWorld* ent_world);
+Game* create_game(Assets* assets, Camera* camera, EcsWorld* ent_world,
+                  JanetTable* env);
 
 void update_game(Game* game);
 

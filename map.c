@@ -92,16 +92,126 @@ void load_models(Map *result, Game *game) {
         game->assets->shaders[SHADER_PHONG_LIGHTING];
 }
 
-Map *load_map_from_file(const char *path, Game *game) {
+Map *load_map_from_script(const char *path, Game *game) {
     FILE *o = fopen(path, "r");
 
-    fseek(o, SEEK_END, 0);
+    fseek(o, 0L, SEEK_END);
     size_t len = ftell(o);
-    fseek(o, SEEK_SET, 0);
+    fseek(o, 0L, SEEK_SET);
+
+    tstr s = talloc(len);
+    fread(s, sizeof(char), len, o);
+
+    Janet resultj;
+    int res = janet_dostring(game->env, s, "main", &resultj);
+    JanetTable *result_table = janet_unwrap_table(resultj);
 
     Map *result = malloc(sizeof(Map));
     result->current_map = -1;
     result->num_layers = 0;
+
+    zero_out_map(result);
+    load_models(result, game);
+
+    // Read the map size
+    JanetArray *size_arr = janet_unwrap_array(
+        janet_table_get(result_table, janet_ckeywordv("size")));
+
+    JanetArray *layers_arr = janet_unwrap_array(
+        janet_table_get(result_table, janet_ckeywordv("layers")));
+
+    assert(size_arr->count == 2);
+
+    result->width = janet_unwrap_integer(size_arr->data[0]);
+    result->height = janet_unwrap_integer(size_arr->data[1]);
+
+    result->player_x = 2;
+    result->player_y = 2;
+
+    for (int layer = 0; layer < layers_arr->count; layer++) {
+        JanetTable *layer_table = janet_unwrap_table(layers_arr->data[layer]);
+
+        JanetString *data = janet_unwrap_string(
+            janet_table_get(layer_table, janet_ckeywordv("data")));
+
+        char *it = data;
+        char *end = it + strlen(data);
+        while (it != end && it != NULL && isspace(*it)) ++it;
+
+        int x = 0;
+        int y = 0;
+        while (it != end) {
+            if (*it == '\n') {
+                ++it;
+                y++;
+                x = 0;
+                continue;
+            }
+
+            if (y >= result->height) break;
+
+            char ch = *it;
+
+            Vector3 pos = (Vector3){
+                .x = (float)x * CUBE_SIZE, .y = 0.f, .z = (float)y * CUBE_SIZE};
+
+            switch (ch) {
+                case '|':
+                    create_z_door(pos, game);
+                    break;
+                case '-':
+                    create_x_door(pos, game);
+                    break;
+                case ' ':
+                case '.':
+                    break;
+
+                case 'X':
+                    result->player_x = pos.x + CUBE_SIZE / 2;
+                    result->player_y = pos.z + CUBE_SIZE / 2;
+                    break;
+                case 'E': {
+                    assemble(ACTOR_END_TARGET, game, pos.x + CUBE_SIZE / 2,
+                             pos.z + CUBE_SIZE / 2, 0, 0);
+                    break;
+                }
+                default: {
+                    char buff[] = {ch, '\0'};
+                    int i = atoi(buff) - 1;
+                    result->walls[layer][x + y * result->width].model = i;
+                    result->walls[layer][x + y * result->width].active = 1;
+                    break;
+                }
+            }
+
+            ++x;
+            ++it;
+        }
+    }
+
+    fclose(o);
+
+    return result;
+}
+
+Map *load_map_from_file(const char *path, Game *game) {
+    FILE *o = fopen(path, "r");
+
+    fseek(o, 0L, SEEK_END);
+    size_t len = ftell(o);
+    fseek(o, 0L, SEEK_SET);
+
+    Map *result = malloc(sizeof(Map));
+    result->current_map = -1;
+    result->num_layers = 0;
+
+    result->path.len = strlen(path);
+    result->path.buff = malloc(result->path.len + 1);
+    for (int i = 0; i < result->path.len; i++) result->path.buff[i] = path[i];
+    result->path.buff[result->path.len] = '\0';
+
+    result->player_x = 0.0f;
+    result->player_y = 0.0f;
 
     zero_out_map(result);
     load_models(result, game);
@@ -142,6 +252,7 @@ Map *load_map_from_file(const char *path, Game *game) {
                                     "ERROR:: blank line in the data segment\n");
                                 return result;
                             }
+                            printf("line: %s", line);
 
                             for (int x = 0; x < result->width; x++) {
                                 Vector3 pos =
@@ -160,9 +271,16 @@ Map *load_map_from_file(const char *path, Game *game) {
                                     case '.':
                                         break;
 
+                                    case 'X':
+                                        result->player_x =
+                                            pos.x + CUBE_SIZE / 2;
+                                        result->player_y =
+                                            pos.z + CUBE_SIZE / 2;
+                                        break;
                                     case 'E': {
-                                        assemble(ACTOR_END_TARGET, game, pos.x,
-                                                 pos.z, 0, 0);
+                                        assemble(ACTOR_END_TARGET, game,
+                                                 pos.x + CUBE_SIZE / 2,
+                                                 pos.z + CUBE_SIZE / 2, 0, 0);
                                         break;
                                     }
 
@@ -208,57 +326,15 @@ Map *load_map_from_file(const char *path, Game *game) {
                         }
 
                         break;
+                    } else if (strcmp(type, "str") == 0) {
                     }
                 }
             }
         }
     }
 
-    return result;
-}
-
-Map *load_map(int map, Game *game) {
-    Map *result = malloc(sizeof(Map));
-    result->current_map = map;
-
-    zero_out_map(result);
-    load_models(result, game);
-
-    const struct LvlData *data = &map_data[result->current_map];
-
-    result->width = data->w;
-    result->height = data->h;
-
-    for (int z = 0; z < data->h; z++) {
-        for (int x = 0; x < data->w; x++) {
-            char chr = data->d[x + z * data->w];
-
-            // Load the entities and tiles
-            Vector3 pos = (Vector3){
-                .x = (float)x * CUBE_SIZE, .y = 0.f, .z = (float)z * CUBE_SIZE};
-
-            switch (chr) {
-                case '|':
-                    create_z_door(pos, game);
-                    break;
-                case '-':
-                    create_x_door(pos, game);
-                    break;
-                case '#':
-                    break;
-                case ' ':
-                    break;
-            }
-
-            if (chr == '#') {
-                result->walls[0][x + z * data->w].active = 1;
-                result->walls[0][x + z * data->w].model = 0;
-            } else {
-                result->walls[0][x + z * data->w].active = 0;
-                result->walls[0][x + z * data->w].model = 0;
-            }
-        }
-    }
+    fclose(o);
+    o = NULL;
 
     return result;
 }
@@ -289,4 +365,30 @@ void draw_map(Map *map, Game *game) {
             }
         }
     }
+}
+
+void destroy_map(Map *map, Game *game) {
+    for (int layer = 0; layer < MAX_NUM_LAYERS; layer++) {
+        for (int y = 0; y < MAX_MAP_HEIGHT; y++) {
+            for (int x = 0; x < MAX_MAP_WIDTH; x++) {
+                map->walls[layer][x + y * MAX_MAP_WIDTH] = (Wall){0, 0};
+            }
+        }
+    }
+
+    for (int mi = 0; mi < MAX_MODELS; mi++) {
+        map->models[mi] = (Model){0};
+    }
+
+    if (map->path.len > 0 && map->path.buff != NULL) {
+        free(map->path.buff);
+        map->path.buff = NULL;
+        map->path.len = -1;
+    }
+}
+
+void reload_map(Map *map, Game *game) {
+    tstr s = tstrf("%s", map->path);
+    destroy_map(map, game);
+    load_map_from_file(s, game);
 }

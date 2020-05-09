@@ -41,9 +41,6 @@ void update_physics(Map* map, EcsWorld* ecs, Game* game, EntId ent) {
 
                 Vector2 pos = {trans->translation.x, trans->translation.z};
 
-                DrawRectangleRec(wall, RED);
-                DrawCircle(body.x, body.y, CUBE_SIZE / 2, BLUE);
-
                 if (CheckCollisionCircleRec(
                         (Vector2){body.x + physics->velocity.x * dt, body.y},
                         0.2f, wall)) {
