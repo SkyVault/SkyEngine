@@ -12,6 +12,7 @@
     I(ACTOR_GIRL_3)         \
     I(ACTOR_GIRL_4)         \
     I(ACTOR_END_TARGET)     \
+    I(ACTOR_BLOCK)          \
     I(ACTOR_NUM_ENTITY_TYPES)
 
 enum EntityTypesE { ENTITY_TYPES(TO_ENUM) };

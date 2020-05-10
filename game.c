@@ -10,6 +10,7 @@ Game* create_game(Assets* assets, Camera* camera, EcsWorld* ecs,
     game->ecs = ecs;
     game->lock_camera = false;
     game->env = env;
+    game->noclip = false;
     return game;
 }
 
@@ -18,5 +19,9 @@ void update_game(Game* game) {
         EnableCursor();
     } else {
         DisableCursor();
+    }
+
+    if (IsKeyPressed(KEY_BACKSLASH)) {
+        game->noclip = !game->noclip;
     }
 }

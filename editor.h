@@ -3,16 +3,18 @@
 
 #if defined _DEBUG
 
+#include "assembler.h"
 #include "game.h"
 #include "map.h"
-#include "physics.h"
 
 typedef struct {
-	bool open;
+    bool open;
 
-	Model models[MESH_NUM_MESHES];
+    Model models[MESH_NUM_MESHES];
 
-	int which;
+    int which;
+
+    int y;
 } Ed;
 
 Ed* create_editor();
@@ -23,4 +25,4 @@ void render_editor_ui(Ed* editor, Map* map, Game* game);
 
 #endif
 
-#endif//BENIS_EDITOR_H
+#endif  // BENIS_EDITOR_H

@@ -76,8 +76,10 @@ void flush_graphics(GfxState* gfx, Camera* camera) {
         Drawable* d = &gfx->drawables[i];
 
         Vector3 pos = d->transform.translation;
+        Vector3 scale = d->transform.scale;
 
         Matrix m = MatrixIdentity();
+        m = MatrixMultiply(m, MatrixScale(scale.x, scale.y, scale.z));
         m = MatrixMultiply(m, QuaternionToMatrix(d->transform.rotation));
         m = MatrixMultiply(m, MatrixTranslate(pos.x, pos.y, pos.z));
 

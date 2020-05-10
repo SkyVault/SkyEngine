@@ -27,7 +27,7 @@ EntId ACTOR_GIRL_1_C(Game* game, float x, float y, float vx, float vy) {
     EntStruct* self = get_ent(game->ecs, self_id);
 
     add_comp(game->ecs, self, Transform, .translation = (Vector3){x, 0, y},
-             .rotation = QuaternionIdentity());
+             .rotation = QuaternionIdentity(), .scale = Vector3One());
 
     add_comp(game->ecs, self, Billboard,
              .texture = game->assets->textures[TEX_GIRL_1],
@@ -43,7 +43,7 @@ EntId ACTOR_GIRL_2_C(Game* game, float x, float y, float vx, float vy) {
     EntStruct* self = get_ent(game->ecs, self_id);
 
     add_comp(game->ecs, self, Transform, .translation = (Vector3){x, 0, y},
-             .rotation = QuaternionIdentity());
+             .rotation = QuaternionIdentity(), .scale = Vector3One());
 
     add_comp(game->ecs, self, Billboard,
              .texture = game->assets->textures[TEX_GIRL_2],
@@ -59,7 +59,7 @@ EntId ACTOR_GIRL_3_C(Game* game, float x, float y, float vx, float vy) {
     EntStruct* self = get_ent(game->ecs, self_id);
 
     add_comp(game->ecs, self, Transform, .translation = (Vector3){x, 0, y},
-             .rotation = QuaternionIdentity());
+             .rotation = QuaternionIdentity(), .scale = Vector3One());
 
     add_comp(game->ecs, self, Billboard,
              .texture = game->assets->textures[TEX_GIRL_3],
@@ -75,7 +75,7 @@ EntId ACTOR_GIRL_4_C(Game* game, float x, float y, float vx, float vy) {
     EntStruct* self = get_ent(game->ecs, self_id);
 
     add_comp(game->ecs, self, Transform, .translation = (Vector3){x, 0, y},
-             .rotation = QuaternionIdentity());
+             .rotation = QuaternionIdentity(), .scale = Vector3One());
 
     add_comp(game->ecs, self, Billboard,
              .texture = game->assets->textures[TEX_GIRL_4],
@@ -91,7 +91,8 @@ EntId ACTOR_END_TARGET_C(Game* game, float x, float y, float vx, float vy) {
     EntStruct* self = get_ent(game->ecs, self_id);
 
     add_comp(game->ecs, self, Transform, .translation = (Vector3){x, 0.0f, y},
-             .rotation = QuaternionIdentity());
+             .rotation = QuaternionIdentity(), .scale = Vector3One());
+
     add_comp(game->ecs, self, Actor, .type = ACTOR_END_TARGET);
 
     add_comp_obj(game->ecs, self, Model,
@@ -102,6 +103,25 @@ EntId ACTOR_END_TARGET_C(Game* game, float x, float y, float vx, float vy) {
     model->materials[0].shader = game->assets->shaders[SHADER_PHONG_LIGHTING];
 
     return self_id;
+}
+
+EntId ACTOR_BLOCK_C(Game* game, float x, float y, float vx, float vy) {
+    EntStruct* self = create_and_get_ent(game->ecs);
+
+    add_comp(game->ecs, self, Transform, .translation = (Vector3){x, 0.0f, y},
+             .rotation = QuaternionIdentity(),
+             .scale = (Vector3){CUBE_SIZE, CUBE_SIZE, CUBE_SIZE});
+
+    add_comp_obj(game->ecs, self, Model,
+                 LoadModelFromMesh(game->assets->meshes[MESH_CUBE]));
+
+    add_comp(game->ecs, self, Actor, .type = ACTOR_BLOCK);
+
+    Model* model = get_comp(game->ecs, self, Model);
+    model->materials[0].maps[MAP_DIFFUSE].color = (Color){255, 255, 0, 255};
+    model->materials[0].shader = game->assets->shaders[SHADER_PHONG_LIGHTING];
+
+    return self->id;
 }
 
 EntId ACTOR_NUM_ENTITY_TYPES_C(Game* game, float x, float y, float vx,

@@ -29,6 +29,8 @@ inline EntId ACTOR_TOSSED_ORANGE_C(Game* game, float x, float y, float vx,
 EntId ACTOR_NUM_ENTITY_TYPES_C(Game* game, float x, float y, float vx,
                                float vy);
 
+EntId ACTOR_BLOCK_C(Game* game, float x, float y, float vx, float vy);
+
 #ifndef ASSEMBLERS
 #define ASSEMBLERS
 static const Ass assemblers[ACTOR_NUM_ENTITY_TYPES + 1] = {

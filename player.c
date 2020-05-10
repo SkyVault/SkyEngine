@@ -168,12 +168,6 @@ void update_player(EcsWorld* ecs, Assets* ass, Game* game, EntId id) {
                                 cosf(CAMERA.angle.x) * direction[MOVE_RIGHT]) /
                                PLAYER_MOVEMENT_SENSITIVITY;
 
-        physics->velocity.y +=
-            (sinf(CAMERA.angle.y) * direction[MOVE_FRONT] -
-             sinf(CAMERA.angle.y) * direction[MOVE_BACK] +
-             1.0f * direction[MOVE_UP] - 1.0f * direction[MOVE_DOWN]) /
-            PLAYER_MOVEMENT_SENSITIVITY;
-
         physics->velocity.z += (cosf(CAMERA.angle.x) * direction[MOVE_BACK] -
                                 cosf(CAMERA.angle.x) * direction[MOVE_FRONT] +
                                 sinf(CAMERA.angle.x) * direction[MOVE_LEFT] -
@@ -217,14 +211,6 @@ void update_player(EcsWorld* ecs, Assets* ass, Game* game, EntId id) {
     camera->target.z = camera->position.z - m_transform.m14;
 
     if (isMoving) swingCounter++;
-
-    // Camera position update
-    // NOTE: On CAMERA_FIRST_PERSON player Y-movement is limited to player 'eyes
-    // position'
-    transform->translation.y =
-        CAMERA.playerEyesPosition -
-        sinf(swingCounter / CAMERA_FIRST_PERSON_STEP_TRIGONOMETRIC_DIVIDER) /
-            CAMERA_FIRST_PERSON_STEP_DIVIDER;
 
     camera->up.x = sinf(swingCounter /
                         (CAMERA_FIRST_PERSON_STEP_TRIGONOMETRIC_DIVIDER * 2)) /

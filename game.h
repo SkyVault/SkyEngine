@@ -22,6 +22,8 @@ typedef struct {
     bool lock_camera;
     int state;
     int scene;
+
+    bool noclip;
 } Game;
 
 Game* create_game(Assets* assets, Camera* camera, EcsWorld* ent_world,
