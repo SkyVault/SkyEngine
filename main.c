@@ -30,6 +30,11 @@
 #define SCREEN_HEIGHT ((int)((SCREEN_WIDTH) * (160.0 / 240.0)))
 #define MAX_COLUMNS (20)
 
+#ifndef _DEBUG
+typedef int Ed;
+static int editor = -1;
+#endif  //
+
 static Light lights[MAX_LIGHTS] = {0};
 
 void custom_logger(int msg_type, const char *text, va_list args) {
@@ -142,10 +147,7 @@ void update_and_render_menu_scene(Game *game, EcsWorld *ecs,
     {
         DO_SCALING();
         GEASE(1.3f);
-        if (DO_BTN("Exit :(")) {
-            // CloseWindow();
-            do_exit_modal = true;
-        }
+        if (DO_BTN("Exit :(")) do_exit_modal = true;
         if (Hot(id)) shrink = false;
         ++id;
     }
@@ -250,6 +252,7 @@ void update_and_render_game_scene(Game *game, EcsWorld *ecs,
     EndMode3D();
 
     draw_player_gui(game, map);
+
 #if defined _DEBUG
     render_editor_ui(editor, map, game);
 #endif
@@ -261,6 +264,7 @@ void update_and_render_game_scene(Game *game, EcsWorld *ecs,
 
 int main() {
     SetConfigFlags(FLAG_WINDOW_RESIZABLE | FLAG_MSAA_4X_HINT);
+    SetExitKey(-1);
     // SetTraceLogLevel(0);
     // SetTraceLogCallback(custom_logger);
 
@@ -330,7 +334,7 @@ int main() {
     InitGui();
 
     // Map *map = load_map_from_file("resources/maps/level1.map", game);
-    Map *map = load_map_from_script("resources/maps/leveltest.janet", game);
+    Map *map = load_map_from_script("resources/maps/edit.janet", game);
 
     assemble(ACTOR_PLAYER, game, map->player_x, map->player_y, 0, 0);
 

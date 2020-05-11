@@ -133,6 +133,10 @@ void update_player(EcsWorld* ecs, Assets* ass, Game* game, EntId id) {
                         ass);
     }
 
+    if (IsKeyPressed(KEY_ESCAPE)) {
+        game->lock_camera = !game->lock_camera;
+    }
+
     static int first = 0;
 
     if (!first) {
@@ -240,7 +244,17 @@ void draw_player_gui(Game* game, Map* map) {
     DrawLine(sw / 2 - 10, sh / 2, sw / 2 + 10, sh / 2, color);
     DrawLine(sw / 2, sh / 2 - 10, sw / 2, sh / 2 + 10, color);
 
-    DrawRectangle(0, (sh - size), size, size, RAYWHITE);
-    DrawRectangle(border, (sh - size) + border, size - border * 2,
-                  size - border * 2, BLACK);
+    // DrawRectangle(0, (sh - size), size, size, RAYWHITE);
+    // DrawRectangle(border, (sh - size) + border, size - border * 2,
+    //               size - border * 2, BLACK);
+
+    // Pause
+    int id = 0;
+
+    if (DoBtn(id, 5, 5, 50, 50, "| |")) {
+    }
+
+    // id = 100;
+    // static char buffer[512];
+    // DoTextInput(id++, buffer, 512, 10, 200, 300, 50);
 }

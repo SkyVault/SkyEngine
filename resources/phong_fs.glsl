@@ -93,5 +93,5 @@ void main()
     finalColor = mix(fogColor, finalColor, fogFactor);
     finalColor.a = colDiffuse.a;
 
-    // if (finalColor.a < 0.1) discard;
+    if (texelColor.a < 0.1) discard;
 }

@@ -7,6 +7,7 @@
 #include "components.h"
 #include "ecs.h"
 #include "entity_types.h"
+#include "gui.h"
 #include "models.h"
 #include "physics.h"
 #include "raylib.h"

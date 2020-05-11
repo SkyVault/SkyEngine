@@ -362,3 +362,5 @@ FodyWeavers.xsd
 TAGS
 .fake
 .ionide
+
+FINAL_BUILD/

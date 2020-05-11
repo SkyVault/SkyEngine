@@ -12,10 +12,11 @@ struct NState {
     int active;
     int hot;
     float value;
+    int cursor;
 };
 
 static struct {
-    struct NState states[1000];
+    struct NState states[2048];
     float px, py;
     Font font;
 
@@ -30,6 +31,8 @@ void DoCenterXLabel(NodeId id, float outer_width, float y, int font_size,
                     const char* text);
 
 void DoModal();
+void DoTextInput(NodeId id, char* buffer, size_t buffer_size, float x, float y,
+                 float width, float height);
 
 void Lock();
 void Unlock();

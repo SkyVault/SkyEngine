@@ -9,12 +9,12 @@
 #define MAX_MAP_WIDTH (100)
 #define MAX_MAP_HEIGHT (100)
 
-#define MAX_NUM_LAYERS (4)
+#define MAX_NUM_LAYERS (10)
 #define MAX_MODELS (100)
 
 typedef struct {
-    int active;
-    int model;
+    uint8_t active;
+    uint8_t model;
 } Wall;
 
 typedef struct {
@@ -25,6 +25,8 @@ typedef struct {
 
     Model floor_tile_models[1];
     Model models[MAX_MODELS];
+
+    int num_models;
 
     int width;
     int height;

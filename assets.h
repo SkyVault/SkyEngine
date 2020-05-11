@@ -8,6 +8,9 @@
 enum Textures {
     TEX_WALL_1,
     TEX_WALL_2,
+    TEX_WALL_3,
+
+    TEX_CHAINLINK_FENCE,
 
     TEX_FLOOR_1,
     TEX_CHAR_1,
@@ -34,10 +37,16 @@ enum Shaders {
     SHADER_NUM_SHADERS,
 };
 
+enum Fonts {
+    FONT_MAIN_FONT,
+    FONT_NUM_FONTS,
+};
+
 typedef struct {
     Mesh meshes[MESH_NUM_MESHES];
     Texture2D textures[TEX_NUM_TEXTURES];
     Shader shaders[SHADER_NUM_SHADERS];
+    Font fonts[FONT_NUM_FONTS];
 } Assets;
 
 Assets* create_and_load_assets();

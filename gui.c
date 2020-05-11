@@ -54,6 +54,36 @@ void DoModal() {
                   (Color){0, 0, 0, 200});
 }
 
+void DoTextInput(NodeId id, char* buffer, size_t buffer_size, float x, float y,
+                 float width, float height) {
+    struct NState* state = &GuiState.states[id];
+    DoFrame(id, x, y, width, height);
+
+    const int fsize = 25;
+    Vector2 size = MeasureTextEx(GuiState.font, buffer, fsize, 1);
+    DrawTextEx(GuiState.font, buffer,
+               (Vector2){x + 4, y + height / 2 - size.y / 2}, fsize, 1, BLACK);
+
+    state->hot = CheckCollisionPointRec(GetMousePosition(),
+                                        (Rectangle){x, y, width, height});
+
+    if (!state->active) {
+        state->active = IsMouseButtonPressed(MOUSE_LEFT_BUTTON) && state->hot;
+    } else {
+        if (IsMouseButtonPressed(MOUSE_LEFT_BUTTON) && !state->hot)
+            state->active = false;
+
+        int key = GetKeyPressed();
+        if (key > 0) {
+            buffer[state->cursor++] = (char)key;
+        }
+    }
+
+    if (state->active && (((int)(GetTime() * 3.0f) % 2) == 0)) {
+        DrawRectangle(x + 4 + size.x, y + 4, 4, height - 8, BLACK);
+    }
+}
+
 void Lock() { GuiState.locked = true; }
 
 void Unlock() { GuiState.locked = false; }

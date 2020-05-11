@@ -81,8 +81,35 @@ void load_models(Map *result, Game *game) {
     default_wall_2.materials[0].shader =
         game->assets->shaders[SHADER_PHONG_LIGHTING];
 
+    Model default_wall_3 = LoadModelFromMesh(game->assets->meshes[MESH_CUBE]);
+    default_wall_2.materials[0].maps[MAP_DIFFUSE].texture =
+        game->assets->textures[TEX_WALL_3];
+    default_wall_2.materials[0].shader =
+        game->assets->shaders[SHADER_PHONG_LIGHTING];
+
+    Model fence_1 = LoadModelFromMesh(game->assets->meshes[MESH_CUBE]);
+    fence_1.materials[0].maps[MAP_DIFFUSE].texture =
+        game->assets->textures[TEX_CHAINLINK_FENCE];
+    fence_1.materials[0].shader = game->assets->shaders[SHADER_PHONG_LIGHTING];
+    fence_1.transform = MatrixIdentity();
+    fence_1.transform =
+        MatrixMultiply(fence_1.transform, MatrixScale(0.01f, 1.0f, 1.0f));
+
+    Model fence_2 = LoadModelFromMesh(game->assets->meshes[MESH_CUBE]);
+    fence_2.materials[0].maps[MAP_DIFFUSE].texture =
+        game->assets->textures[TEX_CHAINLINK_FENCE];
+    fence_2.materials[0].shader = game->assets->shaders[SHADER_PHONG_LIGHTING];
+    fence_2.transform = MatrixIdentity();
+    fence_2.transform =
+        MatrixMultiply(fence_2.transform, MatrixScale(1.0f, 1.0f, 0.01f));
+
     result->models[0] = default_wall;
     result->models[1] = default_wall_2;
+    result->models[3] = default_wall_3;
+
+    result->models[2] = fence_1;
+    result->models[3] = fence_2;
+    result->num_models = 5;
 
     result->floor_tile_models[0] =
         LoadModelFromMesh(game->assets->meshes[MESH_CUBE]);
@@ -108,7 +135,6 @@ Map *load_map_from_script(const char *path, Game *game) {
 
     Map *result = malloc(sizeof(Map));
     result->current_map = -1;
-    result->num_layers = 0;
 
     zero_out_map(result);
     load_models(result, game);
@@ -127,6 +153,7 @@ Map *load_map_from_script(const char *path, Game *game) {
 
     result->player_x = 2;
     result->player_y = 2;
+    result->num_layers = MAX_NUM_LAYERS;
 
     for (int layer = 0; layer < layers_arr->count; layer++) {
         JanetTable *layer_table = janet_unwrap_table(layers_arr->data[layer]);
@@ -357,7 +384,8 @@ void draw_map(Map *map, Game *game) {
                               RAYWHITE);
                 }
 
-                if (map->walls[layer][x + z * map->width].active) {
+                if (map->walls[layer][x + z * map->width].active ||
+                    map->walls[layer][x + z * map->width].model > 0) {
                     DrawModel(map->models[map->walls[layer][x + z * map->width]
                                               .model],
                               pos, CUBE_SIZE, RAYWHITE);
