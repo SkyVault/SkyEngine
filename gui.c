@@ -73,6 +73,13 @@ void DoTextInput(NodeId id, char* buffer, size_t buffer_size, float x, float y,
         if (IsMouseButtonPressed(MOUSE_LEFT_BUTTON) && !state->hot)
             state->active = false;
 
+        if (IsKeyPressed(KEY_BACKSPACE)) {
+            if (state->cursor > 0) {
+                buffer[state->cursor - 1] = '\0';
+                state->cursor--;
+            }
+        }
+
         int key = GetKeyPressed();
         if (key > 0) {
             buffer[state->cursor++] = (char)key;
