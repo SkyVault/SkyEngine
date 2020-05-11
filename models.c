@@ -24,7 +24,7 @@ void draw_billboard(GfxState* gfx, Camera* camera, EcsWorld* ecs, EntId ent) {
             .flags = DrawFlag_Active,
             .transform = *get_comp(ecs, self, Transform),
             .billboard = *get_comp(ecs, self, Billboard),
-            .diffuse = RAYWHITE,
+            .diffuse = WHITE,
         };
     }
 }

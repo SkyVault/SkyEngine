@@ -381,14 +381,14 @@ void draw_map(Map *map, Game *game) {
                 if (layer == 0) {
                     DrawModel(map->floor_tile_models[0],
                               (Vector3){pos.x, -CUBE_SIZE, pos.z}, CUBE_SIZE,
-                              RAYWHITE);
+                              WHITE);
                 }
 
                 if (map->walls[layer][x + z * map->width].active ||
                     map->walls[layer][x + z * map->width].model > 0) {
                     DrawModel(map->models[map->walls[layer][x + z * map->width]
                                               .model],
-                              pos, CUBE_SIZE, RAYWHITE);
+                              pos, CUBE_SIZE, WHITE);
                 }
             }
         }

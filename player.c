@@ -124,13 +124,16 @@ void update_player(EcsWorld* ecs, Assets* ass, Game* game, EntId id) {
     const float angle = PI * 2 - CAMERA.angle.x - PI / 2;
 
     // Shoot
-    if (IsMouseButtonPressed(MOUSE_LEFT_BUTTON)) {
-        throw_orange(ecs, transform->translation, angle, CAMERA.angle.y, ass);
-    }
+    if (!game->noclip) {
+        if (IsMouseButtonPressed(MOUSE_LEFT_BUTTON)) {
+            throw_orange(ecs, transform->translation, angle, CAMERA.angle.y,
+                         ass);
+        }
 
-    if (IsMouseButtonPressed(MOUSE_RIGHT_BUTTON)) {
-        throw_pineapple(ecs, transform->translation, angle, CAMERA.angle.y,
-                        ass);
+        if (IsMouseButtonPressed(MOUSE_RIGHT_BUTTON)) {
+            throw_pineapple(ecs, transform->translation, angle, CAMERA.angle.y,
+                            ass);
+        }
     }
 
     if (IsKeyPressed(KEY_ESCAPE)) {
@@ -230,9 +233,9 @@ void draw_player_gui(Game* game, Map* map) {
 
     const float timer = GetTime();
 
-    DrawText("W/A/S/D to move", 10, 100, 20, RAYWHITE);
-    DrawText("Left click -> throw orange", 10, 130, 20, RAYWHITE);
-    DrawText("Right click -> throw pineapple bomb", 10, 160, 20, RAYWHITE);
+    DrawText("W/A/S/D to move", 10, 100, 20, WHITE);
+    DrawText("Left click -> throw orange", 10, 130, 20, WHITE);
+    DrawText("Right click -> throw pineapple bomb", 10, 160, 20, WHITE);
 
     const int sw = GetScreenWidth();
     const int sh = GetScreenHeight();
@@ -244,7 +247,7 @@ void draw_player_gui(Game* game, Map* map) {
     DrawLine(sw / 2 - 10, sh / 2, sw / 2 + 10, sh / 2, color);
     DrawLine(sw / 2, sh / 2 - 10, sw / 2, sh / 2 + 10, color);
 
-    // DrawRectangle(0, (sh - size), size, size, RAYWHITE);
+    // DrawRectangle(0, (sh - size), size, size, WHITE);
     // DrawRectangle(border, (sh - size) + border, size - border * 2,
     //               size - border * 2, BLACK);
 

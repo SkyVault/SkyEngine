@@ -7,6 +7,12 @@
 #include "game.h"
 #include "map.h"
 
+enum {
+    PLACE_BLOCKS,
+    PLACE_ACTORS,
+    PLACE_BILLBOARDS,
+};
+
 typedef struct {
     bool open;
 
@@ -15,6 +21,8 @@ typedef struct {
 
     int which;
     int y;
+
+    int object_placement_type;
 } Ed;
 
 Ed* create_editor();

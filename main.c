@@ -75,7 +75,7 @@ void update_and_render_menu_scene(Game *game, EcsWorld *ecs,
 
     DrawTexturePro(t, (Rectangle){0, 0, t.width, t.height},
                    (Rectangle){x, y, 500, 500}, (Vector2){250, 500}, rot,
-                   RAYWHITE);
+                   WHITE);
 
     const float shw = GetScreenWidth() / 2;
     const float shh = GetScreenHeight() / 2;

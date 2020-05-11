@@ -17,6 +17,7 @@ Ed* create_editor() {
     editor->which = 0;
     editor->model = 0;
     editor->y = 0;
+    editor->object_placement_type = PLACE_BLOCKS;
 
     return editor;
 }
@@ -92,22 +93,32 @@ void render_editor(Ed* self, Map* map, Game* game) {
 
     float occ = (1.0f + cosf(GetTime() * 10.0f)) * 0.5f;
 
-    DrawModel(map->models[self->model], clamped, CUBE_SIZE,
-              (Color){occ * 255, occ * 255, occ * 255, 100});
+    if (self->object_placement_type == PLACE_BLOCKS) {
+        DrawModel(map->models[self->model], clamped, CUBE_SIZE,
+                  (Color){occ * 255, occ * 255, occ * 255, 100});
 
-    if (IsMouseButtonPressed(MOUSE_LEFT_BUTTON) && !game->lock_camera) {
-        // Try to intersect
+        if (IsMouseButtonPressed(MOUSE_LEFT_BUTTON) && !game->lock_camera) {
+            // Try to intersect
 
-        int index = (int)(clamped.x / cs) + (int)(clamped.z / cs) * map->width;
+            int index =
+                (int)(clamped.x / cs) + (int)(clamped.z / cs) * map->width;
 
-        if (index < MAX_MAP_WIDTH * MAX_MAP_HEIGHT && index >= 0) {
-            map->walls[self->y][index].active =
-                !map->walls[self->y][index].active;
+            if (index < MAX_MAP_WIDTH * MAX_MAP_HEIGHT && index >= 0) {
+                map->walls[self->y][index].active =
+                    !map->walls[self->y][index].active;
 
-            if (!map->walls[self->y][index].active)
-                map->walls[self->y][index].model = 0;
-            else
-                map->walls[self->y][index].model = self->model;
+                if (!map->walls[self->y][index].active)
+                    map->walls[self->y][index].model = 0;
+                else
+                    map->walls[self->y][index].model = self->model;
+            }
+        }
+    } else if (self->object_placement_type == PLACE_ACTORS) {
+        Texture2D tex = game->assets->textures[TEX_GIRL_1 + self->model];
+        DrawBillboard(*game->camera, tex, loc, CUBE_SIZE, WHITE);
+
+        if (IsMouseButtonPressed(MOUSE_LEFT_BUTTON) && !game->lock_camera) {
+            assemble(ACTOR_GIRL_1 + self->model, game, loc.x, loc.z, 0, 0);
         }
     }
 }
@@ -117,6 +128,17 @@ void render_editor_ui(Ed* self, Map* map, Game* game) {
     static char buffer[100] = {'\0'};
     DoTextInput(100, buffer, 100 * sizeof(char), 0, GetScreenHeight() - 50, 300,
                 50);
+
+    static float height = 0.f;
+
+    int last = self->object_placement_type;
+    self->object_placement_type =
+        DoToggleGroupV(101, "BLOCKS|ACTORS|BILLBOARDS|", 0,
+                       GetScreenHeight() - (height + 50), &height);
+
+    if (last != self->object_placement_type) {
+        self->model = 0;
+    }
 }
 
 void serialize_map(Ed* editor, Map* map, Game* game, const char* path) {
