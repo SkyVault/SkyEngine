@@ -161,7 +161,8 @@
     <ClInclude Include="entity_types.h" />
     <ClInclude Include="game.h" />
     <ClInclude Include="map.h" />
-    <ClInclude Include="map_def.h" />
+    <ClInclude Include="prop.h" />
+    <ClInclude Include="map_type.h" />
     <ClInclude Include="maths.h" />
     <ClInclude Include="models.h" />
     <ClInclude Include="particles.h" />
@@ -174,6 +175,7 @@
     <ClInclude Include="utils.h" />
     <ClInclude Include="tween.h" />
     <ClInclude Include="gui.h" />
+    <ClCompile Include="rlights.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="janet.c">
@@ -200,6 +202,7 @@
     <ClCompile Include="utils.c" />
     <ClCompile Include="tween.c" />
     <ClCompile Include="gui.c" />
+    <ClCompile Include="rlights.c" />
   </ItemGroup>
   <ItemGroup>
     <None Include="resources\cubemap_fs.glsl" />

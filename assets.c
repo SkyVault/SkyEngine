@@ -16,6 +16,7 @@ Assets* create_and_load_assets() {
                 [TEX_WALL_1] = LoadTexture("resources/wall_1.png"),
                 [TEX_WALL_2] = LoadTexture("resources/wall_2.png"),
                 [TEX_WALL_3] = LoadTexture("resources/wall_3.png"),
+                [TEX_PROPS] = LoadTexture("resources/props.png"),
                 [TEX_CHAINLINK_FENCE] = LoadTexture("resources/chainlink.png"),
                 [TEX_FLOOR_1] = LoadTexture("resources/floor_1.png"),
                 [TEX_CHAR_1] = LoadTexture("resources/char.png"),
@@ -32,6 +33,9 @@ Assets* create_and_load_assets() {
             {
                 [SHADER_PHONG_LIGHTING] = LoadShader("resources/phong_vs.glsl",
                                                      "resources/phong_fs.glsl"),
+                [SHADER_PHONG_2_0_LIGHTING] =
+                    LoadShader("resources/shaders/phong_2.0_vs.glsl",
+                               "resources/shaders/phong_2.0_fs.glsl"),
                 [SHADER_SKYBOX] = LoadShader("resources/skybox_vs.glsl",
                                              "resources/skybox_fs.glsl"),
                 [SHADER_CUBEMAP] = LoadShader("resources/cubemap_vs.glsl",

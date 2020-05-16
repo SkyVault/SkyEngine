@@ -15,7 +15,7 @@ out vec4 finalColor;
 
 // NOTE: Add here your custom variables
 
-#define     MAX_LIGHTS              1
+#define     MAX_LIGHTS             20 
 #define     LIGHT_DIRECTIONAL       0
 #define     LIGHT_POINT             1
 
@@ -47,6 +47,10 @@ void main()
     vec3 viewD = normalize(viewPos - fragPosition);
     vec3 specular = vec3(0.0);
 
+    float constant = 1.0; 
+    float linear = 0.09;
+    float quadratic = 0.032;
+
     // NOTE: Implement here your fragment shader code
 
     for (int i = 0; i < MAX_LIGHTS; i++)
@@ -64,6 +68,8 @@ void main()
             {
                 light = normalize(lights[i].position - fragPosition);
             }
+
+            float dist = length(lights[i].position - fragPosition);
             
             float NdotL = max(dot(normal, light), 0.0);
             lightDot += lights[i].color.rgb*NdotL;
@@ -71,6 +77,11 @@ void main()
             float specCo = 0.0;
             if (NdotL > 0.0) specCo = pow(max(0.0, dot(viewD, reflect(-(light), normal))), 16); // 16 refers to shine
             specular += specCo;
+
+            float atten = 1.0 / (constant + linear * dist + quadratic * (dist * dist));
+
+            lightDot *= atten;
+            specular *= atten;
         }
     }
 
@@ -85,7 +96,7 @@ void main()
 
     const vec4 fogColor = vec4(0.0, 0.0, 0.0, 1.0);
 
-    float fogDensity = 0.015;
+    float fogDensity = 0.015 * 0;
     float fogFactor = 1.0/exp((dist*fogDensity*8)*(dist*fogDensity));
 
     fogFactor = clamp(fogFactor, 0.0, 1.0);

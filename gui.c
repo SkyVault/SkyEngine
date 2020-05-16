@@ -21,6 +21,14 @@ void DoFrame(NodeId id, float x, float y, float width, float height,
                          (Color){200, 200, 200, 200});
 }
 
+void DoLabel(NodeId id, const char* str, float x, float y, float width,
+             float height, int font_size) {
+    struct NState* state = &GuiState.states[id];
+
+    DrawTextRec(GuiState.font, str, (Rectangle){x, y, width, height}, font_size,
+                1, true, WHITE);
+}
+
 bool DoBtn(NodeId id, float x, float y, float width, float height,
            const char* text) {
     struct NState* state = &GuiState.states[id];
@@ -63,7 +71,7 @@ void DoModal() {
                   (Color){0, 0, 0, 200});
 }
 
-void DoTextInput(NodeId id, char* buffer, size_t buffer_size, float x, float y,
+bool DoTextInput(NodeId id, char* buffer, size_t buffer_size, float x, float y,
                  float width, float height) {
     struct NState* state = &GuiState.states[id];
     DoPanel(id, x, y, width, height);
@@ -98,6 +106,8 @@ void DoTextInput(NodeId id, char* buffer, size_t buffer_size, float x, float y,
     if (state->active && (((int)(GetTime() * 3.0f) % 2) == 0)) {
         DrawRectangle(x + 4 + size.x, y + 4, 4, height - 8, BLACK);
     }
+
+    return state->active && IsKeyPressed(KEY_ENTER);
 }
 
 int DoToggleGroupV(NodeId id, const char* names, float x, float y,
@@ -130,7 +140,7 @@ int DoToggleGroupV(NodeId id, const char* names, float x, float y,
                 DoPanel(id, x, y + cursor_y, size.x + r * 2 + 6, size.y + 4);
                 DrawTextEx(GuiState.font, name,
                            (Vector2){x + r * 2 + 2, y + cursor_y + 2}, 20, 1,
-                           BLACK);
+                           WHITE);
 
                 DrawCircle(x + r + 2, y + 2 + cursor_y + size.y / 2, r, WHITE);
                 DrawCircleLines(x + r + 2, y + 2 + cursor_y + size.y / 2, r,

@@ -143,17 +143,58 @@ Map *load_map_from_script(const char *path, Game *game) {
     JanetArray *size_arr = janet_unwrap_array(
         janet_table_get(result_table, janet_ckeywordv("size")));
 
+    JanetArray *start_arr = janet_unwrap_array(
+        janet_table_get(result_table, janet_ckeywordv("start")));
+
     JanetArray *layers_arr = janet_unwrap_array(
         janet_table_get(result_table, janet_ckeywordv("layers")));
+
+    JanetArray *props_arr = janet_unwrap_array(
+        janet_table_get(result_table, janet_ckeywordv("props")));
 
     assert(size_arr->count == 2);
 
     result->width = janet_unwrap_integer(size_arr->data[0]);
     result->height = janet_unwrap_integer(size_arr->data[1]);
 
-    result->player_x = 2;
-    result->player_y = 2;
+    result->player_x = janet_unwrap_number(start_arr->data[0]);
+    result->player_y = janet_unwrap_number(start_arr->data[1]);
+
     result->num_layers = MAX_NUM_LAYERS;
+    result->num_props = 0;
+
+    Shader *shader = &game->assets->shaders[SHADER_PHONG_LIGHTING];
+
+    result->num_lights = 1;
+    result->lights[0] =
+        CreateLight(LIGHT_POINT, (Vector3){40, 1, 40}, Vector3Zero(),
+                    (Color){255, 255, 255}, *shader);
+    result->lights[0].enabled = true;
+
+    for (int i = 0; i < result->num_lights; i++) {
+        UpdateLightValues(*shader, result->lights[i]);
+    }
+
+    for (int prop = 0; prop < props_arr->count; prop++) {
+        JanetArray *prop_arr = janet_unwrap_array(props_arr->data[prop]);
+
+        float rx = (float)janet_unwrap_number(prop_arr->data[0]);
+        float ry = (float)janet_unwrap_number(prop_arr->data[1]);
+        float rw = (float)janet_unwrap_number(prop_arr->data[2]);
+        float rh = (float)janet_unwrap_number(prop_arr->data[3]);
+        float x = (float)janet_unwrap_number(prop_arr->data[4]);
+        float y = (float)janet_unwrap_number(prop_arr->data[5]);
+        float z = (float)janet_unwrap_number(prop_arr->data[6]);
+        float s = (float)janet_unwrap_number(prop_arr->data[7]);
+
+        result->props[result->num_props++] = (Prop){
+            .region = (Rectangle){rx, ry, rw, rh},
+            .position = (Vector3){x, y, z},
+            .scale = s,
+        };
+
+        printf("props: %d\n", result->num_props);
+    }
 
     for (int layer = 0; layer < layers_arr->count; layer++) {
         JanetTable *layer_table = janet_unwrap_table(layers_arr->data[layer]);
@@ -221,154 +262,15 @@ Map *load_map_from_script(const char *path, Game *game) {
     return result;
 }
 
-Map *load_map_from_file(const char *path, Game *game) {
-    FILE *o = fopen(path, "r");
+void update_map(Map *self, Game *game) {
+    Shader *shader = &game->assets->shaders[SHADER_PHONG_LIGHTING];
 
-    fseek(o, 0L, SEEK_END);
-    size_t len = ftell(o);
-    fseek(o, 0L, SEEK_SET);
-
-    Map *result = malloc(sizeof(Map));
-    result->current_map = -1;
-    result->num_layers = 0;
-
-    result->path.len = strlen(path);
-    result->path.buff = malloc(result->path.len + 1);
-    for (int i = 0; i < result->path.len; i++) result->path.buff[i] = path[i];
-    result->path.buff[result->path.len] = '\0';
-
-    result->player_x = 0.0f;
-    result->player_y = 0.0f;
-
-    zero_out_map(result);
-    load_models(result, game);
-
-    int w = 0;
-    int h = 0;
-
-    bool size_set = false;
-
-    char *line = NULL;
-    size_t slen = 0;
-    size_t read;
-
-    while ((read = getline(&line, &slen, o)) != -1) {
-        if (slen > 0) {
-            char fst = line[0];
-
-            switch (fst) {
-                case ':': {
-                    char name[128];
-                    sscanf(line, ":%s", name);
-
-                    if (is_number(name)) {
-                        if (!size_set) {
-                            printf(
-                                "ERROR:: Map data is missing a size "
-                                "constant\n");
-                            return result;
-                        }
-
-                        int layer = atoi(name);
-
-                        for (int y = 0; y < result->height; y++) {
-                            read = getline(&line, &slen, o);
-
-                            if (slen == 0) {
-                                printf(
-                                    "ERROR:: blank line in the data segment\n");
-                                return result;
-                            }
-                            printf("line: %s", line);
-
-                            for (int x = 0; x < result->width; x++) {
-                                Vector3 pos =
-                                    (Vector3){.x = (float)x * CUBE_SIZE,
-                                              .y = 0.f,
-                                              .z = (float)y * CUBE_SIZE};
-
-                                switch (line[x]) {
-                                    case '|':
-                                        create_z_door(pos, game);
-                                        break;
-                                    case '-':
-                                        create_x_door(pos, game);
-                                        break;
-                                    case ' ':
-                                    case '.':
-                                        break;
-
-                                    case 'X':
-                                        result->player_x =
-                                            pos.x + CUBE_SIZE / 2;
-                                        result->player_y =
-                                            pos.z + CUBE_SIZE / 2;
-                                        break;
-                                    case 'E': {
-                                        assemble(ACTOR_END_TARGET, game,
-                                                 pos.x + CUBE_SIZE / 2,
-                                                 pos.z + CUBE_SIZE / 2, 0, 0);
-                                        break;
-                                    }
-
-                                    default:
-                                        result
-                                            ->walls[layer]
-                                                   [x + y * result->width]
-                                            .active = 1;
-                                        const char buff[] = {line[x], '\0'};
-                                        int i = atoi(buff) - 1;
-                                        result
-                                            ->walls[layer]
-                                                   [x + y * result->width]
-                                            .model = i;
-                                }
-                            }
-                        }
-                    } else if (strcmp(name, "entities")) {
-                        // Parse the entities layer
-                    }
-                }
-
-                default: {
-                    char name[128];
-                    char type[128];
-
-                    sscanf(line, "%s %s", name, type);
-
-                    if (strcmp(type, "i") == 0) {
-                        int i;
-                        sscanf(line, "%s %s %d", name, type, &i);
-                        break;
-                    } else if (strcmp(type, "2i") == 0) {
-                        int x, y;
-                        sscanf(line, "%s %s %d %d", name, type, &x, &y);
-
-                        if (strcmp(name, "size") == 0) {
-                            result->width = x;
-                            result->height = y;
-                            size_set = true;
-                        } else {
-                            // printf("Unknown constant %s\n", name);
-                        }
-
-                        break;
-                    } else if (strcmp(type, "str") == 0) {
-                    }
-                }
-            }
-        }
-    }
-
-    fclose(o);
-    o = NULL;
-
-    return result;
+    self->lights[0].position = game->camera->position;
+    self->lights[0].enabled = true;
+    UpdateLightValues(*shader, self->lights[0]);
 }
 
-void update_map(Map *map, Game *game) {}
-
-void draw_map(Map *map, Game *game) {
+void render_map(Map *map, GfxState *gfx, Game *game) {
     rlEnableBackfaceCulling();
     rlEnableDepthTest();
     for (int layer = 0; layer < MAX_NUM_LAYERS; layer++) {
@@ -392,6 +294,15 @@ void draw_map(Map *map, Game *game) {
                 }
             }
         }
+    }
+
+    // billboards
+    for (int pi = 0; pi < map->num_props; pi++) {
+        draw_prop(gfx, game, map->props[pi]);
+
+        // Prop prop = map->props[pi];
+        // DrawBillboardRec(*game->camera, game->assets->textures[TEX_PROPS],
+        //                  prop.region, prop.position, prop.scale, WHITE);
     }
 }
 
@@ -418,5 +329,4 @@ void destroy_map(Map *map, Game *game) {
 void reload_map(Map *map, Game *game) {
     tstr s = tstrf("%s", map->path);
     destroy_map(map, game);
-    load_map_from_file(s, game);
 }

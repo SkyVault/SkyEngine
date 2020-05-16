@@ -3,7 +3,7 @@
 
 #include "assets.h"
 #include "ecs.h"
-#include "entity_types.h"
+#include "entity_type.h"
 #include "models.h"
 #include "physics.h"
 #include "player.h"

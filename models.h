@@ -7,6 +7,9 @@
 
 #include "billboard.h"
 #include "ecs.h"
+#include "game.h"
+#include "map_type.h"
+#include "prop.h"
 #include "raylib.h"
 #include "raymath.h"
 
@@ -31,7 +34,10 @@ typedef struct Drawable {
     Color diffuse;
 
     union {
-        Billboard billboard;
+        struct {
+            Billboard billboard;
+            Rectangle region;
+        };
         Model model;
     };
 } Drawable;
@@ -48,6 +54,8 @@ void draw_billboard(GfxState* gfx, Camera* camera, EcsWorld* ecs, EntId ent);
 
 void update_models(EcsWorld* ecs, EntId ent);  // Animations?
 void draw_models(GfxState* gfx, EcsWorld* ecs, EntId ent);
+
+void draw_prop(GfxState* gfx, Game* game, Prop prop);
 
 void flush_graphics(GfxState* gfx, Camera* camera);
 

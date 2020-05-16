@@ -4,12 +4,12 @@
 #include <math.h>
 #include <stdlib.h>
 
-#include "game.h"
 #include "ecs.h"
-#include "raylib.h"
+#include "game.h"
+#include "map_type.h"
 #include "physics_type.h"
-#include "map_def.h"
+#include "raylib.h"
 
 void update_physics(Map* map, EcsWorld* ecs, Game* game, EntId ent);
 
-#endif//BENIS_PHYSICS_H
+#endif  // BENIS_PHYSICS_H

@@ -19,11 +19,34 @@ void draw_billboard(GfxState* gfx, Camera* camera, EcsWorld* ecs, EntId ent) {
         return;
 
     if (gfx->num_drawables < MAX_NUMBER_OF_DRAWABLES) {
+        Billboard b = *get_comp(ecs, self, Billboard);
         gfx->drawables[gfx->num_drawables++] = (Drawable){
             .type = DrawType_Billboard,
             .flags = DrawFlag_Active,
             .transform = *get_comp(ecs, self, Transform),
-            .billboard = *get_comp(ecs, self, Billboard),
+            .billboard = b,
+            .diffuse = WHITE,
+            .region = (Rectangle){0, 0, b.texture.width, b.texture.height},
+        };
+    }
+}
+
+void draw_prop(GfxState* gfx, Game* game, Prop prop) {
+    if (gfx->num_drawables < MAX_NUMBER_OF_DRAWABLES) {
+        gfx->drawables[gfx->num_drawables++] = (Drawable){
+            .type = DrawType_Billboard,
+            .flags = DrawFlag_Active,
+            .region = prop.region,
+            .transform =
+                (Transform){
+                    .translation = prop.position,
+                    .rotation = QuaternionIdentity(),
+                    .scale = (Vector3){1, 1, 1},
+                },
+            .billboard =
+                (Billboard){.texture = game->assets->textures[TEX_PROPS],
+                            .material = {0},
+                            .scale = prop.scale},
             .diffuse = WHITE,
         };
     }
@@ -118,8 +141,8 @@ void flush_graphics(GfxState* gfx, Camera* camera) {
 
             d->diffuse = (Color){f.x * 255, f.y * 255, f.z * 255, 255};
 
-            DrawBillboard(*camera, d->billboard.texture, pos,
-                          d->billboard.scale, d->diffuse);
+            DrawBillboardRec(*camera, d->billboard.texture, d->region, pos,
+                             d->billboard.scale, d->diffuse);
 
             // DrawSphere(pos, 0.1f, RED);
 

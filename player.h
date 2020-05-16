@@ -6,7 +6,7 @@
 #include "assets.h"
 #include "components.h"
 #include "ecs.h"
-#include "entity_types.h"
+#include "entity_type.h"
 #include "gui.h"
 #include "models.h"
 #include "physics.h"

@@ -233,9 +233,10 @@ void draw_player_gui(Game* game, Map* map) {
 
     const float timer = GetTime();
 
-    DrawText("W/A/S/D to move", 10, 100, 20, WHITE);
+    DrawText("W/A/S/D -> move", 10, 100, 20, WHITE);
     DrawText("Left click -> throw orange", 10, 130, 20, WHITE);
     DrawText("Right click -> throw pineapple bomb", 10, 160, 20, WHITE);
+    DrawText("Escape -> release mouse", 10, 190, 20, WHITE);
 
     const int sw = GetScreenWidth();
     const int sh = GetScreenHeight();
@@ -247,17 +248,11 @@ void draw_player_gui(Game* game, Map* map) {
     DrawLine(sw / 2 - 10, sh / 2, sw / 2 + 10, sh / 2, color);
     DrawLine(sw / 2, sh / 2 - 10, sw / 2, sh / 2 + 10, color);
 
-    // DrawRectangle(0, (sh - size), size, size, WHITE);
-    // DrawRectangle(border, (sh - size) + border, size - border * 2,
-    //               size - border * 2, BLACK);
-
     // Pause
     int id = 0;
 
+    // static bool do_exit_modal = false;
     if (DoBtn(id, 5, 5, 50, 50, "| |")) {
+        game->scene = SCENE_MAIN_MENU;
     }
-
-    // id = 100;
-    // static char buffer[512];
-    // DoTextInput(id++, buffer, 512, 10, 200, 300, 50);
 }

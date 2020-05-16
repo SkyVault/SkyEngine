@@ -32,8 +32,11 @@ bool DoBtn(NodeId id, float x, float y, float width, float height,
 void DoCenterXLabel(NodeId id, float outer_width, float y, int font_size,
                     const char* text);
 
+void DoLabel(NodeId id, const char* str, float x, float y, float width,
+             float height, int font_size);
+
 void DoModal();
-void DoTextInput(NodeId id, char* buffer, size_t buffer_size, float x, float y,
+bool DoTextInput(NodeId id, char* buffer, size_t buffer_size, float x, float y,
                  float width, float height);
 
 int DoToggleGroupV(NodeId id, const char* names, float x, float y,

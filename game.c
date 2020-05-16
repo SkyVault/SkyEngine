@@ -20,8 +20,4 @@ void update_game(Game* game) {
     } else {
         DisableCursor();
     }
-
-    if (IsKeyPressed(KEY_BACKSLASH)) {
-        game->noclip = !game->noclip;
-    }
 }

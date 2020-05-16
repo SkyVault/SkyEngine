@@ -2,11 +2,6 @@
 #include <janet.h>
 #include <stdio.h>
 
-#include "raylib.h"
-#include "raymath.h"
-#include "rlgl.h"
-
-#define RLIGHTS_IMPLEMENTATION
 #include "assembler.h"
 #include "assets.h"
 #include "behaviours.h"
@@ -17,6 +12,9 @@
 #include "map.h"
 #include "models.h"
 #include "particles.h"
+#include "raylib.h"
+#include "raymath.h"
+#include "rlgl.h"
 #include "rlights.h"
 #include "tween.h"
 
@@ -30,12 +28,7 @@
 #define SCREEN_HEIGHT ((int)((SCREEN_WIDTH) * (160.0 / 240.0)))
 #define MAX_COLUMNS (20)
 
-#ifndef _DEBUG
-typedef int Ed;
-static int editor = -1;
-#endif  //
-
-static Light lights[MAX_LIGHTS] = {0};
+#define MAIN_SHADER SHADER_PHONG_LIGHTING
 
 void custom_logger(int msg_type, const char *text, va_list args) {
     printf(text, args);
@@ -50,7 +43,7 @@ void update_and_render_menu_scene(Game *game, EcsWorld *ecs,
     Assets *assets = game->assets;
     Camera *camera = game->camera;
 
-    Shader *shader = &assets->shaders[SHADER_PHONG_LIGHTING];
+    Shader *shader = &assets->shaders[MAIN_SHADER];
 
     timer += GetFrameTime() * 0.2f;
     if (timer > 1.0f) {
@@ -113,6 +106,7 @@ void update_and_render_menu_scene(Game *game, EcsWorld *ecs,
     if (Hot(id)) scaler_t += GetFrameTime() * 2.0f
 
     bool shrink = true;
+    static bool do_controls_modal = false;
 
     {
         DO_SCALING();
@@ -142,6 +136,16 @@ void update_and_render_menu_scene(Game *game, EcsWorld *ecs,
         ++id;
     }
 
+    {
+        DO_SCALING();
+        GEASE(1.2f);
+        if (DO_BTN("Controls") && !do_controls_modal) {
+            do_controls_modal = true;
+        }
+        if (Hot(id)) shrink = false;
+        ++id;
+    }
+
     static bool do_exit_modal = false;
 
     {
@@ -156,7 +160,24 @@ void update_and_render_menu_scene(Game *game, EcsWorld *ecs,
     if (scaler_t > 1.0f) scaler_t = 1.0f;
     if (scaler_t < 0.0f) scaler_t = 0.0f;
 
-    if (do_exit_modal) {
+    if (do_controls_modal) {
+        DoModal();
+        Unlock();
+
+        DoCenterXLabel(++id, GetScreenWidth(), 130, 30, "W|A|S|D / move");
+        DoCenterXLabel(++id, GetScreenWidth(), 160, 30,
+                       "Left click / throw orange");
+        DoCenterXLabel(++id, GetScreenWidth(), 190, 30,
+                       "Right click / throw pineapple bomb");
+        DoCenterXLabel(++id, GetScreenWidth(), 220, 30,
+                       "Escape / release mouse");
+
+        if (DoBtn(id++, GetScreenWidth() / 2, 400, 30, 30, "X")) {
+            do_controls_modal = false;
+        }
+
+        Lock();
+    } else if (do_exit_modal) {
         DoModal();
 
         Unlock();
@@ -186,7 +207,7 @@ void update_and_render_game_scene(Game *game, EcsWorld *ecs,
     Assets *assets = game->assets;
     Camera *camera = game->camera;
 
-    Shader *shader = &assets->shaders[SHADER_PHONG_LIGHTING];
+    Shader *shader = &assets->shaders[MAIN_SHADER];
 
     update_and_cleanup_ecs_world(ecs);
     update_game(game);
@@ -205,14 +226,9 @@ void update_and_render_game_scene(Game *game, EcsWorld *ecs,
 
     update_map(map, game);
 
-#if defined _DEBUG
+    // #if defined _DEBUG
     update_editor(editor, map, game);
-#endif
-
-    for (int i = 0; i < MAX_LIGHTS; i++) {
-        lights[i].position = camera->position;
-        UpdateLightValues(*shader, lights[i]);
-    }
+    // #endif
 
     SetShaderValue(*shader, shader->locs[LOC_VECTOR_VIEW], &camera->position,
                    UNIFORM_VEC3);
@@ -228,7 +244,7 @@ void update_and_render_game_scene(Game *game, EcsWorld *ecs,
 
     BeginMode3D(*camera);
 
-    draw_map(map, game);
+    render_map(map, gfx, game);
 
     for (int i = 0; i < ecs->max_num_entities; i++) {
         if (!is_ent_alive(ecs, i)) continue;
@@ -245,17 +261,17 @@ void update_and_render_game_scene(Game *game, EcsWorld *ecs,
     // Do the final draw to the screen
     flush_graphics(gfx, camera);
 
-#if defined _DEBUG
+    // #if defined _DEBUG
     render_editor(editor, map, game);
-#endif
+    // #endif
 
     EndMode3D();
 
     draw_player_gui(game, map);
 
-#if defined _DEBUG
+    // #if defined _DEBUG
     render_editor_ui(editor, map, game);
-#endif
+    // #endif
 
     DrawFPS(10, 10);
 
@@ -297,20 +313,14 @@ int main() {
     Game *game = create_game(assets, &camera, ecs, env);
     GfxState *gfx = create_gfx_state();
 
-    Shader *shader = &assets->shaders[SHADER_PHONG_LIGHTING];
-    shader->locs[LOC_MATRIX_MODEL] = GetShaderLocation(*shader, "matModel");
+    Shader *shader = &assets->shaders[MAIN_SHADER];
+
     shader->locs[LOC_VECTOR_VIEW] = GetShaderLocation(*shader, "viewPos");
+    shader->locs[LOC_MATRIX_MODEL] = GetShaderLocation(*shader, "matModel");
 
     int ambientLoc = GetShaderLocation(*shader, "ambient");
-    SetShaderValue(*shader, ambientLoc, (float[4]){0.2f, 0.2f, 0.2f, 1.0f},
+    SetShaderValue(*shader, ambientLoc, (float[4]){0.0f, 0.0f, 0.0f, 1.0f},
                    UNIFORM_VEC4);
-
-    lights[0] = CreateLight(LIGHT_POINT, (Vector3){-10, 0, -10}, (Vector3){0},
-                            WHITE, *shader);
-
-    for (int i = 0; i < MAX_LIGHTS; i++) {
-        UpdateLightValues(*shader, lights[i]);
-    }
 
     // Load the skybox
     game->skybox = LoadModelFromMesh(assets->meshes[MESH_SKYBOX]);
@@ -333,29 +343,51 @@ int main() {
 
     InitGui();
 
-    // Map *map = load_map_from_file("resources/maps/level1.map", game);
-    Map *map = load_map_from_script("resources/maps/edit.janet", game);
+    game->map = load_map_from_script("resources/maps/edit.janet", game);
+    Map *map = game->map;
 
     assemble(ACTOR_PLAYER, game, map->player_x, map->player_y, 0, 0);
 
-    // for (int i = 0; i < 100; i++) assemble(END_TARGET, game, i, i, 0, 0);
-
-    assemble(ACTOR_GIRL_1, game, 5 * CUBE_SIZE, 5 * CUBE_SIZE, 0, 0);
-    assemble(ACTOR_GIRL_2, game, 2 * CUBE_SIZE, 1 * CUBE_SIZE, 0, 0);
-    assemble(ACTOR_GIRL_3, game, 2 * CUBE_SIZE, 4 * CUBE_SIZE, 0, 0);
-    assemble(ACTOR_GIRL_4, game, 4 * CUBE_SIZE, 2 * CUBE_SIZE, 0, 0);
-
-#if defined _DEBUG
+    // #if defined _DEBUG
     Ed *editor = create_editor();
-#endif
+    // #endif
 
     rlEnableBackfaceCulling();
     rlEnableDepthTest();
 
     glEnable(GL_BLEND);
+    glBlendEquation(GL_FUNC_ADD);
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
+    SetShaderValue(*shader,
+                   GetShaderLocation(*shader, "point_lights[0].position"),
+                   &(Vector3){0, 0, 0}, UNIFORM_VEC3);
+
+    SetShaderValue(*shader,
+                   GetShaderLocation(*shader, "point_lights[0].constant"),
+                   &(float[]){1.0f}, UNIFORM_FLOAT);
+
+    SetShaderValue(*shader,
+                   GetShaderLocation(*shader, "point_lights[0].linear"),
+                   &(float[]){0.09f}, UNIFORM_FLOAT);
+
+    SetShaderValue(*shader,
+                   GetShaderLocation(*shader, "point_lights[0].quadratic"),
+                   &(float[]){0.032}, UNIFORM_FLOAT);
+
+    SetShaderValue(*shader,
+                   GetShaderLocation(*shader, "point_lights[0].diffuse"),
+                   &(Vector3){1, 1, 1}, UNIFORM_VEC3);
+
+    SetShaderValue(*shader,
+                   GetShaderLocation(*shader, "point_lights[0].specular"),
+                   &(Vector3){1, 1, 1}, UNIFORM_VEC3);
+
+    SetShaderValue(*shader, GetShaderLocation(*shader, "num_point_lights"),
+                   &(int){1}, UNIFORM_INT);
+
     while (!WindowShouldClose() && game->state == STATE_RUNNING) {
+        map = game->map;
         switch (game->scene) {
             case SCENE_GAME: {
                 update_and_render_game_scene(game, ecs, particle_sys, map, gfx,
