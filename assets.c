@@ -33,9 +33,6 @@ Assets* create_and_load_assets() {
             {
                 [SHADER_PHONG_LIGHTING] = LoadShader("resources/phong_vs.glsl",
                                                      "resources/phong_fs.glsl"),
-                [SHADER_PHONG_2_0_LIGHTING] =
-                    LoadShader("resources/shaders/phong_2.0_vs.glsl",
-                               "resources/shaders/phong_2.0_fs.glsl"),
                 [SHADER_SKYBOX] = LoadShader("resources/skybox_vs.glsl",
                                              "resources/skybox_fs.glsl"),
                 [SHADER_CUBEMAP] = LoadShader("resources/cubemap_vs.glsl",

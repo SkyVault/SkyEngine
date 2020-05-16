@@ -25,6 +25,8 @@ Ed* create_editor() {
     editor->do_load_modal = false;
     editor->maps = GetDirectoryFiles("resources/maps/", &editor->num_maps);
 
+    memset(editor->light_color_index, 0, sizeof(int) * MAX_LIGHTS);
+
     return editor;
 }
 
@@ -209,45 +211,42 @@ int sort_levenshtein(const void* a, const void* b) {
 }
 
 void render_editor_ui(Ed* self, Map* map, Game* game) {
+    Shader* shader = &game->assets->shaders[SHADER_PHONG_LIGHTING];
+
+    int id = 200;
+
     if (!self->open) {
-        if (DoBtn(201, GetScreenWidth() / 2 - 50.0f, 0, 100, 25, "Editor")) {
+        if (DoBtn(id++, GetScreenWidth() / 2 - 50.0f, 0, 100, 25, "Editor")) {
             push_message(self, "Editor mode!");
             self->open = true;
         }
         return;
     }
 
-    if (DoBtn(201, GetScreenWidth() / 2 - 50.0f, 0, 100, 25, "Play")) {
+    if (DoBtn(id++, GetScreenWidth() / 2 - 50.0f, 0, 100, 25, "Play")) {
         self->open = false;
     }
 
     // Notifications
-
-    int id = 100;
-
-    static float height = 0.f;
-
     int last = self->object_placement_type;
     self->object_placement_type =
         DoToggleGroupV(id++, "BLOCKS|ACTORS|BILLBOARDS|MARKERS|", 0,
-                       GetScreenHeight() - (height + 50), &height);
+                       GetScreenHeight() - (self->placement_toggle_height + 50),
+                       &self->placement_toggle_height);
 
+    // Draws a label for the type of marker
+    // TODO(Dustin): Add new markers for exit and other stuff
     if (self->object_placement_type == PLACE_MARKERS) {
         DoCenterXLabel(id++, (float)GetScreenWidth(),
                        (float)GetScreenHeight() / 2 + 50.0f, 30,
                        "Player start");
     }
 
-    if (DoCheckBox(id++, 100, 100, 20, 20)) {
-        printf("Hello%f\n", rand_f());
-    }
-
-    // Export button
+    // Map loading and unloading
     if (DoBtn(id++, 100, GetScreenHeight() - 50.0f, 100, 50, "Export")) {
         self->do_export_modal = true;
     }
 
-    // Load button
     if (DoBtn(id++, 0, GetScreenHeight() - 50.0f, 100, 50, "Load")) {
         self->do_load_modal = true;
     }
@@ -256,6 +255,7 @@ void render_editor_ui(Ed* self, Map* map, Game* game) {
         DoModal();
         Unlock();
 
+        // TODO(Dustin): Get this to work
         // qsort(self->maps, self->num_maps, sizeof(char*), sort_levenshtein);
 
         if (DoTextInput(id++, load_buff, 1024, GetScreenWidth() / 2 - 150.f,
@@ -274,10 +274,6 @@ void render_editor_ui(Ed* self, Map* map, Game* game) {
         }
 
         for (int i = 2; i < self->num_maps; i++) {
-            // DoCenterXLabel(id++, (float)GetScreenWidth(),
-            //                (float)GetScreenHeight() / 2 + 20 + 30 * i, 30,
-            //                self->maps[i]);
-
             if (DoBtn(id++, GetScreenWidth() / 2 - 150.0f,
                       GetScreenHeight() / 2 + 20 + 30 * (i - 1.0f), 300, 30,
                       self->maps[i])) {
@@ -328,11 +324,11 @@ void render_editor_ui(Ed* self, Map* map, Game* game) {
     }
 
     // Lights
-
     DoPanel(id++, GetScreenWidth() - 400.0f, self->light_panel_y + 30, 400,
             GetScreenHeight());
 
-    const float lx = GetScreenWidth() - 400;
+    const float panel_w = 400;
+    const float lx = GetScreenWidth() - panel_w;
 
     float cursor_y = self->light_panel_y;
     if (DoBtn(id++, lx, cursor_y, 200, 30,
@@ -350,22 +346,70 @@ void render_editor_ui(Ed* self, Map* map, Game* game) {
         if (DoBtn(id++, lx + 2, cursor_y + 2, 30, 30, "+")) {
             Light* light = &map->lights[map->num_lights++];
             light->enabled = true;
-            light->color = YELLOW;
+            light->color = WHITE;
             UpdateLightValues(game->assets->shaders[SHADER_PHONG_LIGHTING],
                               *light);
         }
 
-        cursor_y += 32;
+        cursor_y += 32 + 2;
 
         for (int i = 0; i < map->num_lights; i++) {
             Light light = map->lights[i];
-            if (!light.enabled) continue;
+
+            if (DoCollapsingHeader(id++, TextFormat("%s[%d]", "Light", i),
+                                   lx + 10, cursor_y, panel_w - 20, 40)) {
+                cursor_y += 40 + 2;
+
+                DoLabel(id++, "Disabled", lx + 30, cursor_y, 100, 30, 30);
+                map->lights[i].enabled =
+                    !DoCheckBox(id++, lx + 30 + 100, cursor_y, 30, 30);
+                cursor_y += 32;
+
+                DoLabel(id++, "X", lx + 30, cursor_y, 40, 30, 30);
+                float x =
+                    DoSlider(id++, lx + 30 + 42, cursor_y, 200, 30, 0, 100);
+                cursor_y += 32;
+
+                DoLabel(id++, "Y", lx + 30, cursor_y, 40, 30, 30);
+                float y =
+                    DoSlider(id++, lx + 30 + 42, cursor_y, 200, 30, 0, 100);
+                cursor_y += 32;
+
+                DoLabel(id++, "Z", lx + 30, cursor_y, 40, 30, 30);
+                float z =
+                    DoSlider(id++, lx + 30 + 42, cursor_y, 200, 30, 0, 100);
+
+                cursor_y += 32;
+
+                DoLabel(id++, "Color", lx + 30, cursor_y, 100, 30, 30);
+                DrawRectangle(lx + 30 + 100, cursor_y, 30, 30,
+                              LightColors[self->light_color_index[i]]);
+
+                if (DoClickRegion(id++, lx + 30 + 100, cursor_y, 30, 30,
+                                  light.color)) {
+                    self->light_color_index[i]++;
+                    self->light_color_index[i] %=
+                        (sizeof(LightColors) / sizeof(LightColors[0]));
+                    map->lights[i].color =
+                        LightColors[self->light_color_index[i]];
+                }
+
+                cursor_y += 32;
+
+                map->lights[i].position = (Vector3){x, y, z};
+                UpdateLightValues(*shader, map->lights[i]);
+
+            } else {
+                cursor_y += 40 + 2;
+            }
         }
 
     } else {
         self->light_panel_y = lerp(GetFrameTime() * 10.0f, self->light_panel_y,
                                    GetScreenHeight() - 30);
     }
+
+    id += 1000;
 
     int y = 0;
     for (int i = self->num_notes - 1; i >= 0; i--) {

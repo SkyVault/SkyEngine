@@ -5,11 +5,10 @@ void InitGui() { GuiState.font = LoadFont("resources/alagard_font.png"); }
 void DoPanel(NodeId id, float x, float y, float width, float height) {
     struct NState* state = &GuiState.states[id];
 
-    Color color =
-        (!Hot(id)) ? (Color){100, 100, 100, 255} : (Color){200, 200, 200, 255};
+    Color color = (!Hot(id)) ? BASE_COLOR : (Color){200, 200, 200, 255};
 
     DrawRectangle(x, y, width, height, color);
-    DrawRectangleLinesEx((Rectangle){x, y, width, height}, 3, WHITE);
+    DrawRectangleLinesEx((Rectangle){x, y, width, height}, 3, ALT_COLOR);
 }
 
 void DoFrame(NodeId id, float x, float y, float width, float height,
@@ -26,7 +25,15 @@ void DoLabel(NodeId id, const char* str, float x, float y, float width,
     struct NState* state = &GuiState.states[id];
 
     DrawTextRec(GuiState.font, str, (Rectangle){x, y, width, height}, font_size,
-                1, true, WHITE);
+                1, true, HIGHLIGHT_COLOR);
+}
+
+bool DoClickRegion(NodeId id, float x, float y, float width, float height) {
+    struct NState* state = &GuiState.states[id];
+    Rectangle rect = {x + GuiState.px, y + GuiState.py, width, height};
+    state->hot = CheckCollisionPointRec(GetMousePosition(), rect);
+    state->active = state->hot && IsMouseButtonPressed(MOUSE_LEFT_BUTTON);
+    return Active(id);
 }
 
 bool DoBtn(NodeId id, float x, float y, float width, float height,
@@ -49,7 +56,7 @@ bool DoBtn(NodeId id, float x, float y, float width, float height,
                    x + width / 2 - measure.x / 2,
                    y + height / 2 - measure.y / 2,
                },
-               size, 1, WHITE);
+               size, 1, HIGHLIGHT_COLOR);
 
     return Active(id);
 }
@@ -63,7 +70,7 @@ void DoCenterXLabel(NodeId id, float outer_width, float y, int font_size,
                    outer_width / 2 - measure.x / 2,
                    y,
                },
-               font_size, 1, WHITE);
+               font_size, 1, HIGHLIGHT_COLOR);
 }
 
 void DoModal() {
@@ -140,9 +147,10 @@ int DoToggleGroupV(NodeId id, const char* names, float x, float y,
                 DoPanel(id, x, y + cursor_y, size.x + r * 2 + 6, size.y + 4);
                 DrawTextEx(GuiState.font, name,
                            (Vector2){x + r * 2 + 2, y + cursor_y + 2}, 20, 1,
-                           WHITE);
+                           HIGHLIGHT_COLOR);
 
-                DrawCircle(x + r + 2, y + 2 + cursor_y + size.y / 2, r, WHITE);
+                DrawCircle(x + r + 2, y + 2 + cursor_y + size.y / 2, r,
+                           HIGHLIGHT_COLOR);
                 DrawCircleLines(x + r + 2, y + 2 + cursor_y + size.y / 2, r,
                                 BLACK);
 
@@ -152,7 +160,7 @@ int DoToggleGroupV(NodeId id, const char* names, float x, float y,
 
                 if (which == state->cursor) {
                     DrawCircle(x + r + 2.0f, y + 2 + cursor_y + size.y / 2.0f,
-                               r * 0.8f, RED);
+                               r * 0.8f, ALT_COLOR);
                 }
 
                 state->hot = false;
@@ -204,13 +212,13 @@ float DoSlider(NodeId id, float x, float y, float width, float height,
         state->value = min + (max - min) * perc;
     }
 
-    Color color = WHITE;
-    if (state->active) color = (Color){100, 100, 100, 255};
+    Color color = BASE_COLOR;
+    if (state->active) color.a = 255;
 
     DoPanel(id, x, y, width, height);
 
     DrawRectangle(state->last_value, y, height, height, color);
-    DrawRectangleLines(state->last_value, y, height, height, RED);
+    DrawRectangleLines(state->last_value, y, height, height, ALT_COLOR);
 
     return state->value;
 }
@@ -234,7 +242,32 @@ bool DoCheckBox(NodeId id, float x, float y, float width, float height) {
     // Draw the button
     DoPanel(id, x, y, width, height);
 
-    if (state->active) DrawRectangle(x + 1, y + 1, width - 2, height - 2, RED);
+    if (state->active)
+        DrawRectangle(x + 1, y + 1, width - 2, height - 2, ALT_COLOR);
+
+    return Active(id);
+}
+
+bool DoCollapsingHeader(NodeId id, const char* label, float x, float y,
+                        float width, float height) {
+    struct NState* state = &GuiState.states[id];
+
+    Rectangle rect = {x + GuiState.px, y + GuiState.py, width, height};
+
+    state->hot = CheckCollisionPointRec(GetMousePosition(), rect);
+
+    if (state->hot && IsMouseButtonPressed(MOUSE_LEFT_BUTTON)) {
+        state->active = !state->active;
+    }
+
+    char buff[512];
+    sprintf(buff, "%s %s", (state->active ? "-" : "+"), label);
+
+    const Vector2 size = MeasureTextEx(GuiState.font, buff, 30, 1.0f);
+
+    // Draw the button
+    DoPanel(id, x, y, width, height);
+    DoLabel(id, buff, x + width / 2 - size.x / 2, y + 1, width, height, 30);
 
     return Active(id);
 }
