@@ -171,7 +171,10 @@ Map *load_map_from_script(const char *path, Game *game) {
                     (Color){255, 255, 255}, *shader);
     result->lights[0].enabled = true;
 
-    for (int i = 0; i < result->num_lights; i++) {
+    for (int i = 1; i < MAX_LIGHTS; i++) {
+        result->lights[i] = CreateLight(LIGHT_POINT, Vector3Zero(),
+                                        Vector3Zero(), WHITE, *shader);
+        result->lights[i].enabled = false;
         UpdateLightValues(*shader, result->lights[i]);
     }
 
@@ -267,7 +270,10 @@ void update_map(Map *self, Game *game) {
 
     self->lights[0].position = game->camera->position;
     self->lights[0].enabled = true;
+
+    // for (int i = 0; i < self->num_lights; i++) {
     UpdateLightValues(*shader, self->lights[0]);
+    // }
 }
 
 void render_map(Map *map, GfxState *gfx, Game *game) {

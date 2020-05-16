@@ -24,12 +24,12 @@ struct PointLight {
     vec3 specular;
 };
 
-#define MAX_NUMBER_OF_POINT_LIGHTS (4)
+#define MAX_NUMBER_OF_POINT_LIGHTS (10)
 
 uniform PointLight point_lights[MAX_NUMBER_OF_POINT_LIGHTS]; 
 uniform vec3 view_pos; //done
 uniform int num_point_lights = MAX_NUMBER_OF_POINT_LIGHTS;
-uniform Material material;
+uniform Material material
 
 vec3 calc_point_light(PointLight light, vec3 normal, vec3 frag_pos, vec3 view_dir){
     vec3 light_dir = normalize(light.position - frag_pos); 

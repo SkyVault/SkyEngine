@@ -10,10 +10,12 @@
 typedef int NodeId;
 
 struct NState {
-    int active;
-    int hot;
-    float value;
+    uint8_t active;
+    uint8_t hot;
+    uint8_t init;
     int cursor;
+    float value;
+    float last_value;
 };
 
 static struct {
@@ -41,6 +43,17 @@ bool DoTextInput(NodeId id, char* buffer, size_t buffer_size, float x, float y,
 
 int DoToggleGroupV(NodeId id, const char* names, float x, float y,
                    float* out_width);
+
+bool DoCheckBox(NodeId id, float x, float y, float width, float height);
+
+Vector4 CTV4(Color c);
+Color V4TC(Vector4 v);
+
+Color DoColorPicker(NodeId id, float x, float y, float width, float height,
+                    Color color);
+
+float DoSlider(NodeId id, float x, float y, float width, float height,
+               float min, float max);
 
 void Lock();
 void Unlock();

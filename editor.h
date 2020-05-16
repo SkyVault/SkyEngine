@@ -32,10 +32,13 @@ typedef struct {
     int which;
     int y;
 
+    float light_panel_y;
+
     int object_placement_type;
 
     bool do_export_modal;
     bool do_load_modal;
+    bool do_lights_panel;
 
     int num_maps;
     char** maps;

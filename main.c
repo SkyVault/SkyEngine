@@ -359,33 +359,6 @@ int main() {
     glBlendEquation(GL_FUNC_ADD);
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
-    SetShaderValue(*shader,
-                   GetShaderLocation(*shader, "point_lights[0].position"),
-                   &(Vector3){0, 0, 0}, UNIFORM_VEC3);
-
-    SetShaderValue(*shader,
-                   GetShaderLocation(*shader, "point_lights[0].constant"),
-                   &(float[]){1.0f}, UNIFORM_FLOAT);
-
-    SetShaderValue(*shader,
-                   GetShaderLocation(*shader, "point_lights[0].linear"),
-                   &(float[]){0.09f}, UNIFORM_FLOAT);
-
-    SetShaderValue(*shader,
-                   GetShaderLocation(*shader, "point_lights[0].quadratic"),
-                   &(float[]){0.032}, UNIFORM_FLOAT);
-
-    SetShaderValue(*shader,
-                   GetShaderLocation(*shader, "point_lights[0].diffuse"),
-                   &(Vector3){1, 1, 1}, UNIFORM_VEC3);
-
-    SetShaderValue(*shader,
-                   GetShaderLocation(*shader, "point_lights[0].specular"),
-                   &(Vector3){1, 1, 1}, UNIFORM_VEC3);
-
-    SetShaderValue(*shader, GetShaderLocation(*shader, "num_point_lights"),
-                   &(int){1}, UNIFORM_INT);
-
     while (!WindowShouldClose() && game->state == STATE_RUNNING) {
         map = game->map;
         switch (game->scene) {

@@ -174,6 +174,89 @@ int DoToggleGroupV(NodeId id, const char* names, float x, float y,
     return state->cursor;
 }
 
+float DoSlider(NodeId id, float x, float y, float width, float height,
+               float min, float max) {
+    struct NState* state = &GuiState.states[id];
+
+    float drag_x = x + width * (state->value / max);
+
+    if (state->init == 0) {
+        state->last_value = drag_x;
+        state->value = min;
+        state->init = 1;
+    }
+
+    state->hot = CheckCollisionPointRec(GetMousePosition(),
+                                        (Rectangle){x, y, width, height});
+
+    float mx = (GetMouseX() - x);
+    drag_x = x + mx;
+
+    state->active =
+        state->hot &&
+        CheckCollisionPointRec(GetMousePosition(),
+                               (Rectangle){drag_x, y, width, width}) &&
+        IsMouseButtonDown(MOUSE_LEFT_BUTTON);
+
+    if (state->active) {
+        state->last_value = drag_x;
+        float perc = mx / width;
+        state->value = min + (max - min) * perc;
+    }
+
+    Color color = WHITE;
+    if (state->active) color = (Color){100, 100, 100, 255};
+
+    DoPanel(id, x, y, width, height);
+
+    DrawRectangle(state->last_value, y, height, height, color);
+    DrawRectangleLines(state->last_value, y, height, height, RED);
+
+    return state->value;
+}
+
+Color DoColorPicker(NodeId id, float x, float y, float width, float height,
+                    Color color) {
+    DrawRectangle(x, y, height, height, color);
+}
+
+bool DoCheckBox(NodeId id, float x, float y, float width, float height) {
+    struct NState* state = &GuiState.states[id];
+
+    Rectangle rect = {x + GuiState.px, y + GuiState.py, width, height};
+
+    state->hot = CheckCollisionPointRec(GetMousePosition(), rect);
+
+    if (state->hot && IsMouseButtonPressed(MOUSE_LEFT_BUTTON)) {
+        state->active = !state->active;
+    }
+
+    // Draw the button
+    DoPanel(id, x, y, width, height);
+
+    if (state->active) DrawRectangle(x + 1, y + 1, width - 2, height - 2, RED);
+
+    return Active(id);
+}
+
+Vector4 CTV4(Color c) {
+    return (Vector4){
+        c.r / 255.0f,
+        c.g / 255.0f,
+        c.b / 255.0f,
+        c.a / 255.0f,
+    };
+}
+
+Color V4TC(Vector4 v) {
+    return (Color){
+        (unsigned char)(v.x * 255),
+        (unsigned char)(v.y * 255),
+        (unsigned char)(v.z * 255),
+        (unsigned char)(v.w * 255),
+    };
+}
+
 void Lock() { GuiState.locked = true; }
 
 void Unlock() { GuiState.locked = false; }

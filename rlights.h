@@ -41,7 +41,7 @@
 
 #include "raylib.h"
 
-#define MAX_LIGHTS 20  // Max dynamic lights supported by shader
+#define MAX_LIGHTS 6  // Max dynamic lights supported by shader
 
 // Light data
 typedef struct {

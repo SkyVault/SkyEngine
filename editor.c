@@ -19,6 +19,7 @@ Ed* create_editor() {
     editor->which = 0;
     editor->model = 0;
     editor->y = 0;
+    editor->light_panel_y = GetScreenHeight();
     editor->object_placement_type = PLACE_BLOCKS;
     editor->do_export_modal = false;
     editor->do_load_modal = false;
@@ -224,22 +225,6 @@ void render_editor_ui(Ed* self, Map* map, Game* game) {
 
     int id = 100;
 
-    int y = 0;
-    for (int i = self->num_notes - 1; i >= 0; i--) {
-        Note note = self->notes[i];
-
-        if (!note.active) continue;
-
-        Rectangle r = {(float)GetScreenWidth() - 200.0f,
-                       (float)GetScreenHeight() - (NOTE_HEIGHT * (y + 1.0f)),
-                       200, NOTE_HEIGHT};
-        DoFrame(id++, r.x - 4.0f, r.y - 4.0f - ((y + 1.0f) * 4.0f),
-                r.width + 8.0f, r.height + 8.0f);
-        DoLabel(id - 1, note.mesg, r.x, r.y - ((y + 1.0f) * 4.0f), r.width,
-                r.height, 20);
-        y++;
-    }
-
     static float height = 0.f;
 
     int last = self->object_placement_type;
@@ -251,6 +236,10 @@ void render_editor_ui(Ed* self, Map* map, Game* game) {
         DoCenterXLabel(id++, (float)GetScreenWidth(),
                        (float)GetScreenHeight() / 2 + 50.0f, 30,
                        "Player start");
+    }
+
+    if (DoCheckBox(id++, 100, 100, 20, 20)) {
+        printf("Hello%f\n", rand_f());
     }
 
     // Export button
@@ -336,6 +325,62 @@ void render_editor_ui(Ed* self, Map* map, Game* game) {
 
     if (last != self->object_placement_type) {
         self->model = 0;
+    }
+
+    // Lights
+
+    DoPanel(id++, GetScreenWidth() - 400.0f, self->light_panel_y + 30, 400,
+            GetScreenHeight());
+
+    const float lx = GetScreenWidth() - 400;
+
+    float cursor_y = self->light_panel_y;
+    if (DoBtn(id++, lx, cursor_y, 200, 30,
+              TextFormat("%s Lights", (self->do_lights_panel ? "+" : "-")))) {
+        self->do_lights_panel = !self->do_lights_panel;
+    }
+
+    if (!self->do_lights_panel) {
+        self->light_panel_y =
+            lerp(GetFrameTime() * 10.0f, self->light_panel_y, 30);
+        // Do lights panel
+
+        cursor_y += 30;
+
+        if (DoBtn(id++, lx + 2, cursor_y + 2, 30, 30, "+")) {
+            Light* light = &map->lights[map->num_lights++];
+            light->enabled = true;
+            light->color = YELLOW;
+            UpdateLightValues(game->assets->shaders[SHADER_PHONG_LIGHTING],
+                              *light);
+        }
+
+        cursor_y += 32;
+
+        for (int i = 0; i < map->num_lights; i++) {
+            Light light = map->lights[i];
+            if (!light.enabled) continue;
+        }
+
+    } else {
+        self->light_panel_y = lerp(GetFrameTime() * 10.0f, self->light_panel_y,
+                                   GetScreenHeight() - 30);
+    }
+
+    int y = 0;
+    for (int i = self->num_notes - 1; i >= 0; i--) {
+        Note note = self->notes[i];
+
+        if (!note.active) continue;
+
+        Rectangle r = {(float)GetScreenWidth() - 200.0f,
+                       (float)GetScreenHeight() - (NOTE_HEIGHT * (y + 1.0f)),
+                       200, NOTE_HEIGHT};
+        DoFrame(id++, r.x - 4.0f, r.y - 4.0f - ((y + 1.0f) * 4.0f),
+                r.width + 8.0f, r.height + 8.0f);
+        DoLabel(id - 1, note.mesg, r.x, r.y - ((y + 1.0f) * 4.0f), r.width,
+                r.height, 20);
+        y++;
     }
 }
 

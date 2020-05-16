@@ -15,7 +15,7 @@ out vec4 finalColor;
 
 // NOTE: Add here your custom variables
 
-#define     MAX_LIGHTS             20 
+#define     MAX_LIGHTS              6
 #define     LIGHT_DIRECTIONAL       0
 #define     LIGHT_POINT             1
 
@@ -71,17 +71,14 @@ void main()
 
             float dist = length(lights[i].position - fragPosition);
             
+            float atten = 1.0 / (constant + linear * dist + quadratic * (dist * dist));
+
             float NdotL = max(dot(normal, light), 0.0);
-            lightDot += lights[i].color.rgb*NdotL;
+            lightDot += lights[i].color.rgb*NdotL*atten;
 
             float specCo = 0.0;
             if (NdotL > 0.0) specCo = pow(max(0.0, dot(viewD, reflect(-(light), normal))), 16); // 16 refers to shine
-            specular += specCo;
-
-            float atten = 1.0 / (constant + linear * dist + quadratic * (dist * dist));
-
-            lightDot *= atten;
-            specular *= atten;
+            specular += specCo*atten;
         }
     }
 
