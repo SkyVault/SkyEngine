@@ -25,8 +25,6 @@ Ed* create_editor() {
     editor->do_load_modal = false;
     editor->maps = GetDirectoryFiles("resources/maps/", &editor->num_maps);
 
-    memset(editor->light_color_index, 0, sizeof(int) * MAX_LIGHTS);
-
     return editor;
 }
 
@@ -383,20 +381,19 @@ void render_editor_ui(Ed* self, Map* map, Game* game) {
 
                 DoLabel(id++, "Color", lx + 30, cursor_y, 100, 30, 30);
                 DrawRectangle(lx + 30 + 100, cursor_y, 30, 30,
-                              LightColors[self->light_color_index[i]]);
+                              LightColors[map->light_color[i]]);
 
                 if (DoClickRegion(id++, lx + 30 + 100, cursor_y, 30, 30,
                                   light.color)) {
-                    self->light_color_index[i]++;
-                    self->light_color_index[i] %=
+                    map->light_color[i]++;
+                    map->light_color[i] %=
                         (sizeof(LightColors) / sizeof(LightColors[0]));
-                    map->lights[i].color =
-                        LightColors[self->light_color_index[i]];
+                    map->lights[i].color = LightColors[map->light_color[i]];
                 }
 
                 cursor_y += 32;
 
-                map->lights[i].position = (Vector3){x, y, z};
+                // map->lights[i].position = (Vector3){x, y, z};
                 UpdateLightValues(*shader, map->lights[i]);
 
             } else {
@@ -460,6 +457,16 @@ void serialize_map(Ed* editor, Map* map, Game* game, const char* path) {
         it += sprintf(it, "@[%f %f %f %f %f %f %f %f]\n", p.region.x,
                       p.region.y, p.region.width, p.region.height, p.position.x,
                       p.position.y, p.position.z, p.scale);
+    }
+
+    it += sprintf(it, "]\n   :lights @[\n");
+
+    for (int i = 0; i < MAX_LIGHTS; i++) {
+        Light light = map->lights[i];
+
+        it += sprintf(it, "@[%s  %f %f %f  %d]\n",
+                      (light.enabled ? "true" : "false"), light.position.x,
+                      light.position.y, light.position.z, map->light_color[i]);
     }
 
     it += sprintf(it, "]}");

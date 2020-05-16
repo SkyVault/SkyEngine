@@ -152,6 +152,9 @@ Map *load_map_from_script(const char *path, Game *game) {
     JanetArray *props_arr = janet_unwrap_array(
         janet_table_get(result_table, janet_ckeywordv("props")));
 
+    JanetArray *lights_arr = janet_unwrap_array(
+        janet_table_get(result_table, janet_ckeywordv("lights")));
+
     assert(size_arr->count == 2);
 
     result->width = janet_unwrap_integer(size_arr->data[0]);
@@ -165,18 +168,20 @@ Map *load_map_from_script(const char *path, Game *game) {
 
     Shader *shader = &game->assets->shaders[SHADER_PHONG_LIGHTING];
 
+    memset(result->light_color, 0, sizeof(int) * MAX_LIGHTS);
     result->num_lights = 1;
-    result->lights[0] =
-        CreateLight(LIGHT_POINT, (Vector3){40, 1, 40}, Vector3Zero(),
-                    (Color){255, 255, 255}, *shader);
-    result->lights[0].enabled = true;
 
-    for (int i = 1; i < MAX_LIGHTS; i++) {
-        result->lights[i] = CreateLight(LIGHT_POINT, Vector3Zero(),
-                                        Vector3Zero(), WHITE, *shader);
-        result->lights[i].enabled = false;
-        UpdateLightValues(*shader, result->lights[i]);
-    }
+    // result->lights[0] =
+    //     CreateLight(LIGHT_POINT, (Vector3){40, 1, 40}, Vector3Zero(),
+    //                 (Color){255, 255, 255}, *shader);
+    // result->lights[0].enabled = true;
+
+    // for (int i = 1; i < MAX_LIGHTS; i++) {
+    //     result->lights[i] = CreateLight(LIGHT_POINT, Vector3Zero(),
+    //                                     Vector3Zero(), WHITE, *shader);
+    //     result->lights[i].enabled = false;
+    //     UpdateLightValues(*shader, result->lights[i]);
+    // }
 
     for (int prop = 0; prop < props_arr->count; prop++) {
         JanetArray *prop_arr = janet_unwrap_array(props_arr->data[prop]);
@@ -197,6 +202,27 @@ Map *load_map_from_script(const char *path, Game *game) {
         };
 
         printf("props: %d\n", result->num_props);
+    }
+
+    if (lights_arr != NULL) {
+        for (int light = 0; light < lights_arr->count; light++) {
+            JanetArray *light_arr = janet_unwrap_array(lights_arr->data[light]);
+
+            bool enabled = (bool)janet_unwrap_boolean(light_arr->data[0]);
+            float x = (float)janet_unwrap_number(light_arr->data[1]);
+            float y = (float)janet_unwrap_number(light_arr->data[2]);
+            float z = (float)janet_unwrap_number(light_arr->data[3]);
+            int light_index = (int)janet_unwrap_integer(light_arr->data[4]);
+
+            result->light_color[light] = light_index;
+            result->lights[light] =
+                CreateLight(LIGHT_POINT, (Vector3){x, y, z}, Vector3Zero(),
+                            LightColors[result->light_color[light]], *shader);
+            result->lights[light].enabled = enabled;
+            UpdateLightValues(*shader, result->lights[light]);
+        }
+
+        result->num_lights = lights_arr->count;
     }
 
     for (int layer = 0; layer < layers_arr->count; layer++) {

@@ -285,7 +285,7 @@ int main() {
     // SetTraceLogCallback(custom_logger);
 
     InitWindow(SCREEN_WIDTH, SCREEN_HEIGHT, "DevWindow");
-    SetTargetFPS(60);
+    // SetTargetFPS(85);
 
     // glew
     GLenum err = glewInit();

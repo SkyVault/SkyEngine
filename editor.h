@@ -20,12 +20,6 @@ typedef struct Note {
     bool active;
 } Note;
 
-#undef CLITERAL
-#define CLITERAL
-static Color LightColors[] = {WHITE,  RED,    GREEN,  BLUE,  SKYBLUE,
-                              YELLOW, PURPLE, ORANGE, BROWN, BLACK};
-#define CLITERAL (Color)
-
 typedef struct {
     bool open;
 
@@ -42,8 +36,6 @@ typedef struct {
     float placement_toggle_height;
 
     int object_placement_type;
-
-    int light_color_index[MAX_LIGHTS];
 
     bool do_export_modal;
     bool do_load_modal;
