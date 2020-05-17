@@ -47,6 +47,8 @@ void main()
     vec3 viewD = normalize(viewPos - fragPosition);
     vec3 specular = vec3(0.0);
 
+    if (texelColor.a < 0.1) discard;
+
     float constant = 1.0; 
     float linear = 0.09;
     float quadratic = 0.032;

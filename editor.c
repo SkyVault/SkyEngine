@@ -38,12 +38,26 @@ void push_message(Ed* self, const char* mesg) {
 
 void do_mouse_picking(Ed* self, Map* map, Game* game) {}
 
+void render_console(Ed* self, Map* map, Game* game, int id) {
+    if (self->do_console) {
+        self->console_y =
+            lerp(GetTime(), self->console_y, GetScreenHeight() / 4);
+    } else {
+        self->console_y = lerp(GetTime(), self->console_y, 0);
+    }
+}
+
 void update_editor(Ed* self, Map* map, Game* game) {
     game->noclip = self->open;
-    if (IsKeyPressed(KEY_BACKSLASH)) self->open = !self->open;
+    if ((IsKeyPressed(KEY_TAB) && IsKeyDown(KEY_LEFT_SHIFT)))
+        self->open = !self->open;
 
     if (IsKeyPressed(KEY_E)) {
         self->do_export_modal = true;
+    }
+
+    if (IsKeyPressed(KEY_GRAVE)) {
+        self->do_console = !self->do_console;
     }
 
     if (!self->open) return;
@@ -267,8 +281,10 @@ void render_editor_ui(Ed* self, Map* map, Game* game) {
             sprintf(path, "resources/maps/%s.janet", load_buff);
 
             if (FileExists(path) == false) {
-                push_message(self,
-                             FormatText("File [%s] does not exist", path));
+                tstr msg = talloc(512);
+                sprintf(msg, "File [%s] does not exist", path);
+
+                push_message(self, msg);
             } else {
                 game->map = load_map_from_script(path, game);
             }
@@ -411,7 +427,7 @@ void render_editor_ui(Ed* self, Map* map, Game* game) {
                                    GetScreenHeight() - 30);
     }
 
-    id += 1000;
+    id += 500;
 
     int y = 0;
     for (int i = self->num_notes - 1; i >= 0; i--) {
@@ -428,6 +444,8 @@ void render_editor_ui(Ed* self, Map* map, Game* game) {
                 r.height, 20);
         y++;
     }
+
+    render_console(self, map, game, id + 100);
 }
 
 void serialize_map(Ed* editor, Map* map, Game* game, const char* path) {

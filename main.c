@@ -344,7 +344,7 @@ int main() {
                    GetShaderLocation(*cubemap_shader, "equirectagular_map"),
                    (int[1]){0}, UNIFORM_INT);
 
-    Texture2D skybox_texture = LoadTexture("resources/skybox_1.hdr");
+    Texture2D skybox_texture = LoadTexture("resources/textures/skybox_2.png");
     game->skybox.materials[0].maps[MAP_CUBEMAP].texture =
         GenTextureCubemap(*cubemap_shader, skybox_texture, 512);
 
@@ -356,6 +356,14 @@ int main() {
     Map *map = game->map;
 
     assemble(ACTOR_PLAYER, game, map->player_x, 0, map->player_z, 0, 0);
+
+    Model terrain_m = LoadModel("resources/models/terrain.obj");
+    EntStruct *terrain = create_and_get_ent(ecs);
+    add_comp_obj(ecs, terrain, Model, terrain_m);
+    add_comp(
+        ecs, terrain, Transform,
+        .translation = (Vector3){(32 * CUBE_SIZE) / 2, 8, (32 * CUBE_SIZE / 2)},
+        .rotation = QuaternionIdentity(), .scale = (Vector3){5.3, 5.3, 5.3});
 
     // #if defined _DEBUG
     Ed *editor = create_editor();

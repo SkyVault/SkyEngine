@@ -3,6 +3,8 @@
 
 #include "utils.h"
 
+// NOTE(Dustin): To implement AI, do that in the behaviours.cpp file
+
 #define ENTITY_TYPES(I)     \
     I(ACTOR_PLAYER)         \
     I(ACTOR_PINEAPPLE_BOMB) \

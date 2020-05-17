@@ -33,6 +33,7 @@ typedef struct {
     int y;
 
     float light_panel_y;
+    float console_y;
     float placement_toggle_height;
 
     int object_placement_type;
@@ -40,6 +41,7 @@ typedef struct {
     bool do_export_modal;
     bool do_load_modal;
     bool do_lights_panel;
+    bool do_console;
 
     int num_maps;
     char** maps;
