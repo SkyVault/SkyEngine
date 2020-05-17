@@ -91,7 +91,7 @@ void main()
     // Fog
     float dist = length(viewPos - fragPosition);
 
-    const vec4 fogColor = vec4(0.4, 0.8, 1.0, 0.5);
+    const vec4 fogColor = vec4(0.0, 0.0, 0.0, 0.5);
 
     float fogDensity = 0.0015;
     float fogFactor = 1.0/exp((dist*fogDensity*8)*(dist*fogDensity));

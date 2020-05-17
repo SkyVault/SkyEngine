@@ -310,8 +310,8 @@ int main() {
 
     // Define the camera to look into our 3d world (position, target, up vector)
     Camera camera = {0};
-    camera.position = (Vector3){10.0f, 1.85f, 20.0f};
-    camera.target = (Vector3){0.0f, 1.8f, 0.0f};
+    camera.position = (Vector3){10.0f, 0.8f, 10.0f};
+    camera.target = (Vector3){0.0f, 0.8f, 0.0f};
     camera.up = (Vector3){0.0f, 1.0f, 0.0f};
     camera.fovy = 75.0f;
     camera.type = CAMERA_PERSPECTIVE;
