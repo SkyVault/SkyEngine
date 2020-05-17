@@ -3,11 +3,12 @@
 
 #include <inttypes.h>
 
+#include "constants.h"
 #include "prop.h"
 #include "raylib.h"
 #include "rlights.h"
 
-#define CUBE_SIZE (5)
+#define CUBE_SIZE GLOBAL_SCALE
 #define CUBE_HEIGHT (CUBE_SIZE * 2)
 
 #define MAX_MAP_WIDTH (100)

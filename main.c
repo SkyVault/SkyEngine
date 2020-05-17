@@ -5,6 +5,7 @@
 #include "assembler.h"
 #include "assets.h"
 #include "behaviours.h"
+#include "constants.h"
 #include "ecs.h"
 #include "editor.h"
 #include "game.h"
@@ -310,10 +311,10 @@ int main() {
 
     // Define the camera to look into our 3d world (position, target, up vector)
     Camera camera = {0};
-    camera.position = (Vector3){10.0f, 0.8f, 10.0f};
-    camera.target = (Vector3){0.0f, 0.8f, 0.0f};
+    camera.position = (Vector3){1.0f, ACTOR_HEIGHT, 1.0f};
+    camera.target = (Vector3){0.0f, 0.0f, 0.0f};
     camera.up = (Vector3){0.0f, 1.0f, 0.0f};
-    camera.fovy = 75.0f;
+    camera.fovy = FOV;
     camera.type = CAMERA_PERSPECTIVE;
 
     Assets *assets = create_and_load_assets();
@@ -355,7 +356,8 @@ int main() {
     game->map = load_map_from_script("resources/maps/edit.janet", game);
     Map *map = game->map;
 
-    assemble(ACTOR_PLAYER, game, map->player_x, 0, map->player_z, 0, 0);
+    assemble(ACTOR_PLAYER, game, map->player_x, (ACTOR_HEIGHT - GLOBAL_SCALE),
+             map->player_z, 0, 0);
 
     Model terrain_m = LoadModel("resources/models/terrain.obj");
     terrain_m.materials[0].maps[MAP_DIFFUSE].texture =
@@ -364,10 +366,11 @@ int main() {
 
     EntStruct *terrain = create_and_get_ent(ecs);
     add_comp_obj(ecs, terrain, Model, terrain_m);
-    add_comp(
-        ecs, terrain, Transform,
-        .translation = (Vector3){(32 * CUBE_SIZE) / 2, 8, (32 * CUBE_SIZE / 2)},
-        .rotation = QuaternionIdentity(), .scale = (Vector3){5.3, 5.3, 5.3});
+    add_comp(ecs, terrain, Transform,
+             .translation =
+                 (Vector3){(32 * CUBE_SIZE) / 2, 1.49, (32 * CUBE_SIZE / 2)},
+             .rotation = QuaternionIdentity(),
+             .scale = (Vector3){1.0, 1.0, 1.0});
 
     // #if defined _DEBUG
     Ed *editor = create_editor();

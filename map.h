@@ -19,9 +19,9 @@
 #include "rlights.h"
 
 static const Prop prop_types[] = {
-    {.region = {0, 0, 420, 420}, .position = {0, 0, 0}, .scale = 2.0f},
-    {.region = {420, 0, 420, 420}, .position = {0, 0, 0}, .scale = 2.0f},
-    {.region = {840, 0, 420, 420}, .position = {0, 0, 0}, .scale = 2.0f},
+    {.region = {0, 0, 419, 420}, .position = {0, 0, 0}, .scale = 1.0f},
+    {.region = {420, 0, 419, 420}, .position = {0, 0, 0}, .scale = 1.0f},
+    {.region = {840, 0, 419, 420}, .position = {0, 0, 0}, .scale = 1.0f},
 };
 
 Map *load_map_from_script(const char *path, Game *game);

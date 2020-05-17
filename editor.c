@@ -80,14 +80,14 @@ void update_editor(Ed* self, Map* map, Game* game) {
         if (IsKeyPressed(KEY_SPACE)) {
             self->y++;
             get_comp(game->ecs, player, Transform)->translation.y =
-                self->y * (float)CUBE_SIZE;
+                self->y * (float)CUBE_SIZE + (GLOBAL_SCALE - ACTOR_HEIGHT);
         }
 
         if (IsKeyPressed(KEY_LEFT_SHIFT)) {
             self->y--;
             if (self->y < 0) self->y = 0;
             get_comp(game->ecs, player, Transform)->translation.y =
-                self->y * (float)CUBE_SIZE;
+                self->y * (float)CUBE_SIZE + (ACTOR_HEIGHT - GLOBAL_SCALE);
         }
     }
 
@@ -116,23 +116,41 @@ void update_editor(Ed* self, Map* map, Game* game) {
 void render_editor(Ed* self, Map* map, Game* game) {
     if (!self->open) return;
 
-    Vector3 loc = game->camera->target;
+    Vector3 loc = Vector3Zero();
 
     static float dist = 1.0f;
     dist += GetMouseWheelMove() * 0.05f;
+
+    EntId player_id = get_first_with(game->ecs, Player);
+
+    float angle = 0.0f;
+
+    if (player_id >= 0) {
+        EntStruct* player = get_ent(game->ecs, player_id);
+        angle = get_comp(game->ecs, player, Player)->rotation;
+    }
+
+    // Get the rotation of the camera
+    // float angle = Vector3 game->camera->target;
+
+    loc.x = game->camera->position.x + cosf(angle) * 2;
+    loc.y = self->y * (float)(GLOBAL_SCALE);
+    loc.z = game->camera->position.z + sinf(angle) * 2;
 
     // loc.x *= dist;
     // loc.y *= dist;
     // loc.z *= dist;
 
     const int cs = CUBE_SIZE;
+    Vector3 clamped = (Vector3){ceil(loc.x), ceil(loc.y), ceil(loc.z)};
+    // clamped.x -= 1;
+    clamped.z -= 1;
 
-    Vector3 clamped = (Vector3){((int)(loc.x / cs) * cs) + cs / 2, cs * self->y,
-                                ((int)(loc.z / cs) * cs) + cs / 2};
+    if (IsKeyDown(KEY_LEFT_ALT)) clamped = loc;
 
     float occ = (1.0f + cosf((float)GetTime() * 10.0f)) * 0.5f;
 
-    DrawCylinder((Vector3){map->player_x, -3.0f, map->player_z}, 1.0f, 1.0f,
+    DrawCylinder((Vector3){map->player_x, -3.0f, map->player_z}, 0.2f, 0.2f,
                  4.0f, 20, (Color){0, 100, 255, 100});
 
     if (self->object_placement_type == PLACE_BLOCKS) {

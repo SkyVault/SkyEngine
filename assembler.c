@@ -5,8 +5,7 @@ EntId ACTOR_PLAYER_C(Game* game, float x, float y, float z, float vx,
     EntId player_id = create_ent(game->ecs);
     EntStruct* player = get_ent(game->ecs, player_id);
 
-    add_comp(game->ecs, player, Transform,
-             .translation = (Vector3){x, 1.0f, z});
+    add_comp(game->ecs, player, Transform, .translation = (Vector3){x, y, z});
     add_comp(game->ecs, player, Player, .n = 0);
     add_comp_obj(game->ecs, player, Physics, create_physics());
     return player_id;
@@ -35,7 +34,7 @@ EntId ACTOR_GIRL_1_C(Game* game, float x, float y, float z, float vx,
 
     add_comp(game->ecs, self, Billboard,
              .texture = game->assets->textures[TEX_GIRL_1],
-             .material = (Material){0}, .scale = 6);
+             .material = (Material){0}, .scale = GLOBAL_SCALE);
 
     add_comp_obj(game->ecs, self, Actor, create_enemy_actor(ACTOR_GIRL_1));
 
@@ -52,7 +51,7 @@ EntId ACTOR_GIRL_2_C(Game* game, float x, float y, float z, float vx,
 
     add_comp(game->ecs, self, Billboard,
              .texture = game->assets->textures[TEX_GIRL_2],
-             .material = (Material){0}, .scale = 6);
+             .material = (Material){0}, .scale = GLOBAL_SCALE);
 
     add_comp_obj(game->ecs, self, Actor, create_enemy_actor(ACTOR_GIRL_2));
 
@@ -69,7 +68,7 @@ EntId ACTOR_GIRL_3_C(Game* game, float x, float y, float z, float vx,
 
     add_comp(game->ecs, self, Billboard,
              .texture = game->assets->textures[TEX_GIRL_3],
-             .material = (Material){0}, .scale = 6);
+             .material = (Material){0}, .scale = GLOBAL_SCALE);
 
     add_comp_obj(game->ecs, self, Actor, create_enemy_actor(ACTOR_GIRL_3));
 
@@ -86,7 +85,7 @@ EntId ACTOR_GIRL_4_C(Game* game, float x, float y, float z, float vx,
 
     add_comp(game->ecs, self, Billboard,
              .texture = game->assets->textures[TEX_GIRL_4],
-             .material = (Material){0}, .scale = 6);
+             .material = (Material){0}, .scale = GLOBAL_SCALE);
 
     add_comp_obj(game->ecs, self, Actor, create_enemy_actor(ACTOR_GIRL_4));
 

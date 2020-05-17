@@ -16,6 +16,8 @@
 typedef struct {
     int n;
 
+    float rotation;
+
     Texture2D holding;
 } Player;
 
@@ -42,7 +44,7 @@ typedef struct {
 
 static CameraData CAMERA = {.mode = 0,
                             .targetDistance = 0,
-                            .playerEyesPosition = 1.85f,
+                            .playerEyesPosition = ACTOR_HEIGHT,
                             .angle = {0},
                             .moveControl = {KEY_W, 'S', 'D', 'A', 'E', 'Q'},
                             .smoothZoomControl = 341,

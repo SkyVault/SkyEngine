@@ -1,6 +1,6 @@
 #include "player.h"
 
-#define PLAYER_MOVEMENT_SENSITIVITY (0.5f)
+#define PLAYER_MOVEMENT_SENSITIVITY (1.0f)
 #define CAMERA_MOUSE_MOVE_SENSITIVITY 0.003f
 #define CAMERA_MOUSE_SCROLL_SENSITIVITY 1.5f
 #define CAMERA_FIRST_PERSON_MOUSE_SENSITIVITY 0.003f
@@ -58,8 +58,8 @@ void throw_orange(EcsWorld* ecs, Vector3 pos, float angle, float yaw,
     EntStruct* bullet = get_ent(ecs, bullet_id);
 
     pos.x += cosf(angle);
-    pos.z += sinf(angle);
     pos.y -= 0.5f;
+    pos.z += sinf(angle);
 
     add_comp(ecs, bullet, Transform, .translation = pos);
     add_comp_obj(ecs, bullet, Physics, create_physics());
@@ -86,15 +86,15 @@ void throw_pineapple(EcsWorld* ecs, Vector3 pos, float angle, float yaw,
     EntStruct* bullet = get_ent(ecs, bullet_id);
 
     pos.x += cosf(angle);
-    pos.z += sinf(angle);
     pos.y -= 0.5f;
+    pos.z += sinf(angle);
 
     add_comp(ecs, bullet, Transform, .translation = pos);
     add_comp_obj(ecs, bullet, Physics, create_physics());
     add_comp(ecs, bullet, Actor, .type = ACTOR_PINEAPPLE_BOMB, .state = IDLE);
 
     add_comp(ecs, bullet, Billboard, .texture = ass->textures[TEX_PINEAPPLE],
-             .material = (Material){0}, .scale = 1.8);
+             .material = (Material){0}, .scale = ACTOR_HEIGHT);
 
     add_comp(ecs, bullet, TimedDestroy, .time_left = 4.0f, .done = false);
     add_comp(ecs, bullet, PlayerHit, .damage = 1.0f);
@@ -122,6 +122,8 @@ void update_player(EcsWorld* ecs, Assets* ass, Game* game, EntId id) {
     Player* player = get_comp(ecs, self, Player);
 
     const float angle = PI * 2 - CAMERA.angle.x - PI / 2;
+
+    player->rotation = angle;
 
     // Shoot
     if (!game->noclip) {

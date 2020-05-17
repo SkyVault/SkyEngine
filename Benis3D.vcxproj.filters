@@ -21,6 +21,9 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="constants.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
     <ClInclude Include="billboard.h">
       <Filter>Source Files</Filter>
     </ClInclude>
