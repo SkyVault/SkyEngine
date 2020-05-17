@@ -358,6 +358,10 @@ int main() {
     assemble(ACTOR_PLAYER, game, map->player_x, 0, map->player_z, 0, 0);
 
     Model terrain_m = LoadModel("resources/models/terrain.obj");
+    terrain_m.materials[0].maps[MAP_DIFFUSE].texture =
+        game->assets->textures[TEX_GRASS_1];
+    terrain_m.materials[0].shader = assets->shaders[SHADER_PHONG_LIGHTING];
+
     EntStruct *terrain = create_and_get_ent(ecs);
     add_comp_obj(ecs, terrain, Model, terrain_m);
     add_comp(

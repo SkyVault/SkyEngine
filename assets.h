@@ -27,6 +27,9 @@ enum Textures {
     TEX_GIRL_3,
     TEX_GIRL_4,
 
+    // Terrain Textures
+    TEX_GRASS_1,
+
     TEX_NUM_TEXTURES,
 };
 

@@ -13,8 +13,6 @@ uniform vec4 colDiffuse;
 // Output fragment color
 out vec4 finalColor;
 
-// NOTE: Add here your custom variables
-
 #define     MAX_LIGHTS             10 
 #define     LIGHT_DIRECTIONAL       0
 #define     LIGHT_POINT             1
@@ -93,9 +91,9 @@ void main()
     // Fog
     float dist = length(viewPos - fragPosition);
 
-    const vec4 fogColor = vec4(0.0, 0.0, 0.0, 1.0);
+    const vec4 fogColor = vec4(0.4, 0.8, 1.0, 0.5);
 
-    float fogDensity = 0.015 * 0;
+    float fogDensity = 0.0015;
     float fogFactor = 1.0/exp((dist*fogDensity*8)*(dist*fogDensity));
 
     fogFactor = clamp(fogFactor, 0.0, 1.0);

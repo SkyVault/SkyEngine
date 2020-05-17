@@ -27,6 +27,7 @@ Assets* create_and_load_assets() {
                 [TEX_GIRL_2] = LoadTexture("resources/girls/girl_2.png"),
                 [TEX_GIRL_3] = LoadTexture("resources/girls/girl_3.png"),
                 [TEX_GIRL_4] = LoadTexture("resources/girls/girl_4.png"),
+                [TEX_GRASS_1] = LoadTexture("resources/textures/grass_1.png"),
             },
 
         .shaders =
