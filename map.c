@@ -155,6 +155,9 @@ Map *load_map_from_script(const char *path, Game *game) {
     JanetArray *lights_arr = janet_unwrap_array(
         janet_table_get(result_table, janet_ckeywordv("lights")));
 
+    JanetArray *actors_arr = janet_unwrap_array(
+        janet_table_get(result_table, janet_ckeywordv("actors")));
+
     assert(size_arr->count == 2);
 
     result->width = janet_unwrap_integer(size_arr->data[0]);
@@ -232,6 +235,23 @@ Map *load_map_from_script(const char *path, Game *game) {
         result->lights[0].enabled = true;
         UpdateLightValues(*shader, result->lights[0]);
         result->num_lights = 1;
+    }
+
+    if (actors_arr != NULL) {
+        for (int actor_i = 0; actor_i < actors_arr->count; actor_i++) {
+            JanetArray *actor_arr =
+                janet_unwrap_array(actors_arr->data[actor_i]);
+
+            int type = (int)janet_unwrap_integer(actor_arr->data[0]);
+            float x = (float)janet_unwrap_number(actor_arr->data[1]);
+            float y = (float)janet_unwrap_number(actor_arr->data[2]);
+            float z = (float)janet_unwrap_number(actor_arr->data[3]);
+            result->spawns[result->num_spawns++] = (ActorSpawn){
+                .type = ACTOR_GIRL_1 + type,
+                .position = (Vector3){x, y, z},
+            };
+            assemble(ACTOR_GIRL_1 + type, game, x, y, z, 0, 0);
+        }
     }
 
     for (int layer = 0; layer < layers_arr->count; layer++) {

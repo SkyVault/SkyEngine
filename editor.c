@@ -148,10 +148,11 @@ void render_editor(Ed* self, Map* map, Game* game) {
         DrawBillboard(*game->camera, tex, loc, CUBE_SIZE, WHITE);
 
         if (IsMouseButtonPressed(MOUSE_LEFT_BUTTON) && !game->lock_camera) {
-            assemble(ACTOR_GIRL_1 + self->model, game, loc.x, 0, loc.z, 0, 0);
+            assemble(ACTOR_GIRL_1 + self->model, game, loc.x, loc.y, loc.z, 0,
+                     0);
             map->spawns[map->num_spawns++] = (ActorSpawn){
                 .type = ACTOR_GIRL_1 + self->model,
-                .position = (Vector3){loc.x, 0, loc.z},
+                .position = (Vector3){loc.x, loc.y, loc.z},
             };
         }
     } else if (self->object_placement_type == PLACE_PROPS) {
@@ -430,7 +431,7 @@ void render_editor_ui(Ed* self, Map* map, Game* game) {
 }
 
 void serialize_map(Ed* editor, Map* map, Game* game, const char* path) {
-    const int memsize = 1024 * 32;  // Allocate 32k for the output buffer
+    const int memsize = (1024 * 1000);  // Allocate 1m for the output buffer
     char* builder = malloc(sizeof(char) * memsize);
     char* it = builder;
     char* start = it;
@@ -478,8 +479,8 @@ void serialize_map(Ed* editor, Map* map, Game* game, const char* path) {
 
     for (int i = 0; i < map->num_spawns; i++) {
         ActorSpawn s = map->spawns[i];
-        it += sprintf(it, "\n      @[%d  %f %f %f]", s.type, s.position.x,
-                      s.position.y, s.position.z);
+        it += sprintf(it, "\n      @[%d  %f %f %f]", s.type - ACTOR_GIRL_1,
+                      s.position.x, s.position.y, s.position.z);
     }
 
     it += sprintf(it, "]}");

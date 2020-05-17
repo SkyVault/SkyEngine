@@ -24,6 +24,12 @@
 #define GLSL_VERSION 100
 #endif
 
+#define BENIS_VERSION_MAJOR "0"
+#define BENIS_VERSION_MINOR "1"
+#define BENIS_VERSION_PATCH "0"
+#define BENIS_VERSION \
+    BENIS_VERSION_MAJOR "." BENIS_VERSION_MINOR "." BENIS_VERSION_PATCH
+
 #define SCREEN_WIDTH (1280)
 #define SCREEN_HEIGHT ((int)((SCREEN_WIDTH) * (160.0 / 240.0)))
 #define MAX_COLUMNS (20)
@@ -74,6 +80,9 @@ void update_and_render_menu_scene(Game *game, EcsWorld *ecs,
     const float shh = GetScreenHeight() / 2;
 
     DoCenterXLabel(100, GetScreenWidth(), 30, 50, "Benis Shooter 3D");
+
+    DoCenterXLabel(100, GetScreenWidth() + cosf(GetTime() * 2) * 50.0f, 70, 30,
+                   TextFormat("Edit Version: %s", BENIS_VERSION));
 
     // Buttons
     int id = 0;
