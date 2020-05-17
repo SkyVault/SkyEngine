@@ -161,7 +161,7 @@ Map *load_map_from_script(const char *path, Game *game) {
     result->height = janet_unwrap_integer(size_arr->data[1]);
 
     result->player_x = janet_unwrap_number(start_arr->data[0]);
-    result->player_y = janet_unwrap_number(start_arr->data[1]);
+    result->player_z = janet_unwrap_number(start_arr->data[1]);
 
     result->num_layers = MAX_NUM_LAYERS;
     result->num_props = 0;
@@ -170,6 +170,7 @@ Map *load_map_from_script(const char *path, Game *game) {
 
     memset(result->light_color, 0, sizeof(int) * MAX_LIGHTS);
     result->num_lights = 1;
+    result->num_spawns = 0;
 
     // result->lights[0] =
     //     CreateLight(LIGHT_POINT, (Vector3){40, 1, 40}, Vector3Zero(),
@@ -183,25 +184,27 @@ Map *load_map_from_script(const char *path, Game *game) {
     //     UpdateLightValues(*shader, result->lights[i]);
     // }
 
-    for (int prop = 0; prop < props_arr->count; prop++) {
-        JanetArray *prop_arr = janet_unwrap_array(props_arr->data[prop]);
+    if (props_arr != NULL) {
+        for (int prop = 0; prop < props_arr->count; prop++) {
+            JanetArray *prop_arr = janet_unwrap_array(props_arr->data[prop]);
 
-        float rx = (float)janet_unwrap_number(prop_arr->data[0]);
-        float ry = (float)janet_unwrap_number(prop_arr->data[1]);
-        float rw = (float)janet_unwrap_number(prop_arr->data[2]);
-        float rh = (float)janet_unwrap_number(prop_arr->data[3]);
-        float x = (float)janet_unwrap_number(prop_arr->data[4]);
-        float y = (float)janet_unwrap_number(prop_arr->data[5]);
-        float z = (float)janet_unwrap_number(prop_arr->data[6]);
-        float s = (float)janet_unwrap_number(prop_arr->data[7]);
+            float rx = (float)janet_unwrap_number(prop_arr->data[0]);
+            float ry = (float)janet_unwrap_number(prop_arr->data[1]);
+            float rw = (float)janet_unwrap_number(prop_arr->data[2]);
+            float rh = (float)janet_unwrap_number(prop_arr->data[3]);
+            float x = (float)janet_unwrap_number(prop_arr->data[4]);
+            float y = (float)janet_unwrap_number(prop_arr->data[5]);
+            float z = (float)janet_unwrap_number(prop_arr->data[6]);
+            float s = (float)janet_unwrap_number(prop_arr->data[7]);
 
-        result->props[result->num_props++] = (Prop){
-            .region = (Rectangle){rx, ry, rw, rh},
-            .position = (Vector3){x, y, z},
-            .scale = s,
-        };
+            result->props[result->num_props++] = (Prop){
+                .region = (Rectangle){rx, ry, rw, rh},
+                .position = (Vector3){x, y, z},
+                .scale = s,
+            };
 
-        printf("props: %d\n", result->num_props);
+            printf("props: %d\n", result->num_props);
+        }
     }
 
     if (lights_arr != NULL) {
@@ -223,6 +226,12 @@ Map *load_map_from_script(const char *path, Game *game) {
         }
 
         result->num_lights = lights_arr->count;
+    } else {
+        result->lights[0] = CreateLight(LIGHT_POINT, Vector3Zero(),
+                                        Vector3Zero(), WHITE, *shader);
+        result->lights[0].enabled = true;
+        UpdateLightValues(*shader, result->lights[0]);
+        result->num_lights = 1;
     }
 
     for (int layer = 0; layer < layers_arr->count; layer++) {
@@ -265,10 +274,10 @@ Map *load_map_from_script(const char *path, Game *game) {
 
                 case 'X':
                     result->player_x = pos.x + CUBE_SIZE / 2;
-                    result->player_y = pos.z + CUBE_SIZE / 2;
+                    result->player_z = pos.z + CUBE_SIZE / 2;
                     break;
                 case 'E': {
-                    assemble(ACTOR_END_TARGET, game, pos.x + CUBE_SIZE / 2,
+                    assemble(ACTOR_END_TARGET, game, pos.x + CUBE_SIZE / 2, 0,
                              pos.z + CUBE_SIZE / 2, 0, 0);
                     break;
                 }

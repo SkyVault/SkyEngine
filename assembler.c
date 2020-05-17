@@ -1,32 +1,36 @@
 #include "assembler.h"
 
-EntId ACTOR_PLAYER_C(Game* game, float x, float y, float vx, float vy) {
+EntId ACTOR_PLAYER_C(Game* game, float x, float y, float z, float vx,
+                     float vy) {
     EntId player_id = create_ent(game->ecs);
     EntStruct* player = get_ent(game->ecs, player_id);
 
     add_comp(game->ecs, player, Transform,
-             .translation = (Vector3){x, 1.0f, y});
+             .translation = (Vector3){x, 1.0f, z});
     add_comp(game->ecs, player, Player, .n = 0);
     add_comp_obj(game->ecs, player, Physics, create_physics());
     return player_id;
 }
 
-EntId ACTOR_PINEAPPLE_BOMB_C(Game* game, float x, float y, float vx, float vy) {
+EntId ACTOR_PINEAPPLE_BOMB_C(Game* game, float x, float y, float z, float vx,
+                             float vy) {
     EntId bullet_id = create_ent(game->ecs);
     EntStruct* bullet = get_ent(game->ecs, bullet_id);
 
     return bullet_id;
 }
 
-EntId ACTOR_TOSSED_ORANGE_C(Game* game, float x, float y, float vx, float vy) {
+EntId ACTOR_TOSSED_ORANGE_C(Game* game, float x, float y, float z, float vx,
+                            float vy) {
     return -1;
 }
 
-EntId ACTOR_GIRL_1_C(Game* game, float x, float y, float vx, float vy) {
+EntId ACTOR_GIRL_1_C(Game* game, float x, float y, float z, float vx,
+                     float vy) {
     EntId self_id = create_ent(game->ecs);
     EntStruct* self = get_ent(game->ecs, self_id);
 
-    add_comp(game->ecs, self, Transform, .translation = (Vector3){x, 0, y},
+    add_comp(game->ecs, self, Transform, .translation = (Vector3){x, 0, z},
              .rotation = QuaternionIdentity(), .scale = Vector3One());
 
     add_comp(game->ecs, self, Billboard,
@@ -38,11 +42,12 @@ EntId ACTOR_GIRL_1_C(Game* game, float x, float y, float vx, float vy) {
     return self_id;
 }
 
-EntId ACTOR_GIRL_2_C(Game* game, float x, float y, float vx, float vy) {
+EntId ACTOR_GIRL_2_C(Game* game, float x, float y, float z, float vx,
+                     float vy) {
     EntId self_id = create_ent(game->ecs);
     EntStruct* self = get_ent(game->ecs, self_id);
 
-    add_comp(game->ecs, self, Transform, .translation = (Vector3){x, 0, y},
+    add_comp(game->ecs, self, Transform, .translation = (Vector3){x, 0, z},
              .rotation = QuaternionIdentity(), .scale = Vector3One());
 
     add_comp(game->ecs, self, Billboard,
@@ -54,11 +59,12 @@ EntId ACTOR_GIRL_2_C(Game* game, float x, float y, float vx, float vy) {
     return self_id;
 }
 
-EntId ACTOR_GIRL_3_C(Game* game, float x, float y, float vx, float vy) {
+EntId ACTOR_GIRL_3_C(Game* game, float x, float y, float z, float vx,
+                     float vy) {
     EntId self_id = create_ent(game->ecs);
     EntStruct* self = get_ent(game->ecs, self_id);
 
-    add_comp(game->ecs, self, Transform, .translation = (Vector3){x, 0, y},
+    add_comp(game->ecs, self, Transform, .translation = (Vector3){x, 0, z},
              .rotation = QuaternionIdentity(), .scale = Vector3One());
 
     add_comp(game->ecs, self, Billboard,
@@ -70,11 +76,12 @@ EntId ACTOR_GIRL_3_C(Game* game, float x, float y, float vx, float vy) {
     return self_id;
 }
 
-EntId ACTOR_GIRL_4_C(Game* game, float x, float y, float vx, float vy) {
+EntId ACTOR_GIRL_4_C(Game* game, float x, float y, float z, float vx,
+                     float vy) {
     EntId self_id = create_ent(game->ecs);
     EntStruct* self = get_ent(game->ecs, self_id);
 
-    add_comp(game->ecs, self, Transform, .translation = (Vector3){x, 0, y},
+    add_comp(game->ecs, self, Transform, .translation = (Vector3){x, 0, z},
              .rotation = QuaternionIdentity(), .scale = Vector3One());
 
     add_comp(game->ecs, self, Billboard,
@@ -86,11 +93,12 @@ EntId ACTOR_GIRL_4_C(Game* game, float x, float y, float vx, float vy) {
     return self_id;
 }
 
-EntId ACTOR_END_TARGET_C(Game* game, float x, float y, float vx, float vy) {
+EntId ACTOR_END_TARGET_C(Game* game, float x, float y, float z, float vx,
+                         float vy) {
     EntId self_id = create_ent(game->ecs);
     EntStruct* self = get_ent(game->ecs, self_id);
 
-    add_comp(game->ecs, self, Transform, .translation = (Vector3){x, 0.0f, y},
+    add_comp(game->ecs, self, Transform, .translation = (Vector3){x, 0.0f, z},
              .rotation = QuaternionIdentity(), .scale = Vector3One());
 
     add_comp(game->ecs, self, Actor, .type = ACTOR_END_TARGET);
@@ -105,10 +113,10 @@ EntId ACTOR_END_TARGET_C(Game* game, float x, float y, float vx, float vy) {
     return self_id;
 }
 
-EntId ACTOR_BLOCK_C(Game* game, float x, float y, float vx, float vy) {
+EntId ACTOR_BLOCK_C(Game* game, float x, float y, float z, float vx, float vy) {
     EntStruct* self = create_and_get_ent(game->ecs);
 
-    add_comp(game->ecs, self, Transform, .translation = (Vector3){x, 0.0f, y},
+    add_comp(game->ecs, self, Transform, .translation = (Vector3){x, 0.0f, z},
              .rotation = QuaternionIdentity(),
              .scale = (Vector3){CUBE_SIZE, CUBE_SIZE, CUBE_SIZE});
 
@@ -124,11 +132,12 @@ EntId ACTOR_BLOCK_C(Game* game, float x, float y, float vx, float vy) {
     return self->id;
 }
 
-EntId ACTOR_NUM_ENTITY_TYPES_C(Game* game, float x, float y, float vx,
+EntId ACTOR_NUM_ENTITY_TYPES_C(Game* game, float x, float y, float z, float vx,
                                float vy) {
     return -1;
 }
 
-EntId assemble(int which, Game* game, float x, float y, float vx, float vy) {
-    return assemblers[which](game, x, y, vx, vy);
+EntId assemble(int which, Game* game, float x, float y, float z, float vx,
+               float vy) {
+    return assemblers[which](game, x, y, z, vx, vy);
 }

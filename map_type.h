@@ -25,7 +25,7 @@ typedef struct {
 
 typedef struct {
     int type;
-    Vector2 position;
+    Vector3 position;
 } ActorSpawn;
 
 typedef struct {
@@ -52,7 +52,7 @@ typedef struct {
     int height;
 
     float player_x;
-    float player_y;
+    float player_z;
 
     struct {
         char* buff;

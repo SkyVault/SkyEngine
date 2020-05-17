@@ -285,7 +285,7 @@ int main() {
     // SetTraceLogCallback(custom_logger);
 
     InitWindow(SCREEN_WIDTH, SCREEN_HEIGHT, "DevWindow");
-    // SetTargetFPS(85);
+    SetTargetFPS(86);
 
     // glew
     GLenum err = glewInit();
@@ -346,7 +346,7 @@ int main() {
     game->map = load_map_from_script("resources/maps/edit.janet", game);
     Map *map = game->map;
 
-    assemble(ACTOR_PLAYER, game, map->player_x, map->player_y, 0, 0);
+    assemble(ACTOR_PLAYER, game, map->player_x, 0, map->player_z, 0, 0);
 
     // #if defined _DEBUG
     Ed *editor = create_editor();
