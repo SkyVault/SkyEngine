@@ -175,17 +175,12 @@ Map *load_map_from_script(const char *path, Game *game) {
     result->num_lights = 1;
     result->num_spawns = 0;
 
-    // result->lights[0] =
-    //     CreateLight(LIGHT_POINT, (Vector3){40, 1, 40}, Vector3Zero(),
-    //                 (Color){255, 255, 255}, *shader);
-    // result->lights[0].enabled = true;
-
-    // for (int i = 1; i < MAX_LIGHTS; i++) {
-    //     result->lights[i] = CreateLight(LIGHT_POINT, Vector3Zero(),
-    //                                     Vector3Zero(), WHITE, *shader);
-    //     result->lights[i].enabled = false;
-    //     UpdateLightValues(*shader, result->lights[i]);
-    // }
+    for (int i = 0; i < MAX_LIGHTS; i++) {
+        result->lights[i] = CreateLight(LIGHT_POINT, Vector3Zero(),
+                                        Vector3Zero(), WHITE, *shader);
+        result->lights[i].enabled = i == 0;
+        UpdateLightValues(*shader, result->lights[i]);
+    }
 
     if (props_arr != NULL) {
         for (int prop = 0; prop < props_arr->count; prop++) {
@@ -221,17 +216,15 @@ Map *load_map_from_script(const char *path, Game *game) {
             int light_index = (int)janet_unwrap_integer(light_arr->data[4]);
 
             result->light_color[light] = light_index;
-            result->lights[light] =
-                CreateLight(LIGHT_POINT, (Vector3){x, y, z}, Vector3Zero(),
-                            LightColors[result->light_color[light]], *shader);
-            result->lights[light].enabled = enabled;
+            result->lights[light].position = (Vector3){x, y, z};
+            result->lights[light].color =
+                LightColors[result->light_color[light]];
+            result->lights[light].enabled = true;
             UpdateLightValues(*shader, result->lights[light]);
         }
 
         result->num_lights = lights_arr->count;
     } else {
-        result->lights[0] = CreateLight(LIGHT_POINT, Vector3Zero(),
-                                        Vector3Zero(), WHITE, *shader);
         result->lights[0].enabled = true;
         UpdateLightValues(*shader, result->lights[0]);
         result->num_lights = 1;

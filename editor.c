@@ -24,6 +24,9 @@ Ed* create_editor() {
     editor->do_export_modal = false;
     editor->do_load_modal = false;
     editor->maps = GetDirectoryFiles("resources/maps/", &editor->num_maps);
+    editor->which_marker = MARKER_PLAYER_START;
+
+    editor->light_grabbed = -1;
 
     return editor;
 }
@@ -111,6 +114,35 @@ void update_editor(Ed* self, Map* map, Game* game) {
     if (self->model < 0) {
         self->model = ms - 1;
     }
+
+    if (self->light_grabbed >= 0) {
+        // TODO(Dustin): move this to a seperate function
+        Vector3 loc = Vector3Zero();
+
+        EntId player_id = get_first_with(game->ecs, Player);
+
+        float angle = 0.0f;
+
+        if (player_id >= 0) {
+            EntStruct* player = get_ent(game->ecs, player_id);
+            angle = get_comp(game->ecs, player, Player)->rotation;
+        }
+
+        // Get the rotation of the camera
+        // float angle = Vector3 game->camera->target;
+
+        loc.x = game->camera->position.x + cosf(angle) * 2;
+        loc.y = self->y * (float)(GLOBAL_SCALE);
+        loc.z = game->camera->position.z + sinf(angle) * 2;
+
+        map->lights[self->light_grabbed].position = loc;
+        UpdateLightValues(game->assets->shaders[SHADER_PHONG_LIGHTING],
+                          map->lights[self->light_grabbed]);
+
+        if (IsMouseButtonPressed(MOUSE_LEFT_BUTTON)) {
+            self->light_grabbed = -1;
+        }
+    }
 }
 
 void render_editor(Ed* self, Map* map, Game* game) {
@@ -152,6 +184,18 @@ void render_editor(Ed* self, Map* map, Game* game) {
 
     DrawCylinder((Vector3){map->player_x, -3.0f, map->player_z}, 0.2f, 0.2f,
                  4.0f, 20, (Color){0, 100, 255, 100});
+
+    // Draw debug shapes
+
+    for (int light_i = 1; light_i < MAX_LIGHTS; light_i++) {
+        Light light = map->lights[light_i];
+
+        if (!light.enabled) continue;
+        Color c = light.color;
+
+        // Draw debug sphere where light is
+        DrawSphere(light.position, 0.2f, (Color){c.r, c.g, c.b, 100});
+    }
 
     if (self->object_placement_type == PLACE_BLOCKS) {
         DrawModel(
@@ -201,7 +245,7 @@ void render_editor(Ed* self, Map* map, Game* game) {
             map->props[map->num_props++] = prop;
         }
     } else if (self->object_placement_type == PLACE_MARKERS) {
-        DrawCylinder((Vector3){loc.x, -3.0f, loc.z}, 1.0f, 1.0f, 4.0f, 20,
+        DrawCylinder((Vector3){loc.x, -3.0f, loc.z}, 0.2f, 0.2f, 4.0f, 20,
                      (Color){0, 100, 255, 100});
 
         if (IsMouseButtonPressed(MOUSE_LEFT_BUTTON)) {
@@ -400,6 +444,12 @@ void render_editor_ui(Ed* self, Map* map, Game* game) {
                 DoLabel(id++, "Disabled", lx + 30, cursor_y, 100, 30, 30);
                 map->lights[i].enabled =
                     !DoCheckBox(id++, lx + 30 + 100, cursor_y, 30, 30);
+
+                if (DoBtn(id++, lx + 30 + 130 + 10, cursor_y, 100, 30,
+                          "Grab")) {
+                    self->light_grabbed = i;
+                }
+
                 cursor_y += 32;
 
                 DoLabel(id++, "X", lx + 30, cursor_y, 40, 30, 30);
@@ -432,7 +482,7 @@ void render_editor_ui(Ed* self, Map* map, Game* game) {
 
                 cursor_y += 32;
 
-                // map->lights[i].position = (Vector3){x, y, z};
+                map->lights[i].position = (Vector3){x, y, z};
                 UpdateLightValues(*shader, map->lights[i]);
 
             } else {

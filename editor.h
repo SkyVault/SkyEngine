@@ -14,6 +14,19 @@ enum {
     PLACE_MARKERS,
 };
 
+enum {
+    MARKER_PLAYER_START,
+    MARKER_EXIT,
+    MARKER_NUM_MARKERS,
+};
+
+// use for tabs next to the lighting panel
+enum {
+    SHOWING_LIGHT_PANEL,
+    SHOWING_EXIT_PANEL,
+    SHOWING_NOTHING,
+};
+
 typedef struct Note {
     const char* mesg;
     float time;
@@ -31,6 +44,9 @@ typedef struct {
     int model;
     int which;
     int y;
+    int light_grabbed;
+
+    int which_marker;
 
     float light_panel_y;
     float console_y;
