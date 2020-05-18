@@ -67,6 +67,9 @@ Color DoColorPicker(NodeId id, float x, float y, float width, float height,
 float DoSlider(NodeId id, float x, float y, float width, float height,
                float min, float max);
 
+bool DoDragFloat(NodeId id, float x, float y, float width, float height,
+                 float* value, float step);
+
 void Lock();
 void Unlock();
 

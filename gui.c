@@ -272,6 +272,37 @@ bool DoCollapsingHeader(NodeId id, const char* label, float x, float y,
     return Active(id);
 }
 
+bool DoDragFloat(NodeId id, float x, float y, float width, float height,
+                 float* value, float step) {
+    struct NState* state = &GuiState.states[id];
+
+    Rectangle rect = {x + GuiState.px, y + GuiState.py, width, height};
+    state->hot = CheckCollisionPointRec(GetMousePosition(), rect);
+
+    bool last = state->active;
+    state->active = state->hot && IsMouseButtonDown(MOUSE_LEFT_BUTTON);
+
+    if (!last && state->active) {
+        state->last_value = GetMouseX();
+    }
+
+    if (last && state->active) {
+        *value += (state->last_value - GetMouseX()) * step;
+        state->last_value = GetMouseX();
+    }
+
+    const char* str = TextFormat("%f", *value);
+
+    Vector2 size = MeasureTextEx(GuiState.font, str, 20, 1);
+
+    DoPanel(id, x, y, width, height);
+    DrawTextRec(GuiState.font, str,
+                (Rectangle){x + width / 2 - size.x / 2, y, width, height}, 20,
+                1, true, HIGHLIGHT_COLOR);
+
+    return Active(id);
+}
+
 Vector4 CTV4(Color c) {
     return (Vector4){
         c.r / 255.0f,

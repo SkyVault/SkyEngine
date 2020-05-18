@@ -294,6 +294,12 @@ void render_editor_ui(Ed* self, Map* map, Game* game) {
 
     int id = 200;
 
+    static float test = 100.0f;
+
+    DoDragFloat(id++, 200, 200, 200, 30, &test, 0.1f);
+
+    printf("%f\n", test);
+
     if (!self->open) {
         if (DoBtn(id++, GetScreenWidth() / 2 - 50.0f, 0, 100, 25, "Editor")) {
             push_message(self, "Editor mode!");
@@ -453,19 +459,18 @@ void render_editor_ui(Ed* self, Map* map, Game* game) {
                 cursor_y += 32;
 
                 DoLabel(id++, "X", lx + 30, cursor_y, 40, 30, 30);
-                float x =
-                    DoSlider(id++, lx + 30 + 42, cursor_y, 200, 30, 0, 100);
+                DoDragFloat(id++, lx + 30 + 42, cursor_y, 200, 30,
+                            &map->lights[i].position.x, 0.1f);
                 cursor_y += 32;
 
                 DoLabel(id++, "Y", lx + 30, cursor_y, 40, 30, 30);
-                float y =
-                    DoSlider(id++, lx + 30 + 42, cursor_y, 200, 30, 0, 100);
+                DoDragFloat(id++, lx + 30 + 42, cursor_y, 200, 30,
+                            &map->lights[i].position.y, 0.1f);
                 cursor_y += 32;
 
                 DoLabel(id++, "Z", lx + 30, cursor_y, 40, 30, 30);
-                float z =
-                    DoSlider(id++, lx + 30 + 42, cursor_y, 200, 30, 0, 100);
-
+                DoDragFloat(id++, lx + 30 + 42, cursor_y, 200, 30,
+                            &map->lights[i].position.z, 0.1f);
                 cursor_y += 32;
 
                 DoLabel(id++, "Color", lx + 30, cursor_y, 100, 30, 30);
@@ -482,7 +487,6 @@ void render_editor_ui(Ed* self, Map* map, Game* game) {
 
                 cursor_y += 32;
 
-                map->lights[i].position = (Vector3){x, y, z};
                 UpdateLightValues(*shader, map->lights[i]);
 
             } else {
