@@ -1,6 +1,9 @@
 #include "gui.h"
 
-void InitGui() { GuiState.font = LoadFont("resources/alagard_font.png"); }
+void InitGui() {
+    GuiState.font = LoadFont("resources/alpha_beta.png");
+    // GuiState.font = GetFontDefault();
+}
 
 void DoPanel(NodeId id, float x, float y, float width, float height) {
     struct NState* state = &GuiState.states[id];
@@ -223,8 +226,32 @@ float DoSlider(NodeId id, float x, float y, float width, float height,
     return state->value;
 }
 
-Color DoColorPicker(NodeId id, float x, float y, float width, float height,
-                    Color color) {
+Color DoColorPicker(NodeId* id, float x, float y, float width, float height) {
+    struct NState* state = &GuiState.states[*id];
+
+    if (!state->init) {
+        state->v = (Vector4){1, 1, 1, 1};
+        state->init = 1;
+    }
+
+    DoDragFloat((*id)++, x + height, y, (width - height), height / 4,
+                &state->v.x, 0.01f);
+
+    DoDragFloat((*id)++, x + height, y + height / 4, (width - height),
+                height / 4, &state->v.y, 0.01f);
+
+    DoDragFloat((*id)++, x + height, y + (height / 4) * 2, (width - height),
+                height / 4, &state->v.z, 0.01f);
+
+    DoDragFloat((*id)++, x + height, y + (height / 4) * 3, (width - height),
+                height / 4, &state->v.w, 0.01f);
+
+    state->v.x = max(min(state->v.x, 1.0f), 0.0f);
+    state->v.y = max(min(state->v.y, 1.0f), 0.0f);
+    state->v.z = max(min(state->v.z, 1.0f), 0.0f);
+    state->v.w = max(min(state->v.w, 1.0f), 0.0f);
+
+    Color color = V4TC(state->v);
     DrawRectangle(x, y, height, height, color);
 }
 
@@ -287,7 +314,7 @@ bool DoDragFloat(NodeId id, float x, float y, float width, float height,
     }
 
     if (last && state->active) {
-        *value += (state->last_value - GetMouseX()) * step;
+        *value -= (state->last_value - GetMouseX()) * step;
         state->last_value = GetMouseX();
     }
 
@@ -297,8 +324,9 @@ bool DoDragFloat(NodeId id, float x, float y, float width, float height,
 
     DoPanel(id, x, y, width, height);
     DrawTextRec(GuiState.font, str,
-                (Rectangle){x + width / 2 - size.x / 2, y, width, height}, 20,
-                1, true, HIGHLIGHT_COLOR);
+                (Rectangle){x + width / 2 - size.x / 2,
+                            y + height / 2 - size.y / 2, width, height},
+                20, 1, true, HIGHLIGHT_COLOR);
 
     return Active(id);
 }

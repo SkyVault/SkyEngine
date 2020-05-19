@@ -328,9 +328,21 @@ int main() {
     shader->locs[LOC_VECTOR_VIEW] = GetShaderLocation(*shader, "viewPos");
     shader->locs[LOC_MATRIX_MODEL] = GetShaderLocation(*shader, "matModel");
 
-    int ambientLoc = GetShaderLocation(*shader, "ambient");
-    SetShaderValue(*shader, ambientLoc, (float[4]){0.0f, 0.0f, 0.0f, 1.0f},
-                   UNIFORM_VEC4);
+    // int ambientLoc = GetShaderLocation(*shader, "ambient");
+    // SetShaderValue(*shader, ambientLoc, (float[4]){0.15f, 0.15f,
+    // 0.15f, 1.0f},
+    //                UNIFORM_VEC4);
+
+    int sunDirLoc = GetShaderLocation(*shader, "sun.direction");
+
+    SetShaderValue(*shader, GetShaderLocation(*shader, "sun.direction"),
+                   (float[3]){-0.2f, -1.0f, -0.3}, UNIFORM_VEC3);
+
+    SetShaderValue(*shader, GetShaderLocation(*shader, "sun.ambient"),
+                   (float[3]){0.00f, 0.00f, 0.00f}, UNIFORM_VEC3);
+
+    SetShaderValue(*shader, GetShaderLocation(*shader, "sun.diffuse"),
+                   (float[3]){0.01f, 0.01f, 0.01f}, UNIFORM_VEC3);
 
     // Load the skybox
     game->skybox = LoadModelFromMesh(assets->meshes[MESH_SKYBOX]);

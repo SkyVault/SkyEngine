@@ -172,13 +172,13 @@ Map *load_map_from_script(const char *path, Game *game) {
     Shader *shader = &game->assets->shaders[SHADER_PHONG_LIGHTING];
 
     memset(result->light_color, 0, sizeof(int) * MAX_LIGHTS);
-    result->num_lights = 1;
+    result->num_lights = 0;
     result->num_spawns = 0;
 
     for (int i = 0; i < MAX_LIGHTS; i++) {
         result->lights[i] = CreateLight(LIGHT_POINT, Vector3Zero(),
                                         Vector3Zero(), WHITE, *shader);
-        result->lights[i].enabled = i == 0;
+        result->lights[i].enabled = false;
         UpdateLightValues(*shader, result->lights[i]);
     }
 
@@ -216,18 +216,16 @@ Map *load_map_from_script(const char *path, Game *game) {
             int light_index = (int)janet_unwrap_integer(light_arr->data[4]);
 
             result->light_color[light] = light_index;
+
             result->lights[light].position = (Vector3){x, y, z};
             result->lights[light].color =
                 LightColors[result->light_color[light]];
             result->lights[light].enabled = true;
+
             UpdateLightValues(*shader, result->lights[light]);
         }
 
         result->num_lights = lights_arr->count;
-    } else {
-        result->lights[0].enabled = true;
-        UpdateLightValues(*shader, result->lights[0]);
-        result->num_lights = 1;
     }
 
     if (actors_arr != NULL) {
@@ -313,16 +311,7 @@ Map *load_map_from_script(const char *path, Game *game) {
     return result;
 }
 
-void update_map(Map *self, Game *game) {
-    Shader *shader = &game->assets->shaders[SHADER_PHONG_LIGHTING];
-
-    self->lights[0].position = game->camera->position;
-    self->lights[0].enabled = true;
-
-    // for (int i = 0; i < self->num_lights; i++) {
-    UpdateLightValues(*shader, self->lights[0]);
-    // }
-}
+void update_map(Map *self, Game *game) {}
 
 void render_map(Map *map, GfxState *gfx, Game *game) {
     rlEnableBackfaceCulling();
