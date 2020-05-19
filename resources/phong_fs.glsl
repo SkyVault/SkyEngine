@@ -17,6 +17,13 @@ out vec4 finalColor;
 #define     LIGHT_DIRECTIONAL       0
 #define     LIGHT_POINT             1
 
+struct Sun { // Directional light
+    vec3 direction;
+
+    vec3 ambient;
+    vec3 diffuse;
+};
+
 struct MaterialProperty {
     vec3 color;
     int useSampler;
@@ -33,8 +40,15 @@ struct Light {
 
 // Input lighting values
 uniform Light lights[MAX_LIGHTS];
-uniform vec4 ambient;
+uniform Sun sun;
+
 uniform vec3 viewPos;
+
+vec3 calculate_sun(Sun sun, vec3 normal, vec3 viewDir){
+    vec3 lightDir = normalize(-sun.direction); 
+    float diff = max(dot(normal, lightDir), 0.0);
+    return sun.ambient + sun.diffuse * diff;
+}
 
 void main()
 {
@@ -59,13 +73,11 @@ void main()
         {
             vec3 light = vec3(0.0);
             
-            if (lights[i].type == LIGHT_DIRECTIONAL) 
-            {
+            if (lights[i].type == LIGHT_DIRECTIONAL) {
                 light = -normalize(lights[i].target - lights[i].position);
             }
             
-            if (lights[i].type == LIGHT_POINT) 
-            {
+            if (lights[i].type == LIGHT_POINT) {
                 light = normalize(lights[i].position - fragPosition);
             }
 
@@ -82,8 +94,10 @@ void main()
         }
     }
 
+    vec3 sun_color = calculate_sun(sun, normal, viewD);
+
     finalColor = (texelColor*((colDiffuse + vec4(specular, 1.0))*vec4(lightDot, 1.0)));
-    finalColor += texelColor*(ambient/10.0);
+    finalColor += texelColor * vec4(sun_color, 1.0);
     
     // Gamma correction
     finalColor = pow(finalColor, vec4(1.0/2.2)); 

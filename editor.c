@@ -187,10 +187,11 @@ void render_editor(Ed* self, Map* map, Game* game) {
 
     // Draw debug shapes
 
-    for (int light_i = 1; light_i < MAX_LIGHTS; light_i++) {
+    for (int light_i = 0; light_i < map->num_lights; light_i++) {
         Light light = map->lights[light_i];
 
         if (!light.enabled) continue;
+
         Color c = light.color;
 
         // Draw debug sphere where light is
@@ -294,12 +295,6 @@ void render_editor_ui(Ed* self, Map* map, Game* game) {
 
     int id = 200;
 
-    static float test = 100.0f;
-
-    DoDragFloat(id++, 200, 200, 200, 30, &test, 0.1f);
-
-    printf("%f\n", test);
-
     if (!self->open) {
         if (DoBtn(id++, GetScreenWidth() / 2 - 50.0f, 0, 100, 25, "Editor")) {
             push_message(self, "Editor mode!");
@@ -307,6 +302,8 @@ void render_editor_ui(Ed* self, Map* map, Game* game) {
         }
         return;
     }
+
+    // DoColorPicker(&id, 300, 300, 300, 200);
 
     if (DoBtn(id++, GetScreenWidth() / 2 - 50.0f, 0, 100, 25, "Play")) {
         self->open = false;
@@ -557,7 +554,7 @@ void serialize_map(Ed* editor, Map* map, Game* game, const char* path) {
 
     it += sprintf(it, "]\n   :lights @[");
 
-    for (int i = 0; i < MAX_LIGHTS; i++) {
+    for (int i = 0; i < map->num_lights; i++) {
         Light light = map->lights[i];
 
         it += sprintf(it, "\n      @[%s  %f %f %f  %d]",
