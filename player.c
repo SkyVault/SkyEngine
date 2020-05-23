@@ -231,9 +231,7 @@ void update_player(EcsWorld* ecs, Assets* ass, Game* game, EntId id) {
 
 void draw_player_gui(Game* game, Map* map) {
     //
-    Texture2D holding = game->assets->textures[TEX_PINEAPPLE];
-
-    const float timer = GetTime();
+    const float timer = (float)GetTime();
 
     DrawText("W/A/S/D -> move", 10, 100, 20, WHITE);
     DrawText("Left click -> throw orange", 10, 130, 20, WHITE);

@@ -131,10 +131,12 @@ Map *load_map_from_script(const char *path, Game *game) {
 
     Janet resultj;
     int res = janet_dostring(game->env, s, "main", &resultj);
-    JanetTable *result_table = janet_unwrap_table(resultj);
+    JanetTable *result_table = janet_unwrap_table(resultj); 
 
     Map *result = malloc(sizeof(Map));
     result->current_map = -1;
+
+    if (result_table == NULL) return result;
 
     zero_out_map(result);
     load_models(result, game);
@@ -172,15 +174,8 @@ Map *load_map_from_script(const char *path, Game *game) {
     Shader *shader = &game->assets->shaders[SHADER_PHONG_LIGHTING];
 
     memset(result->light_color, 0, sizeof(int) * MAX_LIGHTS);
-    result->num_lights = 0;
+    game->num_lights = 0;
     result->num_spawns = 0;
-
-    for (int i = 0; i < MAX_LIGHTS; i++) {
-        result->lights[i] = CreateLight(LIGHT_POINT, Vector3Zero(),
-                                        Vector3Zero(), WHITE, *shader);
-        result->lights[i].enabled = false;
-        UpdateLightValues(*shader, result->lights[i]);
-    }
 
     if (props_arr != NULL) {
         for (int prop = 0; prop < props_arr->count; prop++) {
@@ -206,26 +201,34 @@ Map *load_map_from_script(const char *path, Game *game) {
     }
 
     if (lights_arr != NULL) {
-        for (int light = 0; light < lights_arr->count; light++) {
-            JanetArray *light_arr = janet_unwrap_array(lights_arr->data[light]);
+        for (int i = 0; i < MAX_LIGHTS; i++) {
+            game->lights[i].enabled = false;
+            result->light_color[i] = 0;
 
-            bool enabled = (bool)janet_unwrap_boolean(light_arr->data[0]);
-            float x = (float)janet_unwrap_number(light_arr->data[1]);
-            float y = (float)janet_unwrap_number(light_arr->data[2]);
-            float z = (float)janet_unwrap_number(light_arr->data[3]);
-            int light_index = (int)janet_unwrap_integer(light_arr->data[4]);
+            if (i < lights_arr->count) {
+                JanetArray *light_arr = janet_unwrap_array(lights_arr->data[i]);
 
-            result->light_color[light] = light_index;
+                bool enabled = (bool)janet_unwrap_boolean(light_arr->data[0]);
+                float x = (float)janet_unwrap_number(light_arr->data[1]);
+                float y = (float)janet_unwrap_number(light_arr->data[2]);
+                float z = (float)janet_unwrap_number(light_arr->data[3]);
+                int light_index = (int)janet_unwrap_integer(light_arr->data[4]);
 
-            result->lights[light].position = (Vector3){x, y, z};
-            result->lights[light].color =
-                LightColors[result->light_color[light]];
-            result->lights[light].enabled = true;
+                result->light_color[i] = light_index;
 
-            UpdateLightValues(*shader, result->lights[light]);
+                game->lights[i].position = (Vector3){x, y, z};
+                game->lights[i].color = LightColors[result->light_color[i]];
+                game->lights[i].enabled = true;
+                game->num_lights++;
+            }
+
+            UpdateLightValues(*shader, game->lights[i]);
         }
 
-        result->num_lights = lights_arr->count;
+    } else {
+        for (int i = 0; i < MAX_LIGHTS; i++) {
+            UpdateLightValues(*shader, game->lights[i]);
+        }
     }
 
     if (actors_arr != NULL) {
@@ -248,7 +251,7 @@ Map *load_map_from_script(const char *path, Game *game) {
     for (int layer = 0; layer < layers_arr->count; layer++) {
         JanetTable *layer_table = janet_unwrap_table(layers_arr->data[layer]);
 
-        JanetString *data = janet_unwrap_string(
+        const JanetString *data = janet_unwrap_string(
             janet_table_get(layer_table, janet_ckeywordv("data")));
 
         char *it = data;
@@ -350,16 +353,8 @@ void render_map(Map *map, GfxState *gfx, Game *game) {
 }
 
 void destroy_map(Map *map, Game *game) {
-    for (int layer = 0; layer < MAX_NUM_LAYERS; layer++) {
-        for (int y = 0; y < MAX_MAP_HEIGHT; y++) {
-            for (int x = 0; x < MAX_MAP_WIDTH; x++) {
-                map->walls[layer][x + y * MAX_MAP_WIDTH] = (Wall){0, 0};
-            }
-        }
-    }
-
     for (int mi = 0; mi < MAX_MODELS; mi++) {
-        map->models[mi] = (Model){0};
+        UnloadModel(map->models[mi]);
     }
 
     if (map->path.len > 0 && map->path.buff != NULL) {

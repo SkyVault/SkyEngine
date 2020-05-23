@@ -252,7 +252,8 @@ Color DoColorPicker(NodeId* id, float x, float y, float width, float height) {
     state->v.w = max(min(state->v.w, 1.0f), 0.0f);
 
     Color color = V4TC(state->v);
-    DrawRectangle(x, y, height, height, color);
+    DrawRectangle((int)x, (int)y, (int)height, (int)height, color);
+    return color;
 }
 
 bool DoCheckBox(NodeId id, float x, float y, float width, float height) {
@@ -270,7 +271,8 @@ bool DoCheckBox(NodeId id, float x, float y, float width, float height) {
     DoPanel(id, x, y, width, height);
 
     if (state->active)
-        DrawRectangle(x + 1, y + 1, width - 2, height - 2, ALT_COLOR);
+        DrawRectangle((int)x + 1, (int)y + 1, (int)width - 2, (int)height - 2,
+                      ALT_COLOR);
 
     return Active(id);
 }
@@ -310,12 +312,12 @@ bool DoDragFloat(NodeId id, float x, float y, float width, float height,
     state->active = state->hot && IsMouseButtonDown(MOUSE_LEFT_BUTTON);
 
     if (!last && state->active) {
-        state->last_value = GetMouseX();
+        state->last_value = (float)GetMouseX();
     }
 
     if (last && state->active) {
-        *value -= (state->last_value - GetMouseX()) * step;
-        state->last_value = GetMouseX();
+        *value -= (state->last_value - (float)GetMouseX()) * step;
+        state->last_value = (float)GetMouseX();
     }
 
     const char* str = TextFormat("%f", *value);
