@@ -135,9 +135,9 @@ void update_editor(Ed* self, Map* map, Game* game) {
         loc.y = self->y * (float)(GLOBAL_SCALE);
         loc.z = game->camera->position.z + sinf(angle) * 2;
 
-        map->lights[self->light_grabbed].position = loc;
+        game->lights[self->light_grabbed].position = loc;
         UpdateLightValues(game->assets->shaders[SHADER_PHONG_LIGHTING],
-                          map->lights[self->light_grabbed]);
+                          game->lights[self->light_grabbed]);
 
         if (IsMouseButtonPressed(MOUSE_LEFT_BUTTON)) {
             self->light_grabbed = -1;
@@ -187,8 +187,8 @@ void render_editor(Ed* self, Map* map, Game* game) {
 
     // Draw debug shapes
 
-    for (int light_i = 0; light_i < map->num_lights; light_i++) {
-        Light light = map->lights[light_i];
+    for (int light_i = 0; light_i < game->num_lights; light_i++) {
+        Light light = game->lights[light_i];
 
         if (!light.enabled) continue;
 
@@ -351,6 +351,12 @@ void render_editor_ui(Ed* self, Map* map, Game* game) {
 
                 push_message(self, msg);
             } else {
+                if (game->map != NULL) {
+                    destroy_map(game->map, game);
+                    free(game->map);
+                    game->map = NULL;
+                }
+
                 game->map = load_map_from_script(path, game);
             }
 
@@ -364,6 +370,12 @@ void render_editor_ui(Ed* self, Map* map, Game* game) {
                 const char* path =
                     TextFormat("resources/maps/%s", self->maps[i]);
                 if (FileExists(path)) {
+                    if (game->map != NULL) {
+                        destroy_map(game->map, game);
+                        free(game->map);
+                        game->map = NULL;
+                    }
+
                     game->map = load_map_from_script(path, game);
                     self->do_load_modal = false;
                 }
@@ -428,7 +440,7 @@ void render_editor_ui(Ed* self, Map* map, Game* game) {
         cursor_y += 30;
 
         if (DoBtn(id++, lx + 2, cursor_y + 2, 30, 30, "+")) {
-            Light* light = &map->lights[map->num_lights++];
+            Light* light = &game->lights[game->num_lights++];
             light->enabled = true;
             light->color = WHITE;
             UpdateLightValues(game->assets->shaders[SHADER_PHONG_LIGHTING],
@@ -437,15 +449,15 @@ void render_editor_ui(Ed* self, Map* map, Game* game) {
 
         cursor_y += 32 + 2;
 
-        for (int i = 0; i < map->num_lights; i++) {
-            Light light = map->lights[i];
+        for (int i = 0; i < game->num_lights; i++) {
+            Light light = game->lights[i];
 
             if (DoCollapsingHeader(id++, TextFormat("%s[%d]", "Light", i),
                                    lx + 10, cursor_y, panel_w - 20, 40)) {
                 cursor_y += 40 + 2;
 
                 DoLabel(id++, "Disabled", lx + 30, cursor_y, 100, 30, 30);
-                map->lights[i].enabled =
+                game->lights[i].enabled =
                     !DoCheckBox(id++, lx + 30 + 100, cursor_y, 30, 30);
 
                 if (DoBtn(id++, lx + 30 + 130 + 10, cursor_y, 100, 30,
@@ -457,17 +469,17 @@ void render_editor_ui(Ed* self, Map* map, Game* game) {
 
                 DoLabel(id++, "X", lx + 30, cursor_y, 40, 30, 30);
                 DoDragFloat(id++, lx + 30 + 42, cursor_y, 200, 30,
-                            &map->lights[i].position.x, 0.1f);
+                            &game->lights[i].position.x, 0.1f);
                 cursor_y += 32;
 
                 DoLabel(id++, "Y", lx + 30, cursor_y, 40, 30, 30);
                 DoDragFloat(id++, lx + 30 + 42, cursor_y, 200, 30,
-                            &map->lights[i].position.y, 0.1f);
+                            &game->lights[i].position.y, 0.1f);
                 cursor_y += 32;
 
                 DoLabel(id++, "Z", lx + 30, cursor_y, 40, 30, 30);
                 DoDragFloat(id++, lx + 30 + 42, cursor_y, 200, 30,
-                            &map->lights[i].position.z, 0.1f);
+                            &game->lights[i].position.z, 0.1f);
                 cursor_y += 32;
 
                 DoLabel(id++, "Color", lx + 30, cursor_y, 100, 30, 30);
@@ -479,12 +491,12 @@ void render_editor_ui(Ed* self, Map* map, Game* game) {
                     map->light_color[i]++;
                     map->light_color[i] %=
                         (sizeof(LightColors) / sizeof(LightColors[0]));
-                    map->lights[i].color = LightColors[map->light_color[i]];
+                    game->lights[i].color = LightColors[map->light_color[i]];
                 }
 
                 cursor_y += 32;
 
-                UpdateLightValues(*shader, map->lights[i]);
+                UpdateLightValues(*shader, game->lights[i]);
 
             } else {
                 cursor_y += 40 + 2;
@@ -554,8 +566,8 @@ void serialize_map(Ed* editor, Map* map, Game* game, const char* path) {
 
     it += sprintf(it, "]\n   :lights @[");
 
-    for (int i = 0; i < map->num_lights; i++) {
-        Light light = map->lights[i];
+    for (int i = 0; i < game->num_lights; i++) {
+        Light light = game->lights[i];
 
         it += sprintf(it, "\n      @[%s  %f %f %f  %d]",
                       (light.enabled ? "true" : "false"), light.position.x,

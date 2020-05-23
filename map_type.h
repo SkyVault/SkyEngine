@@ -38,7 +38,6 @@ typedef struct {
     Model floor_tile_models[1];
     Model models[MAX_MODELS];
     Prop props[MAX_PROPS];
-    Light lights[MAX_LIGHTS];
 
     int light_color[MAX_LIGHTS];
 
@@ -46,7 +45,6 @@ typedef struct {
 
     int num_models;
     int num_props;
-    int num_lights;
     int num_spawns;
 
     int width;

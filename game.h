@@ -7,6 +7,7 @@
 #include "assets.h"
 #include "ecs.h"
 #include "map_type.h"
+#include "rlights.h"
 
 enum State { STATE_RUNNING, STATE_PAUSED, STATE_QUITTING };
 enum Scenes { SCENE_MAIN_MENU, SCENE_GAME, SCENE_SETTINGS };
@@ -16,6 +17,9 @@ typedef struct {
     Camera* camera;
     EcsWorld* ecs;
     Map* map;
+
+    Light lights[MAX_LIGHTS];
+    int num_lights;
 
     JanetTable* env;
 

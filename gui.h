@@ -62,7 +62,7 @@ bool DoCollapsingHeader(NodeId id, const char* label, float x, float y,
 Vector4 CTV4(Color c);
 Color V4TC(Vector4 v);
 
-Color DoColorPicker(NodeId id, float x, float y, float width, float height);
+Color DoColorPicker(NodeId* id, float x, float y, float width, float height);
 
 float DoSlider(NodeId id, float x, float y, float width, float height,
                float min, float max);

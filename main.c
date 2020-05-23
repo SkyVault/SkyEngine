@@ -27,7 +27,7 @@
 
 #define BENIS_VERSION_MAJOR "0"
 #define BENIS_VERSION_MINOR "1"
-#define BENIS_VERSION_PATCH "2"
+#define BENIS_VERSION_PATCH "3"
 #define BENIS_VERSION \
     BENIS_VERSION_MAJOR "." BENIS_VERSION_MINOR "." BENIS_VERSION_PATCH
 
@@ -328,11 +328,6 @@ int main() {
     shader->locs[LOC_VECTOR_VIEW] = GetShaderLocation(*shader, "viewPos");
     shader->locs[LOC_MATRIX_MODEL] = GetShaderLocation(*shader, "matModel");
 
-    // int ambientLoc = GetShaderLocation(*shader, "ambient");
-    // SetShaderValue(*shader, ambientLoc, (float[4]){0.15f, 0.15f,
-    // 0.15f, 1.0f},
-    //                UNIFORM_VEC4);
-
     int sunDirLoc = GetShaderLocation(*shader, "sun.direction");
 
     SetShaderValue(*shader, GetShaderLocation(*shader, "sun.direction"),
@@ -343,6 +338,13 @@ int main() {
 
     SetShaderValue(*shader, GetShaderLocation(*shader, "sun.diffuse"),
                    (float[3]){0.01f, 0.01f, 0.01f}, UNIFORM_VEC3);
+
+    // Initialize the lights
+    for (int i = 0; i < MAX_LIGHTS; i++) {
+        game->lights[i] = CreateLight(LIGHT_POINT, Vector3Zero(), Vector3Zero(),
+                                      WHITE, *shader);
+        game->lights[i].enabled = false;
+    }
 
     // Load the skybox
     game->skybox = LoadModelFromMesh(assets->meshes[MESH_SKYBOX]);
