@@ -38,7 +38,8 @@ static struct {
 
 void InitGui();
 void DoPanel(NodeId id, float x, float y, float width, float height);
-void DoFrame(NodeId id, float x, float y, float width, float height);
+void DoFrame(NodeId id, float x, float y, float width, float height,
+             float alpha);
 bool DoBtn(NodeId id, float x, float y, float width, float height,
            const char* text);
 bool DoClickRegion(NodeId id, float x, float y, float width, float height);
@@ -69,6 +70,11 @@ float DoSlider(NodeId id, float x, float y, float width, float height,
 
 bool DoDragFloat(NodeId id, float x, float y, float width, float height,
                  float* value, float step);
+
+int DoIncrementer(NodeId id, float x, float y, float width, float height,
+                  int* v, float font_size);
+
+Font GetFont();
 
 void Lock();
 void Unlock();

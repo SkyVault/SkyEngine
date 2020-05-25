@@ -18,6 +18,7 @@
 #define MAX_MODELS (100)
 #define MAX_PROPS (10000)
 #define MAX_ACTOR_SPAWNS (100)
+#define MAX_DOORS (100)
 
 typedef struct {
     uint8_t active;
@@ -30,6 +31,13 @@ typedef struct {
 } ActorSpawn;
 
 typedef struct {
+    Vector3 position;
+    int id;
+    int dest_id;
+    char* dest_path;
+} Exit;
+
+typedef struct {
     int current_map;
     int num_layers;
 
@@ -38,6 +46,7 @@ typedef struct {
     Model floor_tile_models[1];
     Model models[MAX_MODELS];
     Prop props[MAX_PROPS];
+    Exit exits[MAX_DOORS];
 
     int light_color[MAX_LIGHTS];
 
@@ -46,6 +55,7 @@ typedef struct {
     int num_models;
     int num_props;
     int num_spawns;
+    int num_doors;
 
     int width;
     int height;

@@ -22,10 +22,14 @@ Ed* create_editor() {
     editor->light_panel_y = GetScreenHeight();
     editor->object_placement_type = PLACE_BLOCKS;
     editor->do_export_modal = false;
+    editor->do_exit_placement_modal = false;
     editor->do_load_modal = false;
     editor->maps = GetDirectoryFiles("resources/maps/", &editor->num_maps);
     editor->which_marker = MARKER_PLAYER_START;
+    editor->console_y = 0.0f;
+    editor->do_console = false;
 
+    editor->editing_exit = -1;
     editor->light_grabbed = -1;
 
     return editor;
@@ -42,12 +46,16 @@ void push_message(Ed* self, const char* mesg) {
 void do_mouse_picking(Ed* self, Map* map, Game* game) {}
 
 void render_console(Ed* self, Map* map, Game* game, int id) {
+    const float speed = 10.0f;
     if (self->do_console) {
-        self->console_y =
-            lerp(GetTime(), self->console_y, GetScreenHeight() / 4);
+        self->console_y = lerp_t(self->console_y, GetScreenHeight() / 4,
+                                 speed * GetFrameTime());
     } else {
-        self->console_y = lerp(GetTime(), self->console_y, 0);
+        self->console_y = lerp_t(self->console_y, 0, speed * GetFrameTime());
     }
+
+    DoFrame(id++, 0, -GetScreenHeight() / 4 + self->console_y, GetScreenWidth(),
+            GetScreenHeight() / 4, 0.8f);
 }
 
 void update_editor(Ed* self, Map* map, Game* game) {
@@ -59,8 +67,9 @@ void update_editor(Ed* self, Map* map, Game* game) {
         self->do_export_modal = true;
     }
 
-    if (IsKeyPressed(KEY_GRAVE)) {
+    if (IsKeyPressed(KEY_T) && !game->lock_camera) {
         self->do_console = !self->do_console;
+        printf("here!!!\n");
     }
 
     if (!self->open) return;
@@ -97,8 +106,14 @@ void update_editor(Ed* self, Map* map, Game* game) {
     int sc = GetMouseWheelMove();
 
     if (sc != 0) {
-        if (sc > 0) self->model++;
-        if (sc < 0) self->model--;
+        if (self->object_placement_type == PLACE_MARKERS) {
+            if (sc > 0) self->which_marker++;
+            if (sc < 0) self->which_marker--;
+            self->which_marker %= (MARKER_NUM_MARKERS);
+        } else {
+            if (sc > 0) self->model++;
+            if (sc < 0) self->model--;
+        }
     }
 
     int ms = map->num_models;
@@ -198,6 +213,15 @@ void render_editor(Ed* self, Map* map, Game* game) {
         DrawSphere(light.position, 0.2f, (Color){c.r, c.g, c.b, 100});
     }
 
+    // Draw debug exits
+
+    for (int exit_i = 0; exit_i < map->num_doors; exit_i++) {
+        Exit theExit = map->exits[exit_i];
+
+        DrawCylinder((Vector3){theExit.position.x, -3.0f, theExit.position.z},
+                     0.2f, 0.2f, 4.0f, 20, (Color){0, 100, 255, 100});
+    }
+
     if (self->object_placement_type == PLACE_BLOCKS) {
         DrawModel(
             map->models[self->model], clamped, CUBE_SIZE,
@@ -246,12 +270,21 @@ void render_editor(Ed* self, Map* map, Game* game) {
             map->props[map->num_props++] = prop;
         }
     } else if (self->object_placement_type == PLACE_MARKERS) {
+        Color color = (Color){0, 100, 255, 100};
+
+        if (self->which_marker == MARKER_EXIT)
+            color = (Color){255, 100, 0, 100};
+
         DrawCylinder((Vector3){loc.x, -3.0f, loc.z}, 0.2f, 0.2f, 4.0f, 20,
-                     (Color){0, 100, 255, 100});
+                     color);
 
         if (IsMouseButtonPressed(MOUSE_LEFT_BUTTON)) {
-            map->player_x = loc.x;
-            map->player_z = loc.z;
+            if (self->which_marker == MARKER_PLAYER_START) {
+                map->player_x = loc.x;
+                map->player_z = loc.z;
+            } else if (self->which_marker == MARKER_EXIT) {
+                self->do_exit_placement_modal = true;
+            }
         }
     }
 }
@@ -319,9 +352,15 @@ void render_editor_ui(Ed* self, Map* map, Game* game) {
     // Draws a label for the type of marker
     // TODO(Dustin): Add new markers for exit and other stuff
     if (self->object_placement_type == PLACE_MARKERS) {
-        DoCenterXLabel(id++, (float)GetScreenWidth(),
-                       (float)GetScreenHeight() / 2 + 50.0f, 30,
-                       "Player start");
+        if (self->which_marker == MARKER_PLAYER_START) {
+            DoCenterXLabel(id++, (float)GetScreenWidth(),
+                           (float)GetScreenHeight() / 2 + 50.0f, 30,
+                           "Player start");
+        } else if (self->which_marker == MARKER_EXIT) {
+            DoCenterXLabel(id++, (float)GetScreenWidth(),
+                           (float)GetScreenHeight() / 2 + 50.0f, 30,
+                           "Place exit");
+        }
     }
 
     // Map loading and unloading
@@ -338,7 +377,8 @@ void render_editor_ui(Ed* self, Map* map, Game* game) {
         Unlock();
 
         // TODO(Dustin): Get this to work
-        // qsort(self->maps, self->num_maps, sizeof(char*), sort_levenshtein);
+        // qsort(self->maps, self->num_maps, sizeof(char*),
+        // sort_levenshtein);
 
         if (DoTextInput(id++, load_buff, 1024, GetScreenWidth() / 2 - 150.f,
                         GetScreenHeight() / 2 - 25.f, 300, 50)) {
@@ -408,6 +448,57 @@ void render_editor_ui(Ed* self, Map* map, Game* game) {
         if (DoBtn(id++, GetScreenWidth() / 2.f + 200, GetScreenHeight() / 2.0f,
                   30, 30, "X")) {
             self->do_export_modal = false;
+        }
+
+        Lock();
+
+    } else if (self->do_exit_placement_modal) {
+        DoModal();
+        Unlock();
+
+        game->lock_camera = true;
+
+        const char* title = "Dest map name";
+        Vector2 size = MeasureTextEx(GetFont(), title, 30, 1);
+
+        static char dest_buffer[512] = {'\0'};
+
+        float cursor_y = GetScreenHeight() / 2 - 200;
+        DoLabel(id++, title, GetScreenWidth() / 2 - size.x - 6, cursor_y,
+                size.x + 20, size.y + 4, 30);
+
+        DoTextInput(id++, dest_buffer, 512, GetScreenWidth() / 2 + 6, cursor_y,
+                    200, size.y + 4);
+
+        cursor_y += size.y + 4 + 8;
+
+        const char* title_2 = "This door id";
+        size = MeasureTextEx(GetFont(), title_2, 30, 1);
+        DoLabel(id++, title_2, GetScreenWidth() / 2 - size.x - 6, cursor_y,
+                size.x + 20, size.y + 4, 30);
+
+        static int door_id = 0;
+        DoIncrementer(id++, GetScreenWidth() / 2 + 6, cursor_y, size.y + 4,
+                      size.y + 4, &door_id, 20);
+
+        cursor_y += size.y + 4 + 8;
+
+        const char* title_3 = "Dest door id";
+        size = MeasureTextEx(GetFont(), title_3, 30, 1);
+        DoLabel(id++, title_3, GetScreenWidth() / 2 - size.x - 6, cursor_y,
+                size.x + 20, size.y + 4, 30);
+
+        static int dest_door_id = 0;
+        DoIncrementer(id++, GetScreenWidth() / 2 + 6, cursor_y, size.y + 4,
+                      size.y + 4, &dest_door_id, 20);
+
+        cursor_y += size.y + 4 + 8;
+
+        if (DoBtn(id++, GetScreenWidth() / 2 - 100, cursor_y, 200, 30,
+                  "Place")) {
+            // add_exit(map, loc, door_id, dest_door_id, dest_buffer);
+
+            self->do_exit_placement_modal = false;
         }
 
         Lock();
@@ -520,7 +611,7 @@ void render_editor_ui(Ed* self, Map* map, Game* game) {
                        (float)GetScreenHeight() - (NOTE_HEIGHT * (y + 1.0f)),
                        200, NOTE_HEIGHT};
         DoFrame(id++, r.x - 4.0f, r.y - 4.0f - ((y + 1.0f) * 4.0f),
-                r.width + 8.0f, r.height + 8.0f);
+                r.width + 8.0f, r.height + 8.0f, 1.0f);
         DoLabel(id - 1, note.mesg, r.x, r.y - ((y + 1.0f) * 4.0f), r.width,
                 r.height, 20);
         y++;

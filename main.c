@@ -6,6 +6,7 @@
 #include "assets.h"
 #include "behaviours.h"
 #include "constants.h"
+#include "dict.h"
 #include "ecs.h"
 #include "editor.h"
 #include "game.h"
@@ -18,6 +19,8 @@
 #include "rlgl.h"
 #include "rlights.h"
 #include "tween.h"
+
+// #define PLATFORM_DESKTOP
 
 #if defined(PLATFORM_DESKTOP)
 #define GLSL_VERSION 330
@@ -73,9 +76,9 @@ void update_and_render_menu_scene(Game *game, EcsWorld *ecs,
     float x = GetScreenWidth() - 20;
     float y = GetScreenHeight() - 20;
 
-    DrawTexturePro(t, (Rectangle){0, 0, t.width, t.height},
-                   (Rectangle){x, y, 500, 500}, (Vector2){250, 500}, rot,
-                   WHITE);
+    // DrawTexturePro(t, (Rectangle){0, 0, t.width, t.height},
+    //               (Rectangle){x, y, 500, 500}, (Vector2){250, 500}, rot,
+    //               WHITE);
 
     const float shw = GetScreenWidth() / 2;
     const float shh = GetScreenHeight() / 2;

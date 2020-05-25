@@ -333,6 +333,39 @@ bool DoDragFloat(NodeId id, float x, float y, float width, float height,
     return Active(id);
 }
 
+int DoIncrementer(NodeId id, float x, float y, float width, float height,
+                  int* v, float font_size) {
+    struct NState* state = &GuiState.states[id];
+
+    Rectangle rect = {x + GuiState.px, y + GuiState.py, width, height};
+
+    state->hot = CheckCollisionPointRec(GetMousePosition(), rect);
+    state->active = state->hot && IsMouseButtonPressed(MOUSE_LEFT_BUTTON);
+
+    const float size = font_size;
+
+    const char* text = FormatText("%d", *v);
+
+    Vector2 measure = MeasureTextEx(GuiState.font, text, size, 1);
+    DoPanel(id, x, y, width, height);
+    DrawTextEx(GuiState.font, text,
+               (Vector2){
+                   x + width / 2 - measure.x / 2,
+                   y + height / 2 - measure.y / 2,
+               },
+               size, 1, HIGHLIGHT_COLOR);
+
+    if (state->hot && IsMouseButtonPressed(MOUSE_LEFT_BUTTON)) {
+        *v = (*v) + 1;
+        return 1;
+    } else if (state->hot && IsMouseButtonPressed(MOUSE_RIGHT_BUTTON)) {
+        *v = (*v) - 1;
+        return -1;
+    }
+
+    return 0;
+}
+
 Vector4 CTV4(Color c) {
     return (Vector4){
         c.r / 255.0f,
@@ -350,6 +383,8 @@ Color V4TC(Vector4 v) {
         (unsigned char)(v.w * 255),
     };
 }
+
+Font GetFont() { return GuiState.font; }
 
 void Lock() { GuiState.locked = true; }
 

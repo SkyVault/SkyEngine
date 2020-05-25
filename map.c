@@ -131,10 +131,16 @@ Map *load_map_from_script(const char *path, Game *game) {
 
     Janet resultj;
     int res = janet_dostring(game->env, s, "main", &resultj);
-    JanetTable *result_table = janet_unwrap_table(resultj); 
+    JanetTable *result_table = janet_unwrap_table(resultj);
 
     Map *result = malloc(sizeof(Map));
     result->current_map = -1;
+
+    size_t psize = strlen(path);
+    result->path.buff = malloc(sizeof(char) * psize + 1);
+    for (int i = 0; i < psize; i++) result->path.buff[i] = path[i];
+
+    result->path.len = psize;
 
     if (result_table == NULL) return result;
 
@@ -170,6 +176,8 @@ Map *load_map_from_script(const char *path, Game *game) {
 
     result->num_layers = MAX_NUM_LAYERS;
     result->num_props = 0;
+
+    result->num_doors = 0;
 
     Shader *shader = &game->assets->shaders[SHADER_PHONG_LIGHTING];
 
@@ -353,8 +361,8 @@ void render_map(Map *map, GfxState *gfx, Game *game) {
 }
 
 void destroy_map(Map *map, Game *game) {
-    for (int mi = 0; mi < MAX_MODELS; mi++) {
-        UnloadModel(map->models[mi]);
+    for (int mi = 0; mi < map->num_models; mi++) {
+        // UnloadModel(map->models[mi]);
     }
 
     if (map->path.len > 0 && map->path.buff != NULL) {
@@ -367,4 +375,17 @@ void destroy_map(Map *map, Game *game) {
 void reload_map(Map *map, Game *game) {
     tstr s = tstrf("%s", map->path);
     destroy_map(map, game);
+}
+
+void add_exit(Map *map, Vector3 position, int id, int dest_id,
+              const char *dest_path) {
+    Exit result = (Exit){
+        .id = id, .dest_id = dest_id, .dest_path = NULL, .position = position};
+
+    size_t len = strlen(dest_path);
+    result.dest_path = malloc(len + 1);
+    result.dest_path[len] = '\0';
+    for (int i = 0; i < len; i++) result.dest_path[i] = dest_path[i];
+
+    map->exits[map->num_doors++] = result;
 }
