@@ -21,6 +21,9 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="dict.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
     <ClInclude Include="constants.h">
       <Filter>Source Files</Filter>
     </ClInclude>
@@ -98,6 +101,9 @@
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="dict.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
     <ClCompile Include="components.c">
       <Filter>Source Files</Filter>
     </ClCompile>

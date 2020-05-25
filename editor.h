@@ -7,6 +7,10 @@
 #include "game.h"
 #include "map.h"
 
+#ifdef _WIN32
+// #include <Windows.h>
+#endif
+
 enum {
     PLACE_BLOCKS,
     PLACE_ACTORS,
@@ -41,6 +45,8 @@ typedef struct {
     Note notes[100];
     int num_notes;
 
+    int editing_exit;
+
     int model;
     int which;
     int y;
@@ -55,6 +61,7 @@ typedef struct {
     int object_placement_type;
 
     bool do_export_modal;
+    bool do_exit_placement_modal;
     bool do_load_modal;
     bool do_lights_panel;
     bool do_console;
