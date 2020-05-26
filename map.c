@@ -129,11 +129,24 @@ void load_map_from_script(Map *result, const char *path, Game *game) {
 
     assert(size_arr->count == 2);
 
-    result->width = janet_unwrap_integer(size_arr->data[0]);
-    result->height = janet_unwrap_integer(size_arr->data[1]);
+    if (size_arr) {
+        result->width = janet_unwrap_integer(size_arr->data[0]);
+        result->height = janet_unwrap_integer(size_arr->data[1]);
+    } else {
+        printf("Map(%s)::load Missing size, going with the default (%d %d)",
+               path, MAX_MAP_WIDTH, MAX_MAP_HEIGHT);
+        result->width = MAX_MAP_WIDTH;
+        result->height = MAX_MAP_HEIGHT;
+    }
 
-    result->player_x = janet_unwrap_number(start_arr->data[0]);
-    result->player_z = janet_unwrap_number(start_arr->data[1]);
+    if (start_arr) {
+        result->player_x = janet_unwrap_number(start_arr->data[0]);
+        result->player_z = janet_unwrap_number(start_arr->data[1]);
+    } else {
+        printf("Map(%s)::load Missing start, going with default (5 5)");
+        result->player_x = 5;
+        result->player_z = 5;
+    }
 
     result->num_layers = MAX_NUM_LAYERS;
     result->num_props = 0;

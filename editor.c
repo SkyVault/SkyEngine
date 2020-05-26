@@ -392,13 +392,8 @@ void render_editor_ui(Ed* self, Map* map, Game* game) {
 
                 push_message(self, msg);
             } else {
-                if (game->map != NULL) {
-                    destroy_map(game->map, game);
-                    free(game->map);
-                    game->map = NULL;
-                }
-
-                game->map = create_map_from_script(path, game);
+				destroy_map(game->map, game); 
+                load_map_from_script(game->map, path, game);
             }
 
             self->do_load_modal = false;
@@ -411,13 +406,8 @@ void render_editor_ui(Ed* self, Map* map, Game* game) {
                 const char* path =
                     TextFormat("resources/maps/%s", self->maps[i]);
                 if (FileExists(path)) {
-                    if (game->map != NULL) {
-                        destroy_map(game->map, game);
-                        free(game->map);
-                        game->map = NULL;
-                    }
-
-                    game->map = create_map_from_script(path, game);
+					destroy_map(game->map, game); 
+                    load_map_from_script(game->map, path, game);
                     self->do_load_modal = false;
                 }
             }
