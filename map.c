@@ -340,6 +340,7 @@ void destroy_map(Map *map, Game *game) {
 void reload_map(Map *map, Game *game) {
     tstr s = tstrf("%s", map->path);
     destroy_map(map, game);
+    load_map_from_script(map, s, game);
 }
 
 void add_exit(Map *map, Vector3 position, int id, int dest_id,
