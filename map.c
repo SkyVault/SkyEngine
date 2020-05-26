@@ -143,7 +143,7 @@ void load_map_from_script(Map *result, const char *path, Game *game) {
     Shader *shader = &game->assets->shaders[SHADER_PHONG_LIGHTING];
 
     memset(result->light_color, 0, sizeof(int) * MAX_LIGHTS);
-    game->num_lights = 0;
+    game->assets->num_lights = 0;
     result->num_spawns = 0;
 
     if (props_arr != NULL) {
@@ -164,14 +164,12 @@ void load_map_from_script(Map *result, const char *path, Game *game) {
                 .position = (Vector3){x, y, z},
                 .scale = s,
             };
-
-            printf("props: %d\n", result->num_props);
         }
     }
 
     if (lights_arr != NULL) {
         for (int i = 0; i < MAX_LIGHTS; i++) {
-            game->lights[i].enabled = false;
+            game->assets->lights[i].enabled = false;
             result->light_color[i] = 0;
 
             if (i < lights_arr->count) {
@@ -185,18 +183,19 @@ void load_map_from_script(Map *result, const char *path, Game *game) {
 
                 result->light_color[i] = light_index;
 
-                game->lights[i].position = (Vector3){x, y, z};
-                game->lights[i].color = LightColors[result->light_color[i]];
-                game->lights[i].enabled = true;
-                game->num_lights++;
+                game->assets->lights[i].position = (Vector3){x, y, z};
+                game->assets->lights[i].color =
+                    LightColors[result->light_color[i]];
+                game->assets->lights[i].enabled = true;
+                game->assets->num_lights++;
             }
 
-            UpdateLightValues(*shader, game->lights[i]);
+            UpdateLightValues(*shader, game->assets->lights[i]);
         }
 
     } else {
         for (int i = 0; i < MAX_LIGHTS; i++) {
-            UpdateLightValues(*shader, game->lights[i]);
+            UpdateLightValues(*shader, game->assets->lights[i]);
         }
     }
 

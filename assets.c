@@ -44,6 +44,30 @@ Assets* create_and_load_assets() {
             [FONT_MAIN_FONT] = LoadFont("resources/alagard_font.png"),
         }};
 
+    Shader* shader = &ass->shaders[SHADER_PHONG_LIGHTING];
+
+    shader->locs[LOC_VECTOR_VIEW] = GetShaderLocation(*shader, "viewPos");
+    shader->locs[LOC_MATRIX_MODEL] = GetShaderLocation(*shader, "matModel");
+
+    int sunDirLoc = GetShaderLocation(*shader, "sun.direction");
+
+    SetShaderValue(*shader, GetShaderLocation(*shader, "sun.direction"),
+                   (float[3]){-0.2f, -1.0f, -0.3}, UNIFORM_VEC3);
+
+    SetShaderValue(*shader, GetShaderLocation(*shader, "sun.ambient"),
+                   (float[3]){0.00f, 0.00f, 0.00f}, UNIFORM_VEC3);
+
+    SetShaderValue(*shader, GetShaderLocation(*shader, "sun.diffuse"),
+                   (float[3]){0.01f, 0.01f, 0.01f}, UNIFORM_VEC3);
+
+    // Initialize the lights
+    for (int i = 0; i < MAX_LIGHTS; i++) {
+        ass->lights[i] = CreateLight(LIGHT_POINT, Vector3Zero(), Vector3Zero(),
+                                     WHITE, *shader);
+        ass->lights[i].enabled = false;
+        UpdateLightValues(*shader, ass->lights[i]);
+    }
+
     for (int i = 0; i < TEX_NUM_TEXTURES; i++) {
         SetTextureFilter(ass->textures[i], FILTER_POINT);
         SetTextureWrap(ass->textures[i], WRAP_REPEAT);
