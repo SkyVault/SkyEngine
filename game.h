@@ -18,9 +18,6 @@ typedef struct {
     EcsWorld* ecs;
     Map* map;
 
-    Light lights[MAX_LIGHTS];
-    int num_lights;
-
     JanetTable* env;
 
     Model skybox;

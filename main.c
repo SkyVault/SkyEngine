@@ -326,29 +326,6 @@ int main() {
     Game *game = create_game(assets, &camera, ecs, env);
     GfxState *gfx = create_gfx_state();
 
-    Shader *shader = &assets->shaders[MAIN_SHADER];
-
-    shader->locs[LOC_VECTOR_VIEW] = GetShaderLocation(*shader, "viewPos");
-    shader->locs[LOC_MATRIX_MODEL] = GetShaderLocation(*shader, "matModel");
-
-    int sunDirLoc = GetShaderLocation(*shader, "sun.direction");
-
-    SetShaderValue(*shader, GetShaderLocation(*shader, "sun.direction"),
-                   (float[3]){-0.2f, -1.0f, -0.3}, UNIFORM_VEC3);
-
-    SetShaderValue(*shader, GetShaderLocation(*shader, "sun.ambient"),
-                   (float[3]){0.00f, 0.00f, 0.00f}, UNIFORM_VEC3);
-
-    SetShaderValue(*shader, GetShaderLocation(*shader, "sun.diffuse"),
-                   (float[3]){0.01f, 0.01f, 0.01f}, UNIFORM_VEC3);
-
-    // Initialize the lights
-    for (int i = 0; i < MAX_LIGHTS; i++) {
-        game->lights[i] = CreateLight(LIGHT_POINT, Vector3Zero(), Vector3Zero(),
-                                      WHITE, *shader);
-        game->lights[i].enabled = false;
-    }
-
     // Load the skybox
     game->skybox = LoadModelFromMesh(assets->meshes[MESH_SKYBOX]);
     game->skybox.materials[0].shader = assets->shaders[SHADER_SKYBOX];

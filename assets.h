@@ -5,6 +5,7 @@
 
 #include "raylib.h"
 #include "raymath.h"
+#include "rlights.h"
 
 enum Textures {
     TEX_WALL_1,
@@ -57,6 +58,9 @@ typedef struct {
 
     Model* models;
     int num_models;
+
+    Light lights[MAX_LIGHTS];
+    int num_lights;
 } Assets;
 
 Assets* create_and_load_assets();
