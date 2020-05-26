@@ -370,7 +370,7 @@ int main() {
 
     InitGui();
 
-    game->map = load_map_from_script("resources/maps/edit.janet", game);
+    game->map = create_map_from_script("resources/maps/edit.janet", game);
     Map *map = game->map;
 
     assemble(ACTOR_PLAYER, game, map->player_x, (ACTOR_HEIGHT - GLOBAL_SCALE),

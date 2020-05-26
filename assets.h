@@ -4,6 +4,7 @@
 #include <stdlib.h>
 
 #include "raylib.h"
+#include "raymath.h"
 
 enum Textures {
     TEX_WALL_1,
@@ -53,6 +54,9 @@ typedef struct {
     Texture2D textures[TEX_NUM_TEXTURES];
     Shader shaders[SHADER_NUM_SHADERS];
     Font fonts[FONT_NUM_FONTS];
+
+    Model* models;
+    int num_models;
 } Assets;
 
 Assets* create_and_load_assets();

@@ -54,72 +54,45 @@ bool is_number(const char *str) {
     return true;
 }
 
-void zero_out_map(Map *result) {
+void zero_out_map(Map *self) {
+    self->num_models = 0;
+    self->num_props = 0;
+    self->num_spawns = 0;
+    self->num_doors = 0;
+
     for (int layer = 0; layer < MAX_NUM_LAYERS; layer++) {
         for (int i = 0; i < MAX_MAP_WIDTH * MAX_MAP_HEIGHT; i++) {
-            if (layer == 0) {
-                result->walls[layer][i].active = 0;
-                result->walls[layer][i].model = 0;
-            } else {
-                result->walls[layer][i].active = 0;
-                result->walls[layer][i].model = 0;
-            }
+            self->walls[layer][i].active = 0;
+            self->walls[layer][i].model = 0;
         }
     }
 }
 
-void load_models(Map *result, Game *game) {
-    Model default_wall = LoadModelFromMesh(game->assets->meshes[MESH_CUBE]);
-    default_wall.materials[0].maps[MAP_DIFFUSE].texture =
-        game->assets->textures[TEX_WALL_1];
-    default_wall.materials[0].shader =
-        game->assets->shaders[SHADER_PHONG_LIGHTING];
+Map *create_map_from_script(const char *path, Game *game) {
+    Map *result = malloc(sizeof(Map));
+    result->current_map = -1;
 
-    Model default_wall_2 = LoadModelFromMesh(game->assets->meshes[MESH_CUBE]);
-    default_wall_2.materials[0].maps[MAP_DIFFUSE].texture =
-        game->assets->textures[TEX_WALL_2];
-    default_wall_2.materials[0].shader =
-        game->assets->shaders[SHADER_PHONG_LIGHTING];
+    size_t psize = strlen(path);
+    result->path.buff = malloc(sizeof(char) * psize + 1);
+    for (int i = 0; i < psize; i++) result->path.buff[i] = path[i];
 
-    Model default_wall_3 = LoadModelFromMesh(game->assets->meshes[MESH_CUBE]);
-    default_wall_2.materials[0].maps[MAP_DIFFUSE].texture =
-        game->assets->textures[TEX_WALL_3];
-    default_wall_2.materials[0].shader =
-        game->assets->shaders[SHADER_PHONG_LIGHTING];
+    result->path.len = psize;
 
-    Model fence_1 = LoadModelFromMesh(game->assets->meshes[MESH_CUBE]);
-    fence_1.materials[0].maps[MAP_DIFFUSE].texture =
-        game->assets->textures[TEX_CHAINLINK_FENCE];
-    fence_1.materials[0].shader = game->assets->shaders[SHADER_PHONG_LIGHTING];
-    fence_1.transform = MatrixIdentity();
-    fence_1.transform =
-        MatrixMultiply(fence_1.transform, MatrixScale(0.01f, 1.0f, 1.0f));
+    zero_out_map(result);
 
-    Model fence_2 = LoadModelFromMesh(game->assets->meshes[MESH_CUBE]);
-    fence_2.materials[0].maps[MAP_DIFFUSE].texture =
-        game->assets->textures[TEX_CHAINLINK_FENCE];
-    fence_2.materials[0].shader = game->assets->shaders[SHADER_PHONG_LIGHTING];
-    fence_2.transform = MatrixIdentity();
-    fence_2.transform =
-        MatrixMultiply(fence_2.transform, MatrixScale(1.0f, 1.0f, 0.01f));
+    // Load the models and meshes
+    for (int i = 0; i <= 4; i++) {
+        result->models[result->num_models++] = game->assets->models[i];
+    }
 
-    result->models[0] = default_wall;
-    result->models[1] = default_wall_2;
-    result->models[3] = default_wall_3;
+    result->floor_tile_models[0] = game->assets->models[5];
 
-    result->models[2] = fence_1;
-    result->models[3] = fence_2;
-    result->num_models = 5;
+    load_map_from_script(result, path, game);
 
-    result->floor_tile_models[0] =
-        LoadModelFromMesh(game->assets->meshes[MESH_CUBE]);
-    result->floor_tile_models[0].materials[0].maps[MAP_DIFFUSE].texture =
-        game->assets->textures[TEX_FLOOR_1];
-    result->floor_tile_models[0].materials[0].shader =
-        game->assets->shaders[SHADER_PHONG_LIGHTING];
+    return result;
 }
 
-Map *load_map_from_script(const char *path, Game *game) {
+void load_map_from_script(Map *result, const char *path, Game *game) {
     FILE *o = fopen(path, "r");
 
     fseek(o, 0L, SEEK_END);
@@ -133,19 +106,7 @@ Map *load_map_from_script(const char *path, Game *game) {
     int res = janet_dostring(game->env, s, "main", &resultj);
     JanetTable *result_table = janet_unwrap_table(resultj);
 
-    Map *result = malloc(sizeof(Map));
-    result->current_map = -1;
-
-    size_t psize = strlen(path);
-    result->path.buff = malloc(sizeof(char) * psize + 1);
-    for (int i = 0; i < psize; i++) result->path.buff[i] = path[i];
-
-    result->path.len = psize;
-
-    if (result_table == NULL) return result;
-
-    zero_out_map(result);
-    load_models(result, game);
+    if (result_table == NULL) return;
 
     // Read the map size
     JanetArray *size_arr = janet_unwrap_array(
@@ -318,8 +279,6 @@ Map *load_map_from_script(const char *path, Game *game) {
     }
 
     fclose(o);
-
-    return result;
 }
 
 void update_map(Map *self, Game *game) {}
@@ -350,20 +309,14 @@ void render_map(Map *map, GfxState *gfx, Game *game) {
         }
     }
 
-    // billboards
+    // Rendering all of the props
     for (int pi = 0; pi < map->num_props; pi++) {
         draw_prop(gfx, game, map->props[pi]);
-
-        // Prop prop = map->props[pi];
-        // DrawBillboardRec(*game->camera, game->assets->textures[TEX_PROPS],
-        //                  prop.region, prop.position, prop.scale, WHITE);
     }
 }
 
 void destroy_map(Map *map, Game *game) {
-    for (int mi = 0; mi < map->num_models; mi++) {
-        // UnloadModel(map->models[mi]);
-    }
+    zero_out_map(map);
 
     if (map->path.len > 0 && map->path.buff != NULL) {
         free(map->path.buff);
