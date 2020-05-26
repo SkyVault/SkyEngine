@@ -160,11 +160,8 @@ void update_editor(Ed* self, Map* map, Game* game) {
     }
 }
 
-void render_editor(Ed* self, Map* map, Game* game) {
-    if (!self->open) return;
-
+Vector3 get_mouse_placement_loc(Game* game, float y) {
     Vector3 loc = Vector3Zero();
-
     static float dist = 1.0f;
     dist += GetMouseWheelMove() * 0.05f;
 
@@ -181,12 +178,16 @@ void render_editor(Ed* self, Map* map, Game* game) {
     // float angle = Vector3 game->camera->target;
 
     loc.x = game->camera->position.x + cosf(angle) * 2;
-    loc.y = self->y * (float)(GLOBAL_SCALE);
+    loc.y = y;
     loc.z = game->camera->position.z + sinf(angle) * 2;
+    return loc;
+}
 
-    // loc.x *= dist;
-    // loc.y *= dist;
-    // loc.z *= dist;
+void render_editor(Ed* self, Map* map, Game* game) {
+    if (!self->open) return;
+
+    Vector3 loc =
+        get_mouse_placement_loc(game, self->y * (float)(GLOBAL_SCALE));
 
     const int cs = CUBE_SIZE;
     Vector3 clamped = (Vector3){ceil(loc.x), ceil(loc.y), ceil(loc.z)};
@@ -219,7 +220,7 @@ void render_editor(Ed* self, Map* map, Game* game) {
         Exit theExit = map->exits[exit_i];
 
         DrawCylinder((Vector3){theExit.position.x, -3.0f, theExit.position.z},
-                     0.2f, 0.2f, 4.0f, 20, (Color){0, 100, 255, 100});
+                     0.2f, 0.2f, 4.0f, 20, (Color){255, 100, 0, 100});
     }
 
     if (self->object_placement_type == PLACE_BLOCKS) {
@@ -397,7 +398,7 @@ void render_editor_ui(Ed* self, Map* map, Game* game) {
                     game->map = NULL;
                 }
 
-                game->map = load_map_from_script(path, game);
+                game->map = create_map_from_script(path, game);
             }
 
             self->do_load_modal = false;
@@ -416,7 +417,7 @@ void render_editor_ui(Ed* self, Map* map, Game* game) {
                         game->map = NULL;
                     }
 
-                    game->map = load_map_from_script(path, game);
+                    game->map = create_map_from_script(path, game);
                     self->do_load_modal = false;
                 }
             }
@@ -496,7 +497,9 @@ void render_editor_ui(Ed* self, Map* map, Game* game) {
 
         if (DoBtn(id++, GetScreenWidth() / 2 - 100, cursor_y, 200, 30,
                   "Place")) {
-            // add_exit(map, loc, door_id, dest_door_id, dest_buffer);
+            Vector3 loc =
+                get_mouse_placement_loc(game, self->y * (int)(GLOBAL_SCALE));
+            add_exit(map, loc, door_id, dest_door_id, dest_buffer);
 
             self->do_exit_placement_modal = false;
         }

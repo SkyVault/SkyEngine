@@ -18,8 +18,6 @@ Dict* create_dict() {
     return result;
 }
 
-static int collisions = 0;
-
 void dict_add(Dict* self, void* key, void* value) {
     uint32_t index = hash(key);
 
@@ -29,8 +27,6 @@ void dict_add(Dict* self, void* key, void* value) {
         self->data[index]->next = NULL;
         self->data[index]->value = value;
     } else {
-        collisions += 1;
-        printf("collision %d\n", collisions);
         Entry* it = self->data[index];
 
         while (it->next != NULL) it = it->next;
@@ -70,7 +66,6 @@ void dict_dump_table(Dict* self) {
 
         while (it) {
             printf("(%p, %p)", it->key, it->value);
-
             if (it->next != NULL)
                 printf(" ");
             else

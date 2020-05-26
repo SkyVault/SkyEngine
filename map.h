@@ -18,13 +18,22 @@
 #include "raymath.h"
 #include "rlights.h"
 
+/* NOTE(Dustin):
+    The map shouldn't contain any assets itself, but should request the
+    asset manager to make sure the assets that it neads, is loaded. Then
+    the map can make requests to the asset manager for all of the needed
+    models and textures
+*/
+
 static const Prop prop_types[] = {
     {.region = {0, 0, 419, 420}, .position = {0, 0, 0}, .scale = 1.0f},
     {.region = {420, 0, 419, 420}, .position = {0, 0, 0}, .scale = 1.0f},
     {.region = {840, 0, 419, 420}, .position = {0, 0, 0}, .scale = 1.0f},
 };
 
-Map *load_map_from_script(const char *path, Game *game);
+Map *create_map_from_script(const char *path, Game *game);
+
+void load_map_from_script(Map *map, const char *path, Game *game);
 
 void destroy_map(Map *map, Game *game);
 void reload_map(Map *map, Game *game);
