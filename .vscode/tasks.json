@@ -8,6 +8,14 @@
       "args": [],
       "problemMatcher": ["$msCompile"],
       "group": "build"
+    },
+    {
+      "type": "process",
+      "label": "Clean",
+      "command": "clean.bat",
+      "args": [],
+      "problemMatcher": ["$msCompile"],
+      "group": "build"
     }
   ]
 }
