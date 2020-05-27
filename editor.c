@@ -6,6 +6,8 @@
 #define MARGIN (8)
 #define NOTE_HEIGHT (75)
 
+bool get_mouse_placement_loc(Game* game, float y, Vector3* loc);
+
 Ed* create_editor() {
     Ed* editor = malloc(sizeof(Ed));
 
@@ -133,22 +135,8 @@ void update_editor(Ed* self, Map* map, Game* game) {
     if (self->light_grabbed >= 0) {
         // TODO(Dustin): move this to a seperate function
         Vector3 loc = Vector3Zero();
-
-        EntId player_id = get_first_with(game->ecs, Player);
-
-        float angle = 0.0f;
-
-        if (player_id >= 0) {
-            EntStruct* player = get_ent(game->ecs, player_id);
-            angle = get_comp(game->ecs, player, Player)->rotation;
-        }
-
-        // Get the rotation of the camera
-        // float angle = Vector3 game->camera->target;
-
-        loc.x = game->camera->position.x + cosf(angle) * 2;
-        loc.y = self->y * (float)(GLOBAL_SCALE);
-        loc.z = game->camera->position.z + sinf(angle) * 2;
+        bool hit = get_mouse_placement_loc(
+            game, self->y * (float)(GLOBAL_SCALE), &loc);
 
         game->assets->lights[self->light_grabbed].position = loc;
         UpdateLightValues(game->assets->shaders[SHADER_PHONG_LIGHTING],
@@ -160,39 +148,47 @@ void update_editor(Ed* self, Map* map, Game* game) {
     }
 }
 
-Vector3 get_mouse_placement_loc(Game* game, float y) {
-    Vector3 loc = Vector3Zero();
-    static float dist = 1.0f;
-    dist += GetMouseWheelMove() * 0.05f;
+bool get_mouse_placement_loc(Game* game, float y, Vector3* loc) {
+    Ray ray =
+        GetMouseRay((Vector2){GetScreenWidth() / 2, GetScreenHeight() / 2 - 50},
+                    *game->camera);
 
-    EntId player_id = get_first_with(game->ecs, Player);
+    RayHitInfo nearestHit = {0};
+    nearestHit.distance = FLOAT_MAX;
+    nearestHit.hit = false;
 
-    float angle = 0.0f;
+    // Check ray collision aginst ground plane
+    RayHitInfo groundHitInfo = GetCollisionRayGround(ray, 0.0f);
 
-    if (player_id >= 0) {
-        EntStruct* player = get_ent(game->ecs, player_id);
-        angle = get_comp(game->ecs, player, Player)->rotation;
+    if ((groundHitInfo.hit) && (groundHitInfo.distance < nearestHit.distance)) {
+        nearestHit = groundHitInfo;
     }
 
-    // Get the rotation of the camera
-    // float angle = Vector3 game->camera->target;
+    if (nearestHit.hit) {
+        *loc = nearestHit.position;
+        return true;
+    }
 
-    loc.x = game->camera->position.x + cosf(angle) * 2;
-    loc.y = y;
-    loc.z = game->camera->position.z + sinf(angle) * 2;
-    return loc;
+    return false;
 }
 
 void render_editor(Ed* self, Map* map, Game* game) {
     if (!self->open) return;
 
-    Vector3 loc =
-        get_mouse_placement_loc(game, self->y * (float)(GLOBAL_SCALE));
+    Vector3 loc;
+    bool hit =
+        get_mouse_placement_loc(game, self->y * (float)(GLOBAL_SCALE), &loc);
+
+    // loc = Vector3Transform(loc, MatrixRotateY(180.0f));
+
+    // DrawCube(loc, 0.2f, 0.2f, 0.2f, GREEN);
 
     const int cs = CUBE_SIZE;
-    Vector3 clamped = (Vector3){ceil(loc.x), ceil(loc.y), ceil(loc.z)};
+    Vector3 clamped =
+        (Vector3){ceil(loc.x) - 0.5f, ceil(loc.y), ceil(loc.z) - 0.5f};
+    clamped.y = self->y;
     // clamped.x -= 1;
-    clamped.z -= 1;
+    // clamped.z -= 1;
 
     if (IsKeyDown(KEY_LEFT_ALT)) clamped = loc;
 
@@ -223,7 +219,8 @@ void render_editor(Ed* self, Map* map, Game* game) {
                      0.2f, 0.2f, 4.0f, 20, (Color){255, 100, 0, 100});
     }
 
-    if (self->object_placement_type == PLACE_BLOCKS) {
+    if (self->object_placement_type == PLACE_BLOCKS &&
+        self->light_grabbed < 0 && self->do_lights_panel) {
         DrawModel(
             map->models[self->model], clamped, CUBE_SIZE,
             (Color){(unsigned char)(occ * 255), (unsigned char)(occ * 255),
@@ -392,7 +389,7 @@ void render_editor_ui(Ed* self, Map* map, Game* game) {
 
                 push_message(self, msg);
             } else {
-				destroy_map(game->map, game); 
+                destroy_map(game->map, game);
                 load_map_from_script(game->map, path, game);
             }
 
@@ -406,7 +403,7 @@ void render_editor_ui(Ed* self, Map* map, Game* game) {
                 const char* path =
                     TextFormat("resources/maps/%s", self->maps[i]);
                 if (FileExists(path)) {
-					destroy_map(game->map, game); 
+                    destroy_map(game->map, game);
                     load_map_from_script(game->map, path, game);
                     self->do_load_modal = false;
                 }
@@ -487,8 +484,9 @@ void render_editor_ui(Ed* self, Map* map, Game* game) {
 
         if (DoBtn(id++, GetScreenWidth() / 2 - 100, cursor_y, 200, 30,
                   "Place")) {
-            Vector3 loc =
-                get_mouse_placement_loc(game, self->y * (int)(GLOBAL_SCALE));
+            Vector3 loc = {0};
+            bool hit = get_mouse_placement_loc(
+                game, self->y * (int)(GLOBAL_SCALE), &loc);
             add_exit(map, loc, door_id, dest_door_id, dest_buffer);
 
             self->do_exit_placement_modal = false;

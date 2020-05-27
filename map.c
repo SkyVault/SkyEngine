@@ -351,7 +351,7 @@ void add_exit(Map *map, Vector3 position, int id, int dest_id,
     size_t len = strlen(dest_path);
     result.dest_path = malloc(len + 1);
     result.dest_path[len] = '\0';
-    for (int i = 0; i < len; i++) result.dest_path[i] = dest_path[i];
+    for (size_t i = 0; i < len; i++) result.dest_path[i] = dest_path[i];
 
     map->exits[map->num_doors++] = result;
 }
