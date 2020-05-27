@@ -21,9 +21,6 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="dict.h">
-      <Filter>Source Files</Filter>
-    </ClInclude>
     <ClInclude Include="constants.h">
       <Filter>Source Files</Filter>
     </ClInclude>
@@ -49,9 +46,6 @@
       <Filter>Source Files</Filter>
     </ClInclude>
     <ClInclude Include="map.h">
-      <Filter>Source Files</Filter>
-    </ClInclude>
-    <ClInclude Include="map_def.h">
       <Filter>Source Files</Filter>
     </ClInclude>
     <ClInclude Include="maths.h">
@@ -98,6 +92,12 @@
     </ClInclude>
     <ClInclude Include="particles.h">
       <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="prop.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="map_type.h">
+      <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -159,6 +159,12 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="janet.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="dict.h">
+      <Filter>Header Files</Filter>
+    </ClCompile>
+    <ClCompile Include="rlights.c">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

@@ -149,7 +149,7 @@
       <AdditionalDependencies>raylib.lib;glew32.lib;opengl32.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
-  <ItemGroup> 
+  <ItemGroup>
     <ClInclude Include="constants.h" />
     <ClInclude Include="assembler.h" />
     <ClInclude Include="assets.h" />
@@ -176,7 +176,6 @@
     <ClInclude Include="utils.h" />
     <ClInclude Include="tween.h" />
     <ClInclude Include="gui.h" />
-    <ClCompile Include="rlights.h" />
     <ClCompile Include="dict.h" />
   </ItemGroup>
   <ItemGroup>

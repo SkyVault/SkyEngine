@@ -16,6 +16,14 @@
       "args": [],
       "problemMatcher": ["$msCompile"],
       "group": "build"
+    },
+    {
+      "type": "process",
+      "label": "Release",
+      "command": "build-release.bat",
+      "args": [],
+      "problemMatcher": ["$msCompile"],
+      "group": "build"
     }
   ]
 }
