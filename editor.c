@@ -8,6 +8,19 @@
 
 bool get_mouse_placement_loc(Game* game, float y, Vector3* loc);
 
+// TODO(Dustin): Refactor this somehow
+static Game* game_s = NULL;
+static Ed* editor_s = NULL;
+static Map* map_s = NULL;
+
+// TODO(Dustin):
+//  Create a on exit save modal
+// That way we can remove the statics above and just have the editor
+
+void on_exit(void) {
+    serialize_map(editor_s, map_s, game_s, "resources/maps/unsaved-backup");
+}
+
 Ed* create_editor() {
     Ed* editor = malloc(sizeof(Ed));
 
@@ -33,6 +46,9 @@ Ed* create_editor() {
 
     editor->editing_exit = -1;
     editor->light_grabbed = -1;
+
+    // Exit handler, portable?
+    atexit(on_exit);
 
     return editor;
 }
@@ -61,6 +77,11 @@ void render_console(Ed* self, Map* map, Game* game, int id) {
 }
 
 void update_editor(Ed* self, Map* map, Game* game) {
+    // Refactor
+    editor_s = self;
+    map_s = map;
+    game_s = game;
+
     game->noclip = self->open;
     if ((IsKeyPressed(KEY_TAB) && IsKeyDown(KEY_LEFT_SHIFT)))
         self->open = !self->open;

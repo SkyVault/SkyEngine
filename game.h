@@ -2,6 +2,7 @@
 #define BENIS_GAME_H
 
 #include <janet.h>
+#include <stdio.h>
 #include <stdlib.h>
 
 #include "assets.h"
