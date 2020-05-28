@@ -509,6 +509,7 @@ void render_editor_ui(Ed* self, Map* map, Game* game) {
     const float lx = GetScreenWidth() - panel_w;
 
     float cursor_y = self->light_panel_y;
+
     if (DoBtn(id++, lx, cursor_y, 200, 30,
               TextFormat("%s Lights", (self->do_lights_panel ? "+" : "-")))) {
         self->do_lights_panel = !self->do_lights_panel;
@@ -518,7 +519,6 @@ void render_editor_ui(Ed* self, Map* map, Game* game) {
         self->light_panel_y =
             lerp(GetFrameTime() * 10.0f, self->light_panel_y, 30);
         // Do lights panel
-
         cursor_y += 30;
 
         if (DoBtn(id++, lx + 2, cursor_y + 2, 30, 30, "+")) {
@@ -531,6 +531,38 @@ void render_editor_ui(Ed* self, Map* map, Game* game) {
 
         cursor_y += 32 + 2;
 
+        if (DoCollapsingHeader(id++, "Sun", lx + 10, cursor_y, panel_w - 20,
+                               40)) {
+            cursor_y += 40 + 2;
+
+            DoLabel(id++, "Direction", lx + 30, cursor_y, 200, 30, 20);
+
+            Vector3 test = {0};
+            DoDragFloat3(&id, lx + 130, cursor_y, 300 - 64, 24,
+                         &game->assets->sun.direction, 0.1f);
+            id++;
+
+            cursor_y += 32;
+
+            DoLabel(id++, "Diffuse", lx + 30, cursor_y, 100, 30, 20);
+
+            Color color = {255};
+            DoColorDragFloat4(&id, lx + 30 + 100, cursor_y, 300 - 64, 24,
+                              &game->assets->sun.diffuse);
+            id++;
+
+            cursor_y += 26;
+
+            DoLabel(id++, "Ambient", lx + 30, cursor_y, 100, 30, 20);
+            DoColorDragFloat4(&id, lx + 30 + 100, cursor_y, 300 - 64, 24,
+                              &game->assets->sun.ambient);
+            id++;
+
+            UpdateSunValue(*shader, game->assets->sun);
+        }
+
+        cursor_y += 32 + 2;
+
         for (int i = 0; i < game->assets->num_lights; i++) {
             Light light = game->assets->lights[i];
 
@@ -538,7 +570,7 @@ void render_editor_ui(Ed* self, Map* map, Game* game) {
                                    lx + 10, cursor_y, panel_w - 20, 40)) {
                 cursor_y += 40 + 2;
 
-                DoLabel(id++, "Disabled", lx + 30, cursor_y, 100, 30, 30);
+                DoLabel(id++, "Disabled", lx + 30, cursor_y, 100, 30, 20);
                 game->assets->lights[i].enabled =
                     !DoCheckBox(id++, lx + 30 + 100, cursor_y, 30, 30);
 
@@ -548,36 +580,19 @@ void render_editor_ui(Ed* self, Map* map, Game* game) {
                 }
 
                 cursor_y += 32;
+                DoLabel(id++, "Position", lx + 30, cursor_y, 200, 30, 20);
 
-                DoLabel(id++, "X", lx + 30, cursor_y, 40, 30, 30);
-                DoDragFloat(id++, lx + 30 + 42, cursor_y, 200, 30,
-                            &game->assets->lights[i].position.x, 0.1f);
-                cursor_y += 32;
+                DoDragFloat3(&id, lx + 130, cursor_y, 300 - 64, 24,
+                             &game->assets->lights[i].position, 0.1f);
 
-                DoLabel(id++, "Y", lx + 30, cursor_y, 40, 30, 30);
-                DoDragFloat(id++, lx + 30 + 42, cursor_y, 200, 30,
-                            &game->assets->lights[i].position.y, 0.1f);
-                cursor_y += 32;
+                cursor_y += 26;
 
-                DoLabel(id++, "Z", lx + 30, cursor_y, 40, 30, 30);
-                DoDragFloat(id++, lx + 30 + 42, cursor_y, 200, 30,
-                            &game->assets->lights[i].position.z, 0.1f);
-                cursor_y += 32;
+                DoLabel(id++, "Color", lx + 30, cursor_y, 100, 30, 20);
 
-                DoLabel(id++, "Color", lx + 30, cursor_y, 100, 30, 30);
-                DrawRectangle(lx + 30 + 100, cursor_y, 30, 30,
-                              LightColors[map->light_color[i]]);
+                DoColorDragFloat4(&id, lx + 30 + 100, cursor_y, 300 - 64, 24,
+                                  &game->assets->lights[i].color);
 
-                if (DoClickRegion(id++, lx + 30 + 100, cursor_y, 30, 30,
-                                  light.color)) {
-                    map->light_color[i]++;
-                    map->light_color[i] %=
-                        (sizeof(LightColors) / sizeof(LightColors[0]));
-                    game->assets->lights[i].color =
-                        LightColors[map->light_color[i]];
-                }
-
-                cursor_y += 32;
+                cursor_y += 28;
 
                 UpdateLightValues(*shader, game->assets->lights[i]);
 

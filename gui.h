@@ -71,6 +71,12 @@ float DoSlider(NodeId id, float x, float y, float width, float height,
 bool DoDragFloat(NodeId id, float x, float y, float width, float height,
                  float* value, float step);
 
+bool DoDragFloat3(NodeId* id, float x, float y, float width, float height,
+                  Vector3* value, float step);
+
+bool DoColorDragFloat4(NodeId* id, float x, float y, float width, float height,
+                       Color* color);
+
 int DoIncrementer(NodeId id, float x, float y, float width, float height,
                   int* v, float font_size);
 

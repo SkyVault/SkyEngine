@@ -49,16 +49,10 @@ Assets* create_and_load_assets() {
     shader->locs[LOC_VECTOR_VIEW] = GetShaderLocation(*shader, "viewPos");
     shader->locs[LOC_MATRIX_MODEL] = GetShaderLocation(*shader, "matModel");
 
-    int sunDirLoc = GetShaderLocation(*shader, "sun.direction");
-
-    SetShaderValue(*shader, GetShaderLocation(*shader, "sun.direction"),
-                   (float[3]){-0.2f, -1.0f, -0.3}, UNIFORM_VEC3);
-
-    SetShaderValue(*shader, GetShaderLocation(*shader, "sun.ambient"),
-                   (float[3]){0.00f, 0.00f, 0.00f}, UNIFORM_VEC3);
-
-    SetShaderValue(*shader, GetShaderLocation(*shader, "sun.diffuse"),
-                   (float[3]){0.01f, 0.01f, 0.01f}, UNIFORM_VEC3);
+    ass->sun.direction = (Vector3){-0.2f, -1.0f, -0.3};
+    ass->sun.ambient = (Color){0, 0, 0, 255};
+    ass->sun.diffuse = (Color){200, 200, 200, 255};
+    UpdateSunValue(*shader, ass->sun);
 
     // Initialize the lights
     for (int i = 0; i < MAX_LIGHTS; i++) {

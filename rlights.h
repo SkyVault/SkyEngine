@@ -49,6 +49,11 @@ static Color LightColors[] = {WHITE,  RED,    GREEN,  BLUE,  SKYBLUE,
                               YELLOW, PURPLE, ORANGE, BROWN, BLACK};
 #define CLITERAL (Color)
 
+typedef struct {
+    Vector3 direction;
+    Color diffuse;
+    Color ambient;
+} Sun;
 // Light data
 typedef struct {
     int type;
@@ -76,4 +81,7 @@ void UpdateLightValues(Shader shader,
                        Light light);  // Send light properties to shader
 // void InitLightLocations(Shader shader, Light *light);     // Init light
 // shader locations
+
+void UpdateSunValue(Shader shader, Sun sun);
+
 #endif
