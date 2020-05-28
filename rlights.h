@@ -53,6 +53,10 @@ typedef struct {
     Vector3 direction;
     Color diffuse;
     Color ambient;
+
+    int directionLoc;
+    int diffuseLoc;
+    int ambientLoc;
 } Sun;
 // Light data
 typedef struct {
@@ -81,6 +85,8 @@ void UpdateLightValues(Shader shader,
                        Light light);  // Send light properties to shader
 // void InitLightLocations(Shader shader, Light *light);     // Init light
 // shader locations
+
+Sun CreateSun(Shader shader, Vector3 direction, Color ambient, Color diffuse);
 
 void UpdateSunValue(Shader shader, Sun sun);
 
