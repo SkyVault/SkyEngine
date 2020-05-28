@@ -60,3 +60,24 @@ void UpdateLightValues(Shader shader, Light light) {
         (float)light.color.b / (float)255, (float)light.color.a / (float)255};
     SetShaderValue(shader, light.colorLoc, color, UNIFORM_VEC4);
 }
+
+void UpdateSunValue(Shader shader, Sun sun) {
+    // TODO(Dustin): @Optimize
+
+    float direction[3] = {sun.direction.x, sun.direction.y, sun.direction.z};
+
+    float ambient[3] = {(float)sun.ambient.r / 255.0f,
+                        (float)sun.ambient.g / 255.0f,
+                        (float)sun.ambient.b / 255.0f};
+
+    float diffuse[3] = {(float)sun.diffuse.r / 255.0f,
+                        (float)sun.diffuse.g / 255.0f,
+                        (float)sun.diffuse.b / 255.0f};
+
+    SetShaderValue(shader, GetShaderLocation(shader, "sun.direction"),
+                   direction, UNIFORM_VEC3);
+    SetShaderValue(shader, GetShaderLocation(shader, "sun.ambient"), ambient,
+                   UNIFORM_VEC3);
+    SetShaderValue(shader, GetShaderLocation(shader, "sun.diffuse"), diffuse,
+                   UNIFORM_VEC3);
+}

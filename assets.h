@@ -61,6 +61,7 @@ typedef struct {
 
     Light lights[MAX_LIGHTS];
     int num_lights;
+    Sun sun;
 } Assets;
 
 Assets* create_and_load_assets();

@@ -18,8 +18,7 @@ out vec4 finalColor;
 #define     LIGHT_POINT             1
 
 struct Sun { // Directional light
-    vec3 direction;
-
+    vec3 direction; 
     vec3 ambient;
     vec3 diffuse;
 };

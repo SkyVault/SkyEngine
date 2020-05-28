@@ -320,7 +320,7 @@ bool DoDragFloat(NodeId id, float x, float y, float width, float height,
         state->last_value = (float)GetMouseX();
     }
 
-    const char* str = TextFormat("%f", *value);
+    const char* str = TextFormat("%.2f", *value);
 
     Vector2 size = MeasureTextEx(GuiState.font, str, 20, 1);
 
@@ -331,6 +331,49 @@ bool DoDragFloat(NodeId id, float x, float y, float width, float height,
                 20, 1, true, HIGHLIGHT_COLOR);
 
     return Active(id);
+}
+
+bool DoDragFloat3(NodeId* id, float x, float y, float width, float height,
+                  Vector3* value, float step) {
+    int nid = *id;
+    DoDragFloat(nid++, x + width / 3 * 0, y, width / 3, height, &value->x,
+                step);
+    DoDragFloat(nid++, x + width / 3 * 1, y, width / 3, height, &value->y,
+                step);
+    DoDragFloat(nid++, x + width / 3 * 2, y, width / 3, height, &value->z,
+                step);
+    *id = nid;
+}
+
+bool DoColorDragFloat4(NodeId* id, float x, float y, float width, float height,
+                       Color* color) {
+    struct NState* state = &GuiState.states[(*id)];
+
+    if (state->init == 0) {
+        state->init = 1;
+
+        state->v = (Vector4){color->r / 255.0f, color->g / 255.0f,
+                             color->b / 255.0f, color->a / 255.0f};
+    }
+
+    DrawRectangle(x, y, height, height, *color);
+    DoDragFloat3(id, x + height, y, width - height, height, &state->v,
+                 (1.0 / 255.0));
+
+    // Clamp
+    state->v.x =
+        (state->v.x < 0.0f ? 0.0f : (state->v.x > 1.0f ? 1.0f : state->v.x));
+
+    state->v.y =
+        (state->v.y < 0.0f ? 0.0f : (state->v.y > 1.0f ? 1.0f : state->v.y));
+
+    state->v.z =
+        (state->v.z < 0.0f ? 0.0f : (state->v.z > 1.0f ? 1.0f : state->v.z));
+
+    color->r = (unsigned char)(state->v.x * 255);
+    color->g = (unsigned char)(state->v.y * 255);
+    color->b = (unsigned char)(state->v.z * 255);
+    return true;
 }
 
 int DoIncrementer(NodeId id, float x, float y, float width, float height,
