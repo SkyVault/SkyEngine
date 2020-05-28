@@ -49,10 +49,8 @@ Assets* create_and_load_assets() {
     shader->locs[LOC_VECTOR_VIEW] = GetShaderLocation(*shader, "viewPos");
     shader->locs[LOC_MATRIX_MODEL] = GetShaderLocation(*shader, "matModel");
 
-    ass->sun.direction = (Vector3){-0.2f, -1.0f, -0.3};
-    ass->sun.ambient = (Color){0, 0, 0, 255};
-    ass->sun.diffuse = (Color){200, 200, 200, 255};
-    UpdateSunValue(*shader, ass->sun);
+    ass->sun = CreateSun(*shader, (Vector3){-0.2f, -1.0f, -0.3},
+                         (Color){0, 0, 0, 255}, (Color){200, 200, 200, 255});
 
     // Initialize the lights
     for (int i = 0; i < MAX_LIGHTS; i++) {
