@@ -34,7 +34,7 @@ Ed* create_editor() {
     editor->which = 0;
     editor->model = 0;
     editor->y = 0;
-    editor->light_panel_y = GetScreenHeight();
+    editor->light_panel_y = (float)GetScreenHeight();
     editor->object_placement_type = PLACE_BLOCKS;
     editor->do_export_modal = false;
     editor->do_exit_placement_modal = false;
