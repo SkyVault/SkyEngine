@@ -301,8 +301,8 @@ bool DoCollapsingHeader(NodeId id, const char* label, float x, float y,
     return Active(id);
 }
 
-bool DoDragFloat(NodeId id, float x, float y, float width, float height,
-                 float* value, float step) {
+bool DoDragRegionFloat(NodeId id, float x, float y, float width, float height,
+                       float* value, float step) {
     struct NState* state = &GuiState.states[id];
 
     Rectangle rect = {x + GuiState.px, y + GuiState.py, width, height};
@@ -319,6 +319,13 @@ bool DoDragFloat(NodeId id, float x, float y, float width, float height,
         *value -= (state->last_value - (float)GetMouseX()) * step;
         state->last_value = (float)GetMouseX();
     }
+}
+
+bool DoDragFloat(NodeId id, float x, float y, float width, float height,
+                 float* value, float step) {
+    struct NState* state = &GuiState.states[id];
+
+    DoDragRegionFloat(id, x, y, width, height, value, step);
 
     const char* str = TextFormat("%.2f", *value);
 
@@ -357,8 +364,22 @@ bool DoColorDragFloat4(NodeId* id, float x, float y, float width, float height,
     }
 
     DrawRectangle(x, y, height, height, *color);
+
+    float delta = 0;
+    DoDragRegionFloat(*id, x, y, height, height, &delta, (1.0f / 255.0f));
+
+    if (delta > 0 || delta < 0) {
+        state->v.x += delta;
+        state->v.y += delta;
+        state->v.z += delta;
+    }
+
+    (*id)++;
+
     DoDragFloat3(id, x + height, y, width - height, height, &state->v,
                  (1.0 / 255.0));
+
+    (*id)++;
 
     // Clamp
     state->v.x =
