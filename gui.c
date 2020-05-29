@@ -1,7 +1,7 @@
 #include "gui.h"
 
 void InitGui() {
-    GuiState.font = LoadFont("resources/alpha_beta.png");
+    GuiState.font = LoadFont("resources/HappyTime.otf");
     // GuiState.font = GetFontDefault();
 }
 
