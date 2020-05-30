@@ -195,13 +195,13 @@ void load_map_from_script(Map *result, const char *path, Game *game) {
                 float x = (float)janet_unwrap_number(light_arr->data[1]);
                 float y = (float)janet_unwrap_number(light_arr->data[2]);
                 float z = (float)janet_unwrap_number(light_arr->data[3]);
-                int light_index = (int)janet_unwrap_integer(light_arr->data[4]);
 
-                result->light_color[i] = light_index;
+                int r = (int)janet_unwrap_integer(light_arr->data[4]);
+                int g = (int)janet_unwrap_integer(light_arr->data[5]);
+                int b = (int)janet_unwrap_integer(light_arr->data[6]);
 
                 game->assets->lights[i].position = (Vector3){x, y, z};
-                game->assets->lights[i].color =
-                    LightColors[result->light_color[i]];
+                game->assets->lights[i].color = (Color){r, g, b, 255};
                 game->assets->lights[i].enabled = true;
                 game->assets->num_lights++;
             }
