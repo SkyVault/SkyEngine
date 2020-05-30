@@ -48,8 +48,6 @@ typedef struct {
     Prop props[MAX_PROPS];
     Exit exits[MAX_DOORS];
 
-    int light_color[MAX_LIGHTS];
-
     ActorSpawn spawns[MAX_ACTOR_SPAWNS];
 
     int num_models;

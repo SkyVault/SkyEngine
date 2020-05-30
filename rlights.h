@@ -43,12 +43,6 @@
 
 #define MAX_LIGHTS 10  // Max dynamic lights supported by shader
 
-#undef CLITERAL
-#define CLITERAL
-static Color LightColors[] = {WHITE,  RED,    GREEN,  BLUE,  SKYBLUE,
-                              YELLOW, PURPLE, ORANGE, BROWN, BLACK};
-#define CLITERAL (Color)
-
 typedef struct {
     Vector3 direction;
     Color diffuse;

@@ -158,7 +158,6 @@ void load_map_from_script(Map *result, const char *path, Game *game) {
 
     Shader *shader = &game->assets->shaders[SHADER_PHONG_LIGHTING];
 
-    memset(result->light_color, 0, sizeof(int) * MAX_LIGHTS);
     game->assets->num_lights = 0;
     result->num_spawns = 0;
 
@@ -186,7 +185,6 @@ void load_map_from_script(Map *result, const char *path, Game *game) {
     if (lights_arr != NULL) {
         for (int i = 0; i < MAX_LIGHTS; i++) {
             game->assets->lights[i].enabled = false;
-            result->light_color[i] = 0;
 
             if (i < lights_arr->count) {
                 JanetArray *light_arr = janet_unwrap_array(lights_arr->data[i]);
