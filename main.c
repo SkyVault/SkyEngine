@@ -289,10 +289,6 @@ void update_and_render_game_scene(Game *game, EcsWorld *ecs,
     render_editor_ui(editor, map, game);
     // #endif
 
-    if (IsMouseOnUiElement()) {
-        printf("MOUSE ON UI%d\n", rand());
-    }
-
     DrawFPS(10, 10);
 
     EndDrawing();
