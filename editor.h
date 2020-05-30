@@ -37,6 +37,15 @@ typedef struct Note {
     bool active;
 } Note;
 
+enum { MAX_HISTORY = 256 };
+
+enum {
+    EDITOR_STATE_EXPORT_MODAL,
+    EDITOR_STATE_EXIT_PLACEMENT_MODAL,
+    EDITOR_STATE_LOAD_MODAL,
+    EDITOR_STATE_LIGHTS_MODAL,
+    EDITOR_STATE_CONSOLE,
+};
 typedef struct {
     bool open;
 
@@ -68,6 +77,9 @@ typedef struct {
 
     int num_maps;
     char** maps;
+
+    int history_size;
+    char* history[MAX_HISTORY];
 } Ed;
 
 Ed* create_editor();

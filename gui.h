@@ -29,7 +29,7 @@ struct NState {
 };
 
 static struct {
-    struct NState states[2048];
+    struct NState states[4096];
     float px, py;
     Font font;
 

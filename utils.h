@@ -29,4 +29,10 @@ void *talloc(size_t n);
 
 tstr tstrf(const char *fmt, ...);
 
+#define BUFFER_SIZE (1024)
+static char buffer[BUFFER_SIZE] = {'\0'};
+
+const char *GetLog();
+void Log(const char *fmt, ...);
+
 #endif  // BENIS_UTILS_H

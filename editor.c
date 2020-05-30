@@ -44,6 +44,8 @@ Ed* create_editor() {
     editor->console_y = 0.0f;
     editor->do_console = false;
 
+    editor->history_size = 0;
+
     editor->editing_exit = -1;
     editor->light_grabbed = -1;
 
@@ -63,6 +65,13 @@ void push_message(Ed* self, const char* mesg) {
 
 void do_mouse_picking(Ed* self, Map* map, Game* game) {}
 
+void push_command_output(Ed* self, const char* str) {
+    char* copy = malloc(strlen(str));
+    sprintf(copy, "%s", str);
+
+    self->history[self->history_size++] = copy;
+}
+
 void render_console(Ed* self, Map* map, Game* game, int id) {
     const float speed = 10.0f;
     if (self->do_console) {
@@ -72,8 +81,32 @@ void render_console(Ed* self, Map* map, Game* game, int id) {
         self->console_y = lerp_t(self->console_y, 0, speed * GetFrameTime());
     }
 
-    DoFrame(id++, 0, -GetScreenHeight() / 4 + self->console_y, GetScreenWidth(),
-            GetScreenHeight() / 4, 0.8f);
+    float cursor_y = -GetScreenHeight() / 4 + self->console_y;
+    float height = GetScreenHeight() / 4;
+
+    DoFrame(id++, 0, cursor_y, GetScreenWidth(), GetScreenHeight() / 4, 0.8f);
+
+    static char input[512] = {'\0'};
+    DoTextInput(id++, input, 512, 0, cursor_y + height - 32, GetScreenWidth(),
+                32);
+
+    if (IsKeyPressed(KEY_ENTER)) {
+        push_command_output(self, input);
+    }
+
+    const float font_size = 30;
+
+    float y = 0;
+    for (int i = self->history_size - 1; i >= 0; i--) {
+        const float yy = self->console_y - (32 + font_size + y);
+        DrawRectangle(0, yy, GetScreenWidth(), font_size,
+                      (Color){0, 0, 0, 100});
+        DrawTextEx(GetFont(), FormatText("[%d]", i), (Vector2){2, yy},
+                   font_size, 1, WHITE);
+        DoLabel(id++, self->history[i], 75, yy, GetScreenWidth() - 2, font_size,
+                font_size);
+        y += 34;
+    }
 }
 
 void update_editor(Ed* self, Map* map, Game* game) {
@@ -92,7 +125,6 @@ void update_editor(Ed* self, Map* map, Game* game) {
 
     if (IsKeyPressed(KEY_T) && !game->lock_camera) {
         self->do_console = !self->do_console;
-        printf("here!!!\n");
     }
 
     if (!self->open) return;
@@ -346,6 +378,10 @@ void render_editor_ui(Ed* self, Map* map, Game* game) {
     Shader* shader = &game->assets->shaders[SHADER_PHONG_LIGHTING];
 
     int id = 200;
+
+    render_console(self, map, game, id);
+
+    id += 400;
 
     if (!self->open) {
         if (DoBtn(id++, GetScreenWidth() / 2 - 50.0f, 0, 100, 25, "Editor")) {
@@ -644,8 +680,6 @@ void render_editor_ui(Ed* self, Map* map, Game* game) {
                 r.height, 20);
         y++;
     }
-
-    render_console(self, map, game, id + 100);
 }
 
 void serialize_map(Ed* editor, Map* map, Game* game, const char* path) {
