@@ -4,7 +4,15 @@
     {
       "type": "process",
       "label": "MSBuild",
-      "command": "run.bat",
+      "command": "build.bat",
+      "args": [],
+      "problemMatcher": ["$msCompile"],
+      "group": "build"
+    },
+    {
+      "type": "process",
+      "label": "Bundle",
+      "command": "bundle.bat",
       "args": [],
       "problemMatcher": ["$msCompile"],
       "group": "build"
@@ -22,6 +30,14 @@
       "label": "Release",
       "command": "build-release.bat",
       "args": [],
+      "problemMatcher": ["$msCompile"],
+      "group": "build"
+    },
+    {
+      "type": "process",
+      "label": "Publish Update",
+      "command": "python",
+      "args": ["create_and_publish_build.py"],
       "problemMatcher": ["$msCompile"],
       "group": "build"
     }

@@ -127,6 +127,9 @@ void load_map_from_script(Map *result, const char *path, Game *game) {
     JanetArray *actors_arr = janet_unwrap_array(
         janet_table_get(result_table, janet_ckeywordv("actors")));
 
+    JanetArray *exits_arr = janet_unwrap_array(
+        janet_table_get(result_table, janet_ckeywordv("exits")));
+
     assert(size_arr->count == 2);
 
     if (size_arr) {
@@ -226,6 +229,25 @@ void load_map_from_script(Map *result, const char *path, Game *game) {
                 .position = (Vector3){x, y, z},
             };
             assemble(ACTOR_GIRL_1 + type, game, x, y, z, 0, 0);
+        }
+    }
+
+    if (exits_arr != NULL && exits_arr != 0x1) {
+        for (int exit_i = 0; exit_i < exits_arr->count; exit_i++) {
+            JanetArray *exit_arr = janet_unwrap_array(exits_arr->data[exit_i]);
+
+            int self_id = (int)janet_unwrap_integer(exit_arr->data[0]);
+
+            float x = (float)janet_unwrap_number(exit_arr->data[1]);
+            float y = (float)janet_unwrap_number(exit_arr->data[2]);
+            float z = (float)janet_unwrap_number(exit_arr->data[3]);
+
+            int dest_id = (int)janet_unwrap_integer(exit_arr->data[4]);
+
+            const JanetString *dest_path =
+                janet_unwrap_string(exit_arr->data[5]);
+
+            add_exit(result, (Vector3){x, y, z}, self_id, dest_id, dest_path);
         }
     }
 
@@ -335,6 +357,9 @@ void destroy_map(Map *map, Game *game) {
         map->path.buff = NULL;
         map->path.len = -1;
     }
+
+    // Clean up the exits path string
+    for (int i = 0; i < map->num_exits; i++) free(map->exits[i].dest_path);
 }
 
 void reload_map(Map *map, Game *game) {

@@ -544,7 +544,8 @@ void render_editor_ui(Ed* self, Map* map, Game* game) {
 
         cursor_y += size.y + 4 + 8;
 
-        if (DoBtn(id++, 0, 0, 30, 30, "X")) {
+        if (DoBtn(id++, GetScreenWidth() / 2 + 200, GetScreenHeight() / 2, 30,
+                  30, "X")) {
             self->state = EDITOR_STATE_NONE;
         }
 
