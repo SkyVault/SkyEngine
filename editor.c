@@ -329,7 +329,7 @@ void render_editor(Ed* self, Map* map, Game* game) {
         DrawCylinder((Vector3){loc.x, -3.0f, loc.z}, 0.2f, 0.2f, 4.0f, 20,
                      color);
 
-        if (IsMouseButtonPressed(MOUSE_LEFT_BUTTON)) {
+        if (IsMouseButtonPressed(MOUSE_LEFT_BUTTON) && !IsMouseOnUiElement()) {
             if (self->which_marker == MARKER_PLAYER_START) {
                 map->player_x = loc.x;
                 map->player_z = loc.z;
@@ -502,7 +502,7 @@ void render_editor_ui(Ed* self, Map* map, Game* game) {
         Lock();
 
     } else if (self->state == EDITOR_STATE_EXIT_PLACEMENT_MODAL) {
-        id += 10;
+        id += 12;
         DoModal();
         Unlock();
 
@@ -543,6 +543,10 @@ void render_editor_ui(Ed* self, Map* map, Game* game) {
                       size.y + 4, &dest_door_id, 20);
 
         cursor_y += size.y + 4 + 8;
+
+        if (DoBtn(id++, 0, 0, 30, 30, "X")) {
+            self->state = EDITOR_STATE_NONE;
+        }
 
         if (DoBtn(id++, GetScreenWidth() / 2 - 100, cursor_y, 200, 30,
                   "Place")) {
@@ -744,6 +748,16 @@ void serialize_map(Ed* editor, Map* map, Game* game, const char* path) {
         ActorSpawn s = map->spawns[i];
         it += sprintf(it, "\n      @[%d  %f %f %f]", s.type - ACTOR_GIRL_1,
                       s.position.x, s.position.y, s.position.z);
+    }
+
+    it += sprintf(it, "]\n   :exits @[");
+
+    for (int i = 0; i < map->num_exits; i++) {
+        Exit e = map->exits[i];
+        //                           id   x  y  z  destId destPath
+        it += sprintf(it, "\n      @[%d  %f %f %f  %d \"%s\"]", e.id,
+                      e.position.x, e.position.y, e.position.z, e.dest_id,
+                      e.dest_path);
     }
 
     it += sprintf(it, "]}");
