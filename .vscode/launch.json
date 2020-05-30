@@ -9,7 +9,7 @@
       "name": "(Windows) Launch",
       "type": "cppvsdbg",
       "request": "launch",
-      "program": "${workspaceFolder}/Debug/Benis3D.exe",
+      "program": "${workspaceFolder}/x64/Debug/Benis3D.exe",
       "args": [],
       "stopAtEntry": false,
       "cwd": "${workspaceFolder}",

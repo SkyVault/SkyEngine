@@ -92,8 +92,9 @@
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalLibraryDirectories>C:\Users\dusti\source\repos\Benis3D\lib;C:\raylib\raylib\projects\VS2017\raylib\Release.DLL;C:\raylib\raylib\projects\VS2017\raylib\Release.DLL;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>C:\Users\dusti\source\repos\Benis3D\lib64</AdditionalLibraryDirectories>
       <AdditionalDependencies>raylib.lib;glew32.lib;opengl32.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <TargetMachine>MachineX64</TargetMachine>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
@@ -107,7 +108,7 @@
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalLibraryDirectories>C:\Users\dusti\source\repos\Benis3D\lib;C:\raylib\raylib\projects\VS2017\raylib\Release.DLL;</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>C:\Users\dusti\source\repos\Benis3D\lib64</AdditionalLibraryDirectories>
       <AdditionalDependencies>raylib.lib;glew32.lib;opengl32.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
@@ -126,8 +127,9 @@
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalLibraryDirectories>C:\Users\dusti\source\repos\Benis3D\lib;C:\raylib\raylib\projects\VS2017\raylib\Release.DLL;</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>C:\Users\dusti\source\repos\Benis3D\lib64</AdditionalLibraryDirectories>
       <AdditionalDependencies>raylib.lib;glew32.lib;opengl32.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <TargetMachine>MachineX64</TargetMachine>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -145,7 +147,7 @@
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalLibraryDirectories>C:\Users\dusti\source\repos\Benis3D\lib;C:\raylib\raylib\projects\VS2017\raylib\Release.DLL;</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>C:\Users\dusti\source\repos\Benis3D\lib64</AdditionalLibraryDirectories>
       <AdditionalDependencies>raylib.lib;glew32.lib;opengl32.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
