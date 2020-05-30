@@ -58,7 +58,7 @@ void zero_out_map(Map *self) {
     self->num_models = 0;
     self->num_props = 0;
     self->num_spawns = 0;
-    self->num_doors = 0;
+    self->num_exits = 0;
 
     for (int layer = 0; layer < MAX_NUM_LAYERS; layer++) {
         for (int i = 0; i < MAX_MAP_WIDTH * MAX_MAP_HEIGHT; i++) {
@@ -151,7 +151,7 @@ void load_map_from_script(Map *result, const char *path, Game *game) {
     result->num_layers = MAX_NUM_LAYERS;
     result->num_props = 0;
 
-    result->num_doors = 0;
+    result->num_exits = 0;
 
     Shader *shader = &game->assets->shaders[SHADER_PHONG_LIGHTING];
 

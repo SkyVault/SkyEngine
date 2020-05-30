@@ -265,7 +265,7 @@ void render_editor(Ed* self, Map* map, Game* game) {
 
     // Draw debug exits
 
-    for (int exit_i = 0; exit_i < map->num_doors; exit_i++) {
+    for (int exit_i = 0; exit_i < map->num_exits; exit_i++) {
         Exit theExit = map->exits[exit_i];
 
         DrawCylinder((Vector3){theExit.position.x, -3.0f, theExit.position.z},
@@ -334,7 +334,6 @@ void render_editor(Ed* self, Map* map, Game* game) {
                 map->player_x = loc.x;
                 map->player_z = loc.z;
             } else if (self->which_marker == MARKER_EXIT) {
-                // self->do_exit_placement_modal = true;
                 self->state = EDITOR_STATE_EXIT_PLACEMENT_MODAL;
             }
         }
