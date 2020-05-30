@@ -55,7 +55,7 @@ typedef struct {
     int num_models;
     int num_props;
     int num_spawns;
-    int num_doors;
+    int num_exits;
 
     int width;
     int height;
