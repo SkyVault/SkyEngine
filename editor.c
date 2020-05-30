@@ -738,9 +738,10 @@ void serialize_map(Ed* editor, Map* map, Game* game, const char* path) {
     for (int i = 0; i < game->assets->num_lights; i++) {
         Light light = game->assets->lights[i];
 
-        it += sprintf(it, "\n      @[%s  %f %f %f  %d]",
+        it += sprintf(it, "\n      @[%s  %f %f %f  %d %d %d]",
                       (light.enabled ? "true" : "false"), light.position.x,
-                      light.position.y, light.position.z, map->light_color[i]);
+                      light.position.y, light.position.z, light.color.r,
+                      light.color.g, light.color.b);
     }
 
     it += sprintf(it, "]\n   :actors @[");
