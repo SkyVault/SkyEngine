@@ -1,8 +1,8 @@
 #include "gui.h"
 
 void InitGui() {
-    GuiState.font = LoadFont("resources/HappyTime.otf");
-    // GuiState.font = GetFontDefault();
+    // GuiState.font = LoadFont("resources/HappyTime.otf");
+    GuiState.font = GetFontDefault();
 }
 
 void DoPanel(NodeId id, float x, float y, float width, float height) {
@@ -86,7 +86,7 @@ bool DoTextInput(NodeId id, char* buffer, size_t buffer_size, float x, float y,
     struct NState* state = &GuiState.states[id];
     DoPanel(id, x, y, width, height);
 
-    const int fsize = 25;
+    const int fsize = 30;
     Vector2 size = MeasureTextEx(GuiState.font, buffer, fsize, 1);
     DrawTextEx(GuiState.font, buffer,
                (Vector2){x + 4, y + height / 2 - size.y / 2}, fsize, 1, BLACK);
@@ -100,7 +100,7 @@ bool DoTextInput(NodeId id, char* buffer, size_t buffer_size, float x, float y,
         if (IsMouseButtonPressed(MOUSE_LEFT_BUTTON) && !state->hot)
             state->active = false;
 
-        if (IsKeyPressed(KEY_BACKSPACE)) {
+        if (IsKeyDown(KEY_BACKSPACE)) {
             if (state->cursor > 0) {
                 buffer[state->cursor - 1] = '\0';
                 state->cursor--;

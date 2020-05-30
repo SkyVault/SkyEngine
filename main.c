@@ -22,6 +22,8 @@
 
 // #define PLATFORM_DESKTOP
 
+#define BUFFSIZE (512)
+
 #if defined(PLATFORM_DESKTOP)
 #define GLSL_VERSION 330
 #else

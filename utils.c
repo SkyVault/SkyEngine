@@ -54,3 +54,13 @@ char *tstrf(const char *fmt, ...) {
     va_end(args);
     return result;
 }
+
+void Log(const char *fmt, ...) {
+    va_list args;
+    va_start(args, fmt);
+    vsprintf(buffer, fmt, args);
+    printf(fmt, args);
+    va_end(args);
+}
+
+const char *GetLog() { return buffer; }
