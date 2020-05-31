@@ -1,14 +1,22 @@
 #include "gui.h"
 
+#define CHECK_IF_HOT()                                                  \
+    Rectangle rect = {x + GuiState.px, y + GuiState.py, width, height}; \
+    state->hot = CheckCollisionPointRec(GetMousePosition(), rect);      \
+    if (state->hot) GuiState.a_el_is_hot = true;
+
 void InitGui() {
     // GuiState.font = LoadFont("resources/HappyTime.otf");
     GuiState.font = GetFontDefault();
+    GuiState.a_el_is_hot = false;
 }
 
 void DoPanel(NodeId id, float x, float y, float width, float height) {
     struct NState* state = &GuiState.states[id];
 
     Color color = (!Hot(id)) ? BASE_COLOR : (Color){200, 200, 200, 255};
+
+    CHECK_IF_HOT()
 
     DrawRectangle(x, y, width, height, color);
     DrawRectangleLinesEx((Rectangle){x, y, width, height}, 3, ALT_COLOR);
@@ -18,6 +26,9 @@ void DoFrame(NodeId id, float x, float y, float width, float height,
              float alpha) {
     struct NState* state = &GuiState.states[id];
     Color color = (Color){100, 100, 100, (unsigned char)(255 * alpha)};
+
+    CHECK_IF_HOT()
+
     DrawRectangle(x, y, width, height, color);
     DrawRectangleLinesEx((Rectangle){x, y, width, height}, 3,
                          (Color){200, 200, 200, 200});
@@ -27,14 +38,15 @@ void DoLabel(NodeId id, const char* str, float x, float y, float width,
              float height, int font_size) {
     struct NState* state = &GuiState.states[id];
 
+    CHECK_IF_HOT()
+
     DrawTextRec(GuiState.font, str, (Rectangle){x, y, width, height}, font_size,
                 1, true, HIGHLIGHT_COLOR);
 }
 
 bool DoClickRegion(NodeId id, float x, float y, float width, float height) {
     struct NState* state = &GuiState.states[id];
-    Rectangle rect = {x + GuiState.px, y + GuiState.py, width, height};
-    state->hot = CheckCollisionPointRec(GetMousePosition(), rect);
+    CHECK_IF_HOT()
     state->active = state->hot && IsMouseButtonPressed(MOUSE_LEFT_BUTTON);
     return Active(id);
 }
@@ -43,9 +55,8 @@ bool DoBtn(NodeId id, float x, float y, float width, float height,
            const char* text) {
     struct NState* state = &GuiState.states[id];
 
-    Rectangle rect = {x + GuiState.px, y + GuiState.py, width, height};
+    CHECK_IF_HOT()
 
-    state->hot = CheckCollisionPointRec(GetMousePosition(), rect);
     state->active = state->hot && IsMouseButtonPressed(MOUSE_LEFT_BUTTON);
 
     const float size = 30.0f;
@@ -91,8 +102,7 @@ bool DoTextInput(NodeId id, char* buffer, size_t buffer_size, float x, float y,
     DrawTextEx(GuiState.font, buffer,
                (Vector2){x + 4, y + height / 2 - size.y / 2}, fsize, 1, BLACK);
 
-    state->hot = CheckCollisionPointRec(GetMousePosition(),
-                                        (Rectangle){x, y, width, height});
+    CHECK_IF_HOT()
 
     if (!state->active) {
         state->active = IsMouseButtonPressed(MOUSE_LEFT_BUTTON) && state->hot;
@@ -147,6 +157,8 @@ int DoToggleGroupV(NodeId id, const char* names, float x, float y,
                     (Rectangle){x, y + cursor_y, size.x + r * 2 + 6,
                                 size.y + 4});
 
+                if (state->hot) GuiState.a_el_is_hot = true;
+
                 DoPanel(id, x, y + cursor_y, size.x + r * 2 + 6, size.y + 4);
                 DrawTextEx(GuiState.font, name,
                            (Vector2){x + r * 2 + 2, y + cursor_y + 2}, 20, 1,
@@ -197,8 +209,7 @@ float DoSlider(NodeId id, float x, float y, float width, float height,
         state->init = 1;
     }
 
-    state->hot = CheckCollisionPointRec(GetMousePosition(),
-                                        (Rectangle){x, y, width, height});
+    CHECK_IF_HOT()
 
     float mx = (GetMouseX() - x);
     drag_x = x + mx;
@@ -259,9 +270,7 @@ Color DoColorPicker(NodeId* id, float x, float y, float width, float height) {
 bool DoCheckBox(NodeId id, float x, float y, float width, float height) {
     struct NState* state = &GuiState.states[id];
 
-    Rectangle rect = {x + GuiState.px, y + GuiState.py, width, height};
-
-    state->hot = CheckCollisionPointRec(GetMousePosition(), rect);
+    CHECK_IF_HOT()
 
     if (state->hot && IsMouseButtonPressed(MOUSE_LEFT_BUTTON)) {
         state->active = !state->active;
@@ -281,9 +290,7 @@ bool DoCollapsingHeader(NodeId id, const char* label, float x, float y,
                         float width, float height) {
     struct NState* state = &GuiState.states[id];
 
-    Rectangle rect = {x + GuiState.px, y + GuiState.py, width, height};
-
-    state->hot = CheckCollisionPointRec(GetMousePosition(), rect);
+    CHECK_IF_HOT()
 
     if (state->hot && IsMouseButtonPressed(MOUSE_LEFT_BUTTON)) {
         state->active = !state->active;
@@ -305,8 +312,7 @@ bool DoDragRegionFloat(NodeId id, float x, float y, float width, float height,
                        float* value, float step) {
     struct NState* state = &GuiState.states[id];
 
-    Rectangle rect = {x + GuiState.px, y + GuiState.py, width, height};
-    state->hot = CheckCollisionPointRec(GetMousePosition(), rect);
+    CHECK_IF_HOT()
 
     bool last = state->active;
     state->active = state->hot && IsMouseButtonDown(MOUSE_LEFT_BUTTON);
@@ -401,9 +407,8 @@ int DoIncrementer(NodeId id, float x, float y, float width, float height,
                   int* v, float font_size) {
     struct NState* state = &GuiState.states[id];
 
-    Rectangle rect = {x + GuiState.px, y + GuiState.py, width, height};
+    CHECK_IF_HOT()
 
-    state->hot = CheckCollisionPointRec(GetMousePosition(), rect);
     state->active = state->hot && IsMouseButtonPressed(MOUSE_LEFT_BUTTON);
 
     const float size = font_size;
@@ -447,6 +452,10 @@ Color V4TC(Vector4 v) {
         (unsigned char)(v.w * 255),
     };
 }
+
+void UpdateGui() { GuiState.a_el_is_hot = false; }
+
+bool IsMouseOnUiElement() { return GuiState.a_el_is_hot; }
 
 Font GetFont() { return GuiState.font; }
 
