@@ -26,9 +26,9 @@ void update_physics(Map* map, EcsWorld* ecs, Game* game, EntId ent) {
             if (active) {
                 Rectangle wall = (Rectangle){x * CUBE_SIZE, y * CUBE_SIZE,
                                              CUBE_SIZE, CUBE_SIZE};
-                Rectangle body =
-                    (Rectangle){trans->translation.x, trans->translation.z,
-                                CUBE_SIZE, CUBE_SIZE};
+                Rectangle body = (Rectangle){trans->translation.x - 0.5f,
+                                             trans->translation.z - 0.5f,
+                                             CUBE_SIZE, CUBE_SIZE};
 
                 Vector2 pos = {trans->translation.x, trans->translation.z};
 
