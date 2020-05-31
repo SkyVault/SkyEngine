@@ -282,11 +282,16 @@ void update_and_render_game_scene(Game *game, EcsWorld *ecs,
 
     EndMode3D();
 
+    UpdateGui();
     draw_player_gui(game, map);
 
     // #if defined _DEBUG
     render_editor_ui(editor, map, game);
     // #endif
+
+    if (IsMouseOnUiElement()) {
+        printf("MOUSE ON UI%d\n", rand());
+    }
 
     DrawFPS(10, 10);
 
@@ -378,6 +383,8 @@ int main() {
     glEnable(GL_BLEND);
     glBlendEquation(GL_FUNC_ADD);
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+    // glBlendFunc(GL_ZERO, GL_SRC_COLOR);
+    // glBlendFunc(GL_ONE, GL_ONE);
 
     while (!WindowShouldClose() && game->state == STATE_RUNNING) {
         map = game->map;

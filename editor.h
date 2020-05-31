@@ -40,6 +40,7 @@ typedef struct Note {
 enum { MAX_HISTORY = 256 };
 
 enum {
+    EDITOR_STATE_NONE,
     EDITOR_STATE_EXPORT_MODAL,
     EDITOR_STATE_EXIT_PLACEMENT_MODAL,
     EDITOR_STATE_LOAD_MODAL,
@@ -69,10 +70,8 @@ typedef struct {
 
     int object_placement_type;
 
-    bool do_export_modal;
-    bool do_exit_placement_modal;
-    bool do_load_modal;
-    bool do_lights_panel;
+    int state;
+
     bool do_console;
 
     int num_maps;

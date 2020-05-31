@@ -32,7 +32,6 @@ enum Actor_Flags {
     AF_NONE = 1 << 0,
     AF_ENEMY = 1 << 1,
 };
-
 typedef struct {
     int type;  // entity types defined above
     int state;

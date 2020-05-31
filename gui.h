@@ -34,9 +34,12 @@ static struct {
     Font font;
 
     bool locked;
+    bool a_el_is_hot;
 } GuiState = {.px = 0.0f, .py = 0.0f, .locked = false};
 
 void InitGui();
+void UpdateGui();
+
 void DoPanel(NodeId id, float x, float y, float width, float height);
 void DoFrame(NodeId id, float x, float y, float width, float height,
              float alpha);
@@ -79,6 +82,8 @@ bool DoColorDragFloat4(NodeId* id, float x, float y, float width, float height,
 
 int DoIncrementer(NodeId id, float x, float y, float width, float height,
                   int* v, float font_size);
+
+bool IsMouseOnUiElement();
 
 Font GetFont();
 

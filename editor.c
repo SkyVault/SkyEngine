@@ -36,9 +36,9 @@ Ed* create_editor() {
     editor->y = 0;
     editor->light_panel_y = (float)GetScreenHeight();
     editor->object_placement_type = PLACE_BLOCKS;
-    editor->do_export_modal = false;
-    editor->do_exit_placement_modal = false;
-    editor->do_load_modal = false;
+
+    editor->state = EDITOR_STATE_NONE;
+
     editor->maps = GetDirectoryFiles("resources/maps/", &editor->num_maps);
     editor->which_marker = MARKER_PLAYER_START;
     editor->console_y = 0.0f;
@@ -120,7 +120,7 @@ void update_editor(Ed* self, Map* map, Game* game) {
         self->open = !self->open;
 
     if (IsKeyPressed(KEY_E)) {
-        self->do_export_modal = true;
+        self->state = EDITOR_STATE_EXPORT_MODAL;
     }
 
     if (IsKeyPressed(KEY_T) && !game->lock_camera) {
@@ -273,7 +273,7 @@ void render_editor(Ed* self, Map* map, Game* game) {
     }
 
     if (self->object_placement_type == PLACE_BLOCKS &&
-        self->light_grabbed < 0 && self->do_lights_panel) {
+        self->light_grabbed < 0 && self->state == EDITOR_STATE_NONE) {
         DrawModel(
             map->models[self->model], clamped, CUBE_SIZE,
             (Color){(unsigned char)(occ * 255), (unsigned char)(occ * 255),
@@ -316,9 +316,9 @@ void render_editor(Ed* self, Map* map, Game* game) {
         DrawBillboardRec(*game->camera, tex, prop.region, loc, prop.scale,
                          WHITE);
 
-        if (IsMouseButtonPressed(MOUSE_LEFT_BUTTON)) {
-            printf("added prop\n");
+        if (IsMouseButtonPressed(MOUSE_LEFT_BUTTON) && !IsMouseOnUiElement()) {
             map->props[map->num_props++] = prop;
+            printf("Added prop [%d]\n", map->num_props);
         }
     } else if (self->object_placement_type == PLACE_MARKERS) {
         Color color = (Color){0, 100, 255, 100};
@@ -334,7 +334,8 @@ void render_editor(Ed* self, Map* map, Game* game) {
                 map->player_x = loc.x;
                 map->player_z = loc.z;
             } else if (self->which_marker == MARKER_EXIT) {
-                self->do_exit_placement_modal = true;
+                // self->do_exit_placement_modal = true;
+                self->state = EDITOR_STATE_EXIT_PLACEMENT_MODAL;
             }
         }
     }
@@ -420,14 +421,16 @@ void render_editor_ui(Ed* self, Map* map, Game* game) {
 
     // Map loading and unloading
     if (DoBtn(id++, 100, GetScreenHeight() - 50.0f, 100, 50, "Export")) {
-        self->do_export_modal = true;
+        // self->do_export_modal = true;
+        self->state = EDITOR_STATE_EXPORT_MODAL;
     }
 
     if (DoBtn(id++, 0, GetScreenHeight() - 50.0f, 100, 50, "Load")) {
-        self->do_load_modal = true;
+        self->state = EDITOR_STATE_LOAD_MODAL;
     }
 
-    if (self->do_load_modal) {
+    if (self->state == EDITOR_STATE_LOAD_MODAL) {
+        id += 10;
         DoModal();
         Unlock();
 
@@ -450,7 +453,7 @@ void render_editor_ui(Ed* self, Map* map, Game* game) {
                 load_map_from_script(game->map, path, game);
             }
 
-            self->do_load_modal = false;
+            self->state = EDITOR_STATE_NONE;
         }
 
         for (int i = 2; i < self->num_maps; i++) {
@@ -462,18 +465,20 @@ void render_editor_ui(Ed* self, Map* map, Game* game) {
                 if (FileExists(path)) {
                     destroy_map(game->map, game);
                     load_map_from_script(game->map, path, game);
-                    self->do_load_modal = false;
+                    self->state = EDITOR_STATE_NONE;
                 }
             }
         }
 
         if (DoBtn(id++, GetScreenWidth() / 2 + 200.0f, GetScreenHeight() / 2.0f,
                   30, 30, "X")) {
-            self->do_load_modal = false;
+            self->state = EDITOR_STATE_NONE;
         }
 
         Lock();
-    } else if (self->do_export_modal) {
+    } else if (self->state == EDITOR_STATE_EXPORT_MODAL) {
+        id += 10;
+
         DoModal();
         Unlock();
 
@@ -487,17 +492,18 @@ void render_editor_ui(Ed* self, Map* map, Game* game) {
             sprintf(path, "resources/maps/%s.janet", buffer);
             serialize_map(self, map, game, path);
             push_message(self, FormatText("Exported [%s]", path));
-            self->do_export_modal = false;
+            self->state = EDITOR_STATE_NONE;
         }
 
         if (DoBtn(id++, GetScreenWidth() / 2.f + 200, GetScreenHeight() / 2.0f,
                   30, 30, "X")) {
-            self->do_export_modal = false;
+            self->state = EDITOR_STATE_NONE;
         }
 
         Lock();
 
-    } else if (self->do_exit_placement_modal) {
+    } else if (self->state == EDITOR_STATE_EXIT_PLACEMENT_MODAL) {
+        id += 10;
         DoModal();
         Unlock();
 
@@ -546,7 +552,7 @@ void render_editor_ui(Ed* self, Map* map, Game* game) {
                 game, self->y * (int)(GLOBAL_SCALE), &loc);
             add_exit(map, loc, door_id, dest_door_id, dest_buffer);
 
-            self->do_exit_placement_modal = false;
+            self->state = EDITOR_STATE_NONE;
         }
 
         Lock();
@@ -559,8 +565,8 @@ void render_editor_ui(Ed* self, Map* map, Game* game) {
     }
 
     // Lights
-    DoPanel(id++, GetScreenWidth() - 400.0f, self->light_panel_y + 30, 400,
-            GetScreenHeight());
+    DoFrame(id++, GetScreenWidth() - 400.0f, self->light_panel_y + 30, 400,
+            GetScreenHeight(), 0.8f);
 
     const float panel_w = 400;
     const float lx = GetScreenWidth() - panel_w;
@@ -568,11 +574,17 @@ void render_editor_ui(Ed* self, Map* map, Game* game) {
     float cursor_y = self->light_panel_y;
 
     if (DoBtn(id++, lx, cursor_y, 200, 30,
-              TextFormat("%s Lights", (self->do_lights_panel ? "+" : "-")))) {
-        self->do_lights_panel = !self->do_lights_panel;
+              TextFormat(
+                  "%s Lights",
+                  ((self->state == EDITOR_STATE_LIGHTS_MODAL) ? "+" : "-")))) {
+        if (self->state != EDITOR_STATE_LIGHTS_MODAL) {
+            self->state = EDITOR_STATE_LIGHTS_MODAL;
+        } else {
+            self->state = EDITOR_STATE_NONE;
+        }
     }
 
-    if (!self->do_lights_panel) {
+    if (self->state == EDITOR_STATE_LIGHTS_MODAL) {
         self->light_panel_y =
             lerp(GetFrameTime() * 10.0f, self->light_panel_y, 30);
         // Do lights panel
