@@ -112,7 +112,10 @@ void main()
     fogFactor = clamp(fogFactor, 0.0, 1.0);
 
     finalColor = mix(fogColor, finalColor, fogFactor);
+    finalColor = mix(colDiffuse, finalColor, colDiffuse);
     finalColor.a = colDiffuse.a;
+
+    // finalColor = colDiffuse;
 
     if (texelColor.a < 0.1) discard;
 }
