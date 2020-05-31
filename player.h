@@ -8,6 +8,7 @@
 #include "ecs.h"
 #include "entity_type.h"
 #include "gui.h"
+#include "map_type.h"
 #include "models.h"
 #include "physics.h"
 #include "raylib.h"

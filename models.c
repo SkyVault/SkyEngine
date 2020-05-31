@@ -151,7 +151,7 @@ void flush_graphics(GfxState* gfx, Camera* camera) {
             DrawModel(d->model, (Vector3){0, 0, 0}, 1, d->diffuse);
         }
 
-        gfx->drawables[i] = (Drawable){0};
+        //gfx->drawables[i] = (Drawable){0};
     }
 
     gfx->num_drawables = 0;

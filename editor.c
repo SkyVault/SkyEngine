@@ -18,7 +18,7 @@ static Map* map_s = NULL;
 // That way we can remove the statics above and just have the editor
 
 void on_exit(void) {
-    serialize_map(editor_s, map_s, game_s, "resources/maps/unsaved-backup");
+    // serialize_map(editor_s, map_s, game_s, "resources/maps/unsaved-backup");
 }
 
 Ed* create_editor() {
@@ -448,7 +448,7 @@ void render_editor_ui(Ed* self, Map* map, Game* game) {
 
                 push_message(self, msg);
             } else {
-                destroy_map(game->map, game);
+                reset_map_to_zero(game->map, game);
                 load_map_from_script(game->map, path, game);
             }
 
@@ -462,7 +462,7 @@ void render_editor_ui(Ed* self, Map* map, Game* game) {
                 const char* path =
                     TextFormat("resources/maps/%s", self->maps[i]);
                 if (FileExists(path)) {
-                    destroy_map(game->map, game);
+                    reset_map_to_zero(game->map, game);
                     load_map_from_script(game->map, path, game);
                     self->state = EDITOR_STATE_NONE;
                 }
