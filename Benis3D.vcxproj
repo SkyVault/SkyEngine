@@ -167,7 +167,7 @@
     <ClInclude Include="prop.h" />
     <ClInclude Include="map_type.h" />
     <ClInclude Include="maths.h" />
-    <ClInclude Include="models.h" />
+    <ClInclude Include="renderer.h" />
     <ClInclude Include="particles.h" />
     <ClInclude Include="physics.h" />
     <ClInclude Include="physics_type.h" />
@@ -197,7 +197,7 @@
     <ClCompile Include="main.c" />
     <ClCompile Include="map.c" />
     <ClCompile Include="maths.c" />
-    <ClCompile Include="models.c" />
+    <ClCompile Include="renderer.c" />
     <ClCompile Include="particles.c" />
     <ClCompile Include="physics.c" />
     <ClCompile Include="physics_type.c" />

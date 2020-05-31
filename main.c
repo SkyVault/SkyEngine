@@ -12,7 +12,7 @@
 #include "game.h"
 #include "gui.h"
 #include "map.h"
-#include "models.h"
+#include "renderer.h"
 #include "particles.h"
 #include "raylib.h"
 #include "raymath.h"

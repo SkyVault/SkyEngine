@@ -9,6 +9,7 @@ Game* create_game(Assets* assets, Camera* camera, EcsWorld* ecs,
     game->camera = camera;
     game->ecs = ecs;
     game->lock_camera = false;
+    game->editor_open = false;
     game->env = env;
     game->noclip = false;
     return game;

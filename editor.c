@@ -119,6 +119,8 @@ void update_editor(Ed* self, Map* map, Game* game) {
     if ((IsKeyPressed(KEY_TAB) && IsKeyDown(KEY_LEFT_SHIFT)))
         self->open = !self->open;
 
+    game->editor_open = self->open;
+
     if (IsKeyPressed(KEY_E)) {
         self->state = EDITOR_STATE_EXPORT_MODAL;
     }

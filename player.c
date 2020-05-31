@@ -1,6 +1,7 @@
 #include "player.h"
 
 #define PLAYER_MOVEMENT_SENSITIVITY (1.0f)
+
 #define CAMERA_MOUSE_MOVE_SENSITIVITY 0.003f
 #define CAMERA_MOUSE_SCROLL_SENSITIVITY 1.5f
 #define CAMERA_FIRST_PERSON_MOUSE_SENSITIVITY 0.003f
@@ -168,20 +169,22 @@ void update_player(EcsWorld* ecs, Assets* ass, Game* game, EntId id) {
 
     previousMousePosition = mousePosition;
 
+    const float speed = game->editor_open ? 120.0f : 25.0f;
+
     // Handle collisions
     {
         physics->friction = 0.001f;
         physics->velocity.x += (sinf(CAMERA.angle.x) * direction[MOVE_BACK] -
                                 sinf(CAMERA.angle.x) * direction[MOVE_FRONT] -
                                 cosf(CAMERA.angle.x) * direction[MOVE_LEFT] +
-                                cosf(CAMERA.angle.x) * direction[MOVE_RIGHT]) /
-                               PLAYER_MOVEMENT_SENSITIVITY;
+                                cosf(CAMERA.angle.x) * direction[MOVE_RIGHT]) *
+                               speed * GetFrameTime();
 
         physics->velocity.z += (cosf(CAMERA.angle.x) * direction[MOVE_BACK] -
                                 cosf(CAMERA.angle.x) * direction[MOVE_FRONT] +
                                 sinf(CAMERA.angle.x) * direction[MOVE_LEFT] -
-                                sinf(CAMERA.angle.x) * direction[MOVE_RIGHT]) /
-                               PLAYER_MOVEMENT_SENSITIVITY;
+                                sinf(CAMERA.angle.x) * direction[MOVE_RIGHT]) *
+                               speed * GetFrameTime();
     }
 
     bool isMoving = false;  // Required for swinging

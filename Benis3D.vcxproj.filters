@@ -51,9 +51,6 @@
     <ClInclude Include="maths.h">
       <Filter>Source Files</Filter>
     </ClInclude>
-    <ClInclude Include="models.h">
-      <Filter>Source Files</Filter>
-    </ClInclude>
     <ClInclude Include="physics.h">
       <Filter>Source Files</Filter>
     </ClInclude>
@@ -99,6 +96,9 @@
     <ClInclude Include="map_type.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="renderer.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="dict.c">
@@ -126,9 +126,6 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="maths.c">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="models.c">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="physics.c">
@@ -165,6 +162,9 @@
       <Filter>Header Files</Filter>
     </ClCompile>
     <ClCompile Include="rlights.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="renderer.c">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

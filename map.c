@@ -252,8 +252,15 @@ void load_map_from_script(Map *result, const char *path, Game *game) {
     for (int layer = 0; layer < layers_arr->count; layer++) {
         JanetTable *layer_table = janet_unwrap_table(layers_arr->data[layer]);
 
-        const JanetString *data = janet_unwrap_string(
+        const char *jdata = janet_unwrap_string(
             janet_table_get(layer_table, janet_ckeywordv("data")));
+
+        const size_t len = strlen(jdata);
+
+        char *data = malloc(len + 1);
+        data[len] = '\0';
+
+        for (int i = 0; i < len; i++) data[i] = jdata[i];
 
         char *it = data;
         char *end = it + strlen(data);
