@@ -227,6 +227,17 @@ void update_player(EcsWorld* ecs, Assets* ass, Game* game, EntId id) {
     camera->up.z = -sinf(swingCounter /
                          (CAMERA_FIRST_PERSON_STEP_TRIGONOMETRIC_DIVIDER * 2)) /
                    CAMERA_FIRST_PERSON_WAVING_DIVIDER;
+
+    // Handle exits
+    for (int i = 0; i < game->map->num_exits; i++) {
+        Exit exit = game->map->exits[i];
+
+        if (Vector3Distance(exit.position, transform->translation) < 0.5) {
+            printf("HERE%d\n", rand());
+
+            reset_map_to_zero(game->map, game);
+        }
+    }
 }
 
 void draw_player_gui(Game* game, Map* map) {

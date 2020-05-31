@@ -35,7 +35,7 @@ Map *create_map_from_script(const char *path, Game *game);
 
 void load_map_from_script(Map *map, const char *path, Game *game);
 
-void destroy_map(Map *map, Game *game);
+void reset_map_to_zero(Map *map, Game *game);
 void reload_map(Map *map, Game *game);
 
 void update_map(Map *map, Game *game);

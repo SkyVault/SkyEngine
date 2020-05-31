@@ -347,7 +347,7 @@ void render_map(Map *map, GfxState *gfx, Game *game) {
     }
 }
 
-void destroy_map(Map *map, Game *game) {
+void reset_map_to_zero(Map *map, Game *game) {
     zero_out_map(map);
 
     if (map->path.len > 0 && map->path.buff != NULL) {
@@ -362,7 +362,7 @@ void destroy_map(Map *map, Game *game) {
 
 void reload_map(Map *map, Game *game) {
     tstr s = tstrf("%s", map->path);
-    destroy_map(map, game);
+    reset_map_to_zero(map, game);
     load_map_from_script(map, s, game);
 }
 

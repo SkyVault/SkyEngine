@@ -259,6 +259,8 @@ void update_and_render_game_scene(Game *game, EcsWorld *ecs,
 
     BeginMode3D(*camera);
 
+    rlViewport(0, 0, GetScreenWidth(), GetScreenHeight());
+
     render_map(map, gfx, game);
 
     for (int i = 0; i < ecs->max_num_entities; i++) {

@@ -74,9 +74,21 @@ int find_free_comp(struct CompList* list);
 
 #define CAT(a, b) a##b
 
+inline void* alloc_or_die(size_t size) {
+    void* mem = malloc(size);
+
+    if (mem == NULL) {
+        printf("[ERROR]:: Malloc returned NULL");
+        fgetc(stdin);
+        exit(1);
+    }
+
+    return mem;
+}
+
 #ifndef NEW_COMP
 #define NEW_COMP(C, ...) \
-    memcpy(malloc(sizeof(C)), &(C const){__VA_ARGS__}, sizeof(C));
+    memcpy(alloc_or_die(sizeof(C)), &(C const){__VA_ARGS__}, sizeof(C));
 #endif  // NEW_COMP
 
 // Lets make a safer function for getting entities.
