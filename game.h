@@ -24,6 +24,8 @@ typedef struct {
     Model skybox;
 
     bool lock_camera;
+    bool editor_open;
+
     int state;
     int scene;
 

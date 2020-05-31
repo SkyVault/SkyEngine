@@ -366,3 +366,5 @@ FINAL_BUILD/
 
 create_and_publish_build.py
 publish-log
+
+*.rdbg

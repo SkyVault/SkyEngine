@@ -4,7 +4,7 @@
 #include "assets.h"
 #include "ecs.h"
 #include "entity_type.h"
-#include "models.h"
+#include "renderer.h"
 #include "physics.h"
 #include "player.h"
 #include "raylib.h"
