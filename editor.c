@@ -247,8 +247,6 @@ void render_editor(Ed* self, Map* map, Game* game) {
 
     if (IsKeyDown(KEY_LEFT_ALT)) clamped = loc;
 
-    float occ = (1.0f + cosf((float)GetTime() * 10.0f)) * 0.5f;
-
     DrawCylinder((Vector3){map->player_x, -3.0f, map->player_z}, 0.2f, 0.2f,
                  4.0f, 20, (Color){0, 100, 255, 100});
 
@@ -274,12 +272,15 @@ void render_editor(Ed* self, Map* map, Game* game) {
                      0.2f, 0.2f, 4.0f, 20, (Color){255, 100, 0, 100});
     }
 
+    float scale = 0.3f;
+    float occ = (1.0f - scale) +
+                ((1.0f + cosf((float)GetTime() * 10.0f)) * 0.5f) * scale;
+
     if (self->object_placement_type == PLACE_BLOCKS &&
         self->light_grabbed < 0 && self->state == EDITOR_STATE_NONE) {
-        DrawModel(
-            map->models[self->model], clamped, CUBE_SIZE,
-            (Color){(unsigned char)(occ * 255), (unsigned char)(occ * 255),
-                    (unsigned char)(occ * 255), 100});
+        DrawModel(map->models[self->model], clamped, CUBE_SIZE + 0.02f,
+                  (Color){(unsigned char)(occ * 255), 255,
+                          (unsigned char)(occ * 255), 150});
 
         if (IsMouseButtonPressed(MOUSE_LEFT_BUTTON) && !game->lock_camera) {
             // Try to intersect
