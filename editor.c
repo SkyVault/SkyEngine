@@ -165,7 +165,7 @@ void update_editor(Ed* self, Map* map, Game* game) {
 
     int sc = GetMouseWheelMove();
 
-    if (sc != 0) {
+    if (sc != 0 && !IsMouseOnUiElement()) {
         if (self->object_placement_type == PLACE_MARKERS) {
             if (sc > 0) self->which_marker++;
             if (sc < 0) self->which_marker--;
@@ -407,7 +407,7 @@ void render_editor_ui(Ed* self, Map* map, Game* game) {
     // Notifications
     int last = self->object_placement_type;
     self->object_placement_type =
-        DoToggleGroupV(id++, "BLOCKS|ACTORS|BILLBOARDS|MARKERS|", 0,
+        DoToggleGroupV(id++, "NONE|BLOCKS|ACTORS|BILLBOARDS|MARKERS|", 0,
                        GetScreenHeight() - (self->placement_toggle_height + 50),
                        &self->placement_toggle_height);
 
@@ -473,7 +473,7 @@ void render_editor_ui(Ed* self, Map* map, Game* game) {
             if (DoBtn(id++, GetScreenWidth() / 2 - 150.0f,
                       GetScreenHeight() / 2 + 20 + 30 * (i - 1.0f) - scroll_y,
                       300, 30, self->maps[i])) {
-                                const char* path =
+                const char* path =
                     TextFormat("resources/maps/%s", self->maps[i]);
                 if (FileExists(path)) {
                     reset_map_to_zero(game->map, game);
@@ -614,6 +614,46 @@ void render_editor_ui(Ed* self, Map* map, Game* game) {
 
             cursor_y += 30;
 
+            const float models_panel_w = 200;
+
+            static float scroll_y = 0;
+            static float max_height = 300;
+            BeginScrollPanelV(id++, lx + 1, cursor_y + 1,
+                              models_panel_w + 18 - 1, GetScreenHeight() - 1,
+                              &scroll_y, max_height);
+
+            cursor_y += 30;
+
+            max_height = 0;
+            for (int i = 0; i < map->num_models; i++) {
+                const float size = models_panel_w - 10;
+                Model model = map->models[i];
+                Texture2D texture =
+                    model.materials[0].maps[MAP_DIFFUSE].texture;
+                // DrawTexturePro(
+                //     texture, (Rectangle){0, 0, texture.width,
+                //     texture.height}, (Rectangle){lx + 30, cursor_y -
+                //     scroll_y, size, size}, Vector2Zero(), 0.0f, WHITE);
+
+                if (DoTexBtn(id++, lx + 10, cursor_y - scroll_y, size, size, "",
+                             texture)) {
+                    self->model = i;
+                    self->state = EDITOR_STATE_NONE;
+                }
+
+                if (self->model == i) {
+                    DrawRectangleLinesEx(
+                        (Rectangle){lx + 10, cursor_y - scroll_y, size, size},
+                        2, RED);
+                }
+
+                cursor_y += size + 8;
+                max_height += size + 8;
+            }
+
+            id += map->num_models + 10;
+
+            EndScrollPanelV();
         } else {
             self->models_panel_y =
                 lerp(GetFrameTime() * 10.0f, self->models_panel_y,
