@@ -112,6 +112,13 @@ void render_console(Ed* self, Map* map, Game* game, int id) {
     }
 }
 
+void toggle_model_selector_modal(Ed* self) {
+    if (self->state != EDITOR_STATE_MODEL_SELECTOR_MODAL)
+        self->state = EDITOR_STATE_MODEL_SELECTOR_MODAL;
+    else
+        self->state = EDITOR_STATE_NONE;
+}
+
 void update_editor(Ed* self, Map* map, Game* game) {
     // Refactor
     editor_s = self;
@@ -124,8 +131,13 @@ void update_editor(Ed* self, Map* map, Game* game) {
 
     game->editor_open = self->open;
 
+    // if (IsKeyPressed(KEY_E)) {
+    //     self->state = EDITOR_STATE_EXPORT_MODAL;
+    // }
+
     if (IsKeyPressed(KEY_E)) {
-        self->state = EDITOR_STATE_EXPORT_MODAL;
+        toggle_model_selector_modal(self);
+        game->lock_camera = true;
     }
 
     if (IsKeyPressed(KEY_T) && !game->lock_camera) {
@@ -587,7 +599,7 @@ void render_editor_ui(Ed* self, Map* map, Game* game) {
 
     const float panel_w = 400;
 
-    // Models
+    // # Models
     {
         DoFrame(id++, 400.0f, self->models_panel_y + 30, 400, GetScreenHeight(),
                 0.8f);
@@ -601,11 +613,7 @@ void render_editor_ui(Ed* self, Map* map, Game* game) {
                              ((self->state == EDITOR_STATE_MODEL_SELECTOR_MODAL)
                                   ? "+"
                                   : "-")))) {
-            if (self->state != EDITOR_STATE_MODEL_SELECTOR_MODAL) {
-                self->state = EDITOR_STATE_MODEL_SELECTOR_MODAL;
-            } else {
-                self->state = EDITOR_STATE_NONE;
-            }
+            toggle_model_selector_modal(self);
         }
 
         if (self->state == EDITOR_STATE_MODEL_SELECTOR_MODAL) {
