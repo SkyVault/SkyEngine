@@ -165,6 +165,12 @@ int DoToggleGroupV(NodeId id, const char* names, float x, float y,
                    float* out_width) {
     GET_STATE()
 
+    if (state->init == 0) {
+        state->init = 1;
+
+        state->cursor = 1;
+    }
+
     char* it = names;
     char* end = it + strlen(names);
 
