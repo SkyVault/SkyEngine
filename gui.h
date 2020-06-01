@@ -45,6 +45,10 @@ void DoFrame(NodeId id, float x, float y, float width, float height,
              float alpha);
 bool DoBtn(NodeId id, float x, float y, float width, float height,
            const char* text);
+
+bool DoTexBtn(NodeId id, float x, float y, float width, float height,
+              const char* text, Texture2D texture);
+
 bool DoClickRegion(NodeId id, float x, float y, float width, float height);
 void DoCenterXLabel(NodeId id, float outer_width, float y, int font_size,
                     const char* text);

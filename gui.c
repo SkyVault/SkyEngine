@@ -75,6 +75,37 @@ bool DoBtn(NodeId id, float x, float y, float width, float height,
     return Active(id);
 }
 
+bool DoTexBtn(NodeId id, float x, float y, float width, float height,
+              const char* text, Texture2D texture) {
+    GET_STATE()
+    CHECK_IF_HOT()
+
+    state->active = state->hot && IsMouseButtonPressed(MOUSE_LEFT_BUTTON);
+
+    const float size = 30.0f;
+
+    Vector2 measure = MeasureTextEx(GuiState.font, text, size, 1);
+
+    // Draw the button
+    DoPanel(id, x, y, width, height);
+
+    Color color = {200, 200, 200, 255};
+    if (state->hot) color = WHITE;
+
+    DrawTexturePro(texture, (Rectangle){0, 0, texture.width, texture.height},
+                   (Rectangle){x + 1, y + 1, width - 2, height - 2},
+                   (Vector2){0.0f, 0.0f}, 0.0f, color);
+
+    DrawTextEx(GuiState.font, text,
+               (Vector2){
+                   x + width / 2 - measure.x / 2,
+                   y + height / 2 - measure.y / 2,
+               },
+               size, 1, HIGHLIGHT_COLOR);
+
+    return Active(id);
+}
+
 void DoCenterXLabel(NodeId id, float outer_width, float y, int font_size,
                     const char* text) {
     Vector2 measure = MeasureTextEx(GuiState.font, text, font_size, 1);
@@ -165,9 +196,9 @@ int DoToggleGroupV(NodeId id, const char* names, float x, float y,
                            HIGHLIGHT_COLOR);
 
                 DrawCircle(x + r + 2, y + 2 + cursor_y + size.y / 2, r,
-                           HIGHLIGHT_COLOR);
+                           BASE_COLOR);
                 DrawCircleLines(x + r + 2, y + 2 + cursor_y + size.y / 2, r,
-                                BLACK);
+                                ALT_COLOR);
 
                 if (state->hot && IsMouseButtonPressed(MOUSE_LEFT_BUTTON)) {
                     state->cursor = which;
@@ -462,6 +493,7 @@ void BeginScrollPanelV(NodeId id, float x, float y, float width, float height,
     DrawRectangleLines(x + width - scroll_w, y, scroll_w, height,
                        HIGHLIGHT_COLOR);
 
+    // TODO(Dustin): Allow dragging the scrollbar
     DrawRectangle(x + width - scroll_w, y + height * scroll_ratio, scroll_w,
                   height * ratio, HIGHLIGHT_COLOR);
 

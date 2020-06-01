@@ -12,6 +12,7 @@
 #endif
 
 enum {
+    PLACE_NONE,
     PLACE_BLOCKS,
     PLACE_ACTORS,
     PLACE_PROPS,
