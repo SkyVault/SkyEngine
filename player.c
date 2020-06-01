@@ -67,7 +67,7 @@ void throw_orange(EcsWorld* ecs, Vector3 pos, float angle, float yaw,
     add_comp(ecs, bullet, Actor, .type = ACTOR_TOSSED_ORANGE, .state = IDLE);
 
     add_comp(ecs, bullet, Billboard, .texture = ass->textures[TEX_ORANGE],
-             .material = (Material){0}, .scale = 1.0);
+             .material = (Material){0}, .scale = GLOBAL_SCALE * 0.5f);
 
     add_comp(ecs, bullet, TimedDestroy, .time_left = 4.0f, .done = false);
     add_comp(ecs, bullet, PlayerHit, .damage = 1.0f);
@@ -95,7 +95,7 @@ void throw_pineapple(EcsWorld* ecs, Vector3 pos, float angle, float yaw,
     add_comp(ecs, bullet, Actor, .type = ACTOR_PINEAPPLE_BOMB, .state = IDLE);
 
     add_comp(ecs, bullet, Billboard, .texture = ass->textures[TEX_PINEAPPLE],
-             .material = (Material){0}, .scale = ACTOR_HEIGHT);
+             .material = (Material){0}, .scale = GLOBAL_SCALE * 0.5f);
 
     add_comp(ecs, bullet, TimedDestroy, .time_left = 4.0f, .done = false);
     add_comp(ecs, bullet, PlayerHit, .damage = 1.0f);
