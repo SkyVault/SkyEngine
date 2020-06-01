@@ -146,11 +146,9 @@ void flush_graphics(GfxState* gfx, Camera* camera) {
             DrawBillboardRec(*camera, d->billboard.texture, d->region, pos,
                              d->billboard.scale, d->diffuse);
 
-            // DrawSphere(pos, 0.1f, RED);
-
         } else if (d->type == DrawType_Model) {
             d->model.transform = m;
-            DrawModel(d->model, (Vector3){0, 0, 0}, 1, d->diffuse);
+            DrawModel(d->model, Vector3Zero(), 1, d->diffuse);
         }
 
         gfx->drawables[i] = (Drawable){0};

@@ -83,6 +83,11 @@ bool DoColorDragFloat4(NodeId* id, float x, float y, float width, float height,
 int DoIncrementer(NodeId id, float x, float y, float width, float height,
                   int* v, float font_size);
 
+void BeginScrollPanelV(NodeId id, float x, float y, float width, float height,
+                       float* scroll, float max_height);
+
+void EndScrollPanelV();
+
 bool IsMouseOnUiElement();
 
 Font GetFont();
