@@ -5,6 +5,8 @@
     state->hot = CheckCollisionPointRec(GetMousePosition(), rect);      \
     if (state->hot) GuiState.a_el_is_hot = true;
 
+#define GET_STATE() struct NState* state = &GuiState.states[id];
+
 void InitGui() {
     // GuiState.font = LoadFont("resources/HappyTime.otf");
     GuiState.font = GetFontDefault();
@@ -12,7 +14,7 @@ void InitGui() {
 }
 
 void DoPanel(NodeId id, float x, float y, float width, float height) {
-    struct NState* state = &GuiState.states[id];
+    GET_STATE()
 
     Color color = (!Hot(id)) ? BASE_COLOR : (Color){200, 200, 200, 255};
 
@@ -24,7 +26,7 @@ void DoPanel(NodeId id, float x, float y, float width, float height) {
 
 void DoFrame(NodeId id, float x, float y, float width, float height,
              float alpha) {
-    struct NState* state = &GuiState.states[id];
+    GET_STATE()
     Color color = (Color){100, 100, 100, (unsigned char)(255 * alpha)};
 
     CHECK_IF_HOT()
@@ -36,8 +38,7 @@ void DoFrame(NodeId id, float x, float y, float width, float height,
 
 void DoLabel(NodeId id, const char* str, float x, float y, float width,
              float height, int font_size) {
-    struct NState* state = &GuiState.states[id];
-
+    GET_STATE()
     CHECK_IF_HOT()
 
     DrawTextRec(GuiState.font, str, (Rectangle){x, y, width, height}, font_size,
@@ -45,7 +46,7 @@ void DoLabel(NodeId id, const char* str, float x, float y, float width,
 }
 
 bool DoClickRegion(NodeId id, float x, float y, float width, float height) {
-    struct NState* state = &GuiState.states[id];
+    GET_STATE()
     CHECK_IF_HOT()
     state->active = state->hot && IsMouseButtonPressed(MOUSE_LEFT_BUTTON);
     return Active(id);
@@ -53,8 +54,7 @@ bool DoClickRegion(NodeId id, float x, float y, float width, float height) {
 
 bool DoBtn(NodeId id, float x, float y, float width, float height,
            const char* text) {
-    struct NState* state = &GuiState.states[id];
-
+    GET_STATE()
     CHECK_IF_HOT()
 
     state->active = state->hot && IsMouseButtonPressed(MOUSE_LEFT_BUTTON);
@@ -94,7 +94,7 @@ void DoModal() {
 
 bool DoTextInput(NodeId id, char* buffer, size_t buffer_size, float x, float y,
                  float width, float height) {
-    struct NState* state = &GuiState.states[id];
+    GET_STATE()
     DoPanel(id, x, y, width, height);
 
     const int fsize = 30;
@@ -132,7 +132,7 @@ bool DoTextInput(NodeId id, char* buffer, size_t buffer_size, float x, float y,
 
 int DoToggleGroupV(NodeId id, const char* names, float x, float y,
                    float* out_width) {
-    struct NState* state = &GuiState.states[id];
+    GET_STATE()
 
     char* it = names;
     char* end = it + strlen(names);
@@ -199,7 +199,7 @@ int DoToggleGroupV(NodeId id, const char* names, float x, float y,
 
 float DoSlider(NodeId id, float x, float y, float width, float height,
                float min, float max) {
-    struct NState* state = &GuiState.states[id];
+    GET_STATE()
 
     float drag_x = x + width * (state->value / max);
 
@@ -434,6 +434,41 @@ int DoIncrementer(NodeId id, float x, float y, float width, float height,
 
     return 0;
 }
+
+void BeginScrollPanelV(NodeId id, float x, float y, float width, float height,
+                       float* scroll, float max_height) {
+    const float scroll_w = 12;
+
+    GET_STATE()
+    CHECK_IF_HOT()
+
+    if (state->hot && scroll != NULL) {
+        int mdelta = GetMouseWheelMove();
+        (*scroll) -= mdelta * 20.0f;
+    }
+
+    if (*scroll < 0) {
+        *scroll = 0.0f;
+    }
+
+    if (*scroll > max_height) *scroll = max_height;
+
+    float ratio = (height / max_height);
+    float scroll_ratio =
+        ((*scroll < 0.0f ? -(*scroll) : (*scroll)) / max_height);
+
+    DoFrame(id, x, y, width, height, 0.8f);
+
+    DrawRectangleLines(x + width - scroll_w, y, scroll_w, height,
+                       HIGHLIGHT_COLOR);
+
+    DrawRectangle(x + width - scroll_w, y + height * scroll_ratio, scroll_w,
+                  height * ratio, HIGHLIGHT_COLOR);
+
+    BeginScissorMode(x, y, width - scroll_w, height);
+}
+
+void EndScrollPanelV() { EndScissorMode(); }
 
 Vector4 CTV4(Color c) {
     return (Vector4){

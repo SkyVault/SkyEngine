@@ -34,7 +34,10 @@ Ed* create_editor() {
     editor->which = 0;
     editor->model = 0;
     editor->y = 0;
-    editor->light_panel_y = (float)GetScreenHeight();
+
+    editor->lights_panel_y = (float)GetScreenHeight();
+    editor->models_panel_y = (float)GetScreenHeight();
+
     editor->object_placement_type = PLACE_BLOCKS;
 
     editor->state = EDITOR_STATE_NONE;
@@ -231,6 +234,7 @@ void render_editor(Ed* self, Map* map, Game* game) {
     if (!self->open) return;
 
     Vector3 loc;
+
     bool hit =
         get_mouse_placement_loc(game, self->y * (float)(GLOBAL_SCALE), &loc);
 
@@ -458,11 +462,18 @@ void render_editor_ui(Ed* self, Map* map, Game* game) {
             self->state = EDITOR_STATE_NONE;
         }
 
+        static float scroll_y = 0;
+        static float max_height = 0;
+        BeginScrollPanelV(id++, GetScreenWidth() / 2 - 150.0f,
+                          GetScreenHeight() / 2 + 20 + 30 * 2, 300 + 12, 300,
+                          &scroll_y, max_height);
+
+        max_height = 0;
         for (int i = 2; i < self->num_maps; i++) {
             if (DoBtn(id++, GetScreenWidth() / 2 - 150.0f,
-                      GetScreenHeight() / 2 + 20 + 30 * (i - 1.0f), 300, 30,
-                      self->maps[i])) {
-                const char* path =
+                      GetScreenHeight() / 2 + 20 + 30 * (i - 1.0f) - scroll_y,
+                      300, 30, self->maps[i])) {
+                                const char* path =
                     TextFormat("resources/maps/%s", self->maps[i]);
                 if (FileExists(path)) {
                     reset_map_to_zero(game->map, game);
@@ -470,7 +481,10 @@ void render_editor_ui(Ed* self, Map* map, Game* game) {
                     self->state = EDITOR_STATE_NONE;
                 }
             }
+            max_height += 30;
         }
+
+        EndScrollPanelV();
 
         if (DoBtn(id++, GetScreenWidth() / 2 + 200.0f, GetScreenHeight() / 2.0f,
                   30, 30, "X")) {
@@ -571,133 +585,174 @@ void render_editor_ui(Ed* self, Map* map, Game* game) {
         self->model = 0;
     }
 
-    // Lights
-    DoFrame(id++, GetScreenWidth() - 400.0f, self->light_panel_y + 30, 400,
-            GetScreenHeight(), 0.8f);
-
     const float panel_w = 400;
-    const float lx = GetScreenWidth() - panel_w;
 
-    float cursor_y = self->light_panel_y;
+    // Models
+    {
+        DoFrame(id++, 400.0f, self->models_panel_y + 30, 400, GetScreenHeight(),
+                0.8f);
 
-    if (DoBtn(id++, lx, cursor_y, 200, 30,
-              TextFormat(
-                  "%s Lights",
-                  ((self->state == EDITOR_STATE_LIGHTS_MODAL) ? "+" : "-")))) {
-        if (self->state != EDITOR_STATE_LIGHTS_MODAL) {
-            self->state = EDITOR_STATE_LIGHTS_MODAL;
-        } else {
-            self->state = EDITOR_STATE_NONE;
-        }
-    }
+        const float lx = 400.0f;
 
-    if (self->state == EDITOR_STATE_LIGHTS_MODAL) {
-        self->light_panel_y =
-            lerp(GetFrameTime() * 10.0f, self->light_panel_y, 30);
-        // Do lights panel
-        cursor_y += 30;
+        float cursor_y = self->models_panel_y;
 
-        if (DoBtn(id++, lx + 2, cursor_y + 2, 30, 30, "+")) {
-            Light* light = &game->assets->lights[game->assets->num_lights++];
-            light->enabled = true;
-            light->color = WHITE;
-            UpdateLightValues(game->assets->shaders[SHADER_PHONG_LIGHTING],
-                              *light);
-        }
-
-        cursor_y += 32 + 2;
-
-        if (DoCollapsingHeader(id++, "Sun", lx + 10, cursor_y, panel_w - 20,
-                               40)) {
-            cursor_y += 40 + 2;
-
-            DoLabel(id++, "Direction", lx + 30, cursor_y, 200, 30, 20);
-
-            Vector3 test = {0};
-            DoDragFloat3(&id, lx + 130, cursor_y, 300 - 64, 24,
-                         &game->assets->sun.direction, 0.1f);
-            id++;
-
-            cursor_y += 32;
-
-            DoLabel(id++, "Diffuse", lx + 30, cursor_y, 100, 30, 20);
-
-            Color color = {255};
-            DoColorDragFloat4(&id, lx + 30 + 100, cursor_y, 300 - 64, 24,
-                              &game->assets->sun.diffuse);
-            id++;
-
-            cursor_y += 26;
-
-            DoLabel(id++, "Ambient", lx + 30, cursor_y, 100, 30, 20);
-            DoColorDragFloat4(&id, lx + 30 + 100, cursor_y, 300 - 64, 24,
-                              &game->assets->sun.ambient);
-            id++;
-
-            UpdateSunValue(*shader, game->assets->sun);
-        }
-
-        cursor_y += 32 + 2;
-
-        for (int i = 0; i < game->assets->num_lights; i++) {
-            Light light = game->assets->lights[i];
-
-            if (DoCollapsingHeader(id++, TextFormat("%s[%d]", "Light", i),
-                                   lx + 10, cursor_y, panel_w - 20, 40)) {
-                cursor_y += 40 + 2;
-
-                DoLabel(id++, "Disabled", lx + 30, cursor_y, 100, 30, 20);
-                game->assets->lights[i].enabled =
-                    !DoCheckBox(id++, lx + 30 + 100, cursor_y, 30, 30);
-
-                if (DoBtn(id++, lx + 30 + 130 + 10, cursor_y, 100, 30,
-                          "Grab")) {
-                    self->light_grabbed = i;
-                }
-
-                cursor_y += 32;
-                DoLabel(id++, "Position", lx + 30, cursor_y, 200, 30, 20);
-
-                DoDragFloat3(&id, lx + 130, cursor_y, 300 - 64, 24,
-                             &game->assets->lights[i].position, 0.1f);
-
-                cursor_y += 26;
-
-                DoLabel(id++, "Color", lx + 30, cursor_y, 100, 30, 20);
-
-                DoColorDragFloat4(&id, lx + 30 + 100, cursor_y, 300 - 64, 24,
-                                  &game->assets->lights[i].color);
-
-                cursor_y += 28;
-
-                UpdateLightValues(*shader, game->assets->lights[i]);
-
+        if (DoBtn(id++, lx, cursor_y, 200, 30,
+                  TextFormat("%s Models",
+                             ((self->state == EDITOR_STATE_MODEL_SELECTOR_MODAL)
+                                  ? "+"
+                                  : "-")))) {
+            if (self->state != EDITOR_STATE_MODEL_SELECTOR_MODAL) {
+                self->state = EDITOR_STATE_MODEL_SELECTOR_MODAL;
             } else {
-                cursor_y += 40 + 2;
+                self->state = EDITOR_STATE_NONE;
             }
         }
 
-    } else {
-        self->light_panel_y = lerp(GetFrameTime() * 10.0f, self->light_panel_y,
-                                   GetScreenHeight() - 30);
+        if (self->state == EDITOR_STATE_MODEL_SELECTOR_MODAL) {
+            self->models_panel_y =
+                lerp(GetFrameTime() * 10.0f, self->models_panel_y, 30);
+
+            cursor_y += 30;
+
+        } else {
+            self->models_panel_y =
+                lerp(GetFrameTime() * 10.0f, self->models_panel_y,
+                     GetScreenHeight() - 30);
+        }
     }
 
-    id += 500;
+    // Lights
+    {
+        DoFrame(id++, GetScreenWidth() - 400.0f, self->lights_panel_y + 30, 400,
+                GetScreenHeight(), 0.8f);
 
-    int y = 0;
-    for (int i = self->num_notes - 1; i >= 0; i--) {
-        Note note = self->notes[i];
+        const float lx = GetScreenWidth() - panel_w;
 
-        if (!note.active) continue;
+        float cursor_y = self->lights_panel_y;
 
-        Rectangle r = {(float)GetScreenWidth() - 200.0f,
-                       (float)GetScreenHeight() - (NOTE_HEIGHT * (y + 1.0f)),
-                       200, NOTE_HEIGHT};
-        DoFrame(id++, r.x - 4.0f, r.y - 4.0f - ((y + 1.0f) * 4.0f),
-                r.width + 8.0f, r.height + 8.0f, 1.0f);
-        DoLabel(id - 1, note.mesg, r.x, r.y - ((y + 1.0f) * 4.0f), r.width,
-                r.height, 20);
-        y++;
+        if (DoBtn(id++, lx, cursor_y, 200, 30,
+                  TextFormat(
+                      "%s Lights",
+                      ((self->state == EDITOR_STATE_LIGHTS_MODAL) ? "+"
+                                                                  : "-")))) {
+            if (self->state != EDITOR_STATE_LIGHTS_MODAL) {
+                self->state = EDITOR_STATE_LIGHTS_MODAL;
+            } else {
+                self->state = EDITOR_STATE_NONE;
+            }
+        }
+
+        if (self->state == EDITOR_STATE_LIGHTS_MODAL) {
+            self->lights_panel_y =
+                lerp(GetFrameTime() * 10.0f, self->lights_panel_y, 30);
+            // Do lights panel
+            cursor_y += 30;
+
+            if (DoBtn(id++, lx + 2, cursor_y + 2, 30, 30, "+")) {
+                Light* light =
+                    &game->assets->lights[game->assets->num_lights++];
+                light->enabled = true;
+                light->color = WHITE;
+                UpdateLightValues(game->assets->shaders[SHADER_PHONG_LIGHTING],
+                                  *light);
+            }
+
+            cursor_y += 32 + 2;
+
+            if (DoCollapsingHeader(id++, "Sun", lx + 10, cursor_y, panel_w - 20,
+                                   40)) {
+                cursor_y += 40 + 2;
+
+                DoLabel(id++, "Direction", lx + 30, cursor_y, 200, 30, 20);
+
+                Vector3 test = {0};
+                DoDragFloat3(&id, lx + 130, cursor_y, 300 - 64, 24,
+                             &game->assets->sun.direction, 0.1f);
+                id++;
+
+                cursor_y += 32;
+
+                DoLabel(id++, "Diffuse", lx + 30, cursor_y, 100, 30, 20);
+
+                Color color = {255};
+                DoColorDragFloat4(&id, lx + 30 + 100, cursor_y, 300 - 64, 24,
+                                  &game->assets->sun.diffuse);
+                id++;
+
+                cursor_y += 26;
+
+                DoLabel(id++, "Ambient", lx + 30, cursor_y, 100, 30, 20);
+                DoColorDragFloat4(&id, lx + 30 + 100, cursor_y, 300 - 64, 24,
+                                  &game->assets->sun.ambient);
+                id++;
+
+                UpdateSunValue(*shader, game->assets->sun);
+            }
+
+            cursor_y += 32 + 2;
+
+            for (int i = 0; i < game->assets->num_lights; i++) {
+                Light light = game->assets->lights[i];
+
+                if (DoCollapsingHeader(id++, TextFormat("%s[%d]", "Light", i),
+                                       lx + 10, cursor_y, panel_w - 20, 40)) {
+                    cursor_y += 40 + 2;
+
+                    DoLabel(id++, "Disabled", lx + 30, cursor_y, 100, 30, 20);
+                    game->assets->lights[i].enabled =
+                        !DoCheckBox(id++, lx + 30 + 100, cursor_y, 30, 30);
+
+                    if (DoBtn(id++, lx + 30 + 130 + 10, cursor_y, 100, 30,
+                              "Grab")) {
+                        self->light_grabbed = i;
+                    }
+
+                    cursor_y += 32;
+                    DoLabel(id++, "Position", lx + 30, cursor_y, 200, 30, 20);
+
+                    DoDragFloat3(&id, lx + 130, cursor_y, 300 - 64, 24,
+                                 &game->assets->lights[i].position, 0.1f);
+
+                    cursor_y += 26;
+
+                    DoLabel(id++, "Color", lx + 30, cursor_y, 100, 30, 20);
+
+                    DoColorDragFloat4(&id, lx + 30 + 100, cursor_y, 300 - 64,
+                                      24, &game->assets->lights[i].color);
+
+                    cursor_y += 28;
+
+                    UpdateLightValues(*shader, game->assets->lights[i]);
+
+                } else {
+                    cursor_y += 40 + 2;
+                }
+            }
+
+        } else {
+            self->lights_panel_y =
+                lerp(GetFrameTime() * 10.0f, self->lights_panel_y,
+                     GetScreenHeight() - 30);
+        }
+
+        id += 500;
+
+        int y = 0;
+        for (int i = self->num_notes - 1; i >= 0; i--) {
+            Note note = self->notes[i];
+
+            if (!note.active) continue;
+
+            Rectangle r = {
+                (float)GetScreenWidth() - 200.0f,
+                (float)GetScreenHeight() - (NOTE_HEIGHT * (y + 1.0f)), 200,
+                NOTE_HEIGHT};
+            DoFrame(id++, r.x - 4.0f, r.y - 4.0f - ((y + 1.0f) * 4.0f),
+                    r.width + 8.0f, r.height + 8.0f, 1.0f);
+            DoLabel(id - 1, note.mesg, r.x, r.y - ((y + 1.0f) * 4.0f), r.width,
+                    r.height, 20);
+            y++;
+        }
     }
 }
 

@@ -44,7 +44,10 @@ enum {
     EDITOR_STATE_EXPORT_MODAL,
     EDITOR_STATE_EXIT_PLACEMENT_MODAL,
     EDITOR_STATE_LOAD_MODAL,
+
     EDITOR_STATE_LIGHTS_MODAL,
+    EDITOR_STATE_MODEL_SELECTOR_MODAL,
+
     EDITOR_STATE_CONSOLE,
 };
 typedef struct {
@@ -64,7 +67,9 @@ typedef struct {
 
     int which_marker;
 
-    float light_panel_y;
+    float lights_panel_y;
+    float models_panel_y;
+
     float console_y;
     float placement_toggle_height;
 
