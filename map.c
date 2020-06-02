@@ -108,6 +108,8 @@ void load_map_from_script(Map *result, const char *path, Game *game) {
 
     if (result_table == NULL) return;
 
+    Shader *shader = &game->assets->shaders[SHADER_PHONG_LIGHTING];
+
     // Read the map size
     JanetArray *size_arr = janet_unwrap_array(
         janet_table_get(result_table, janet_ckeywordv("size")));
@@ -132,6 +134,21 @@ void load_map_from_script(Map *result, const char *path, Game *game) {
 
     assert(size_arr->count == 2);
 
+    Janet sun_dir_arr_val =
+        janet_table_get(result_table, janet_ckeywordv("sun-direction"));
+
+    if (janet_checktype(sun_dir_arr_val, JANET_ARRAY)) {
+        printf("sun here\n");
+        JanetArray *arr = janet_unwrap_array(sun_dir_arr_val);
+
+        const float x = janet_unwrap_number(arr->data[0]);
+        const float y = janet_unwrap_number(arr->data[1]);
+        const float z = janet_unwrap_number(arr->data[2]);
+
+        game->assets->sun.direction = (Vector3){x, y, z};
+        UpdateSunValue(*shader, game->assets->sun);
+    }
+
     if (size_arr) {
         result->width = janet_unwrap_integer(size_arr->data[0]);
         result->height = janet_unwrap_integer(size_arr->data[1]);
@@ -155,8 +172,6 @@ void load_map_from_script(Map *result, const char *path, Game *game) {
     result->num_props = 0;
 
     result->num_exits = 0;
-
-    Shader *shader = &game->assets->shaders[SHADER_PHONG_LIGHTING];
 
     game->assets->num_lights = 0;
     result->num_spawns = 0;
