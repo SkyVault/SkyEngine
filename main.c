@@ -12,10 +12,10 @@
 #include "game.h"
 #include "gui.h"
 #include "map.h"
-#include "renderer.h"
 #include "particles.h"
 #include "raylib.h"
 #include "raymath.h"
+#include "renderer.h"
 #include "rlgl.h"
 #include "rlights.h"
 #include "tween.h"
@@ -32,7 +32,7 @@
 
 #define BENIS_VERSION_MAJOR "0"
 #define BENIS_VERSION_MINOR "1"
-#define BENIS_VERSION_PATCH "6"
+#define BENIS_VERSION_PATCH "7"
 #define BENIS_VERSION \
     BENIS_VERSION_MAJOR "." BENIS_VERSION_MINOR "." BENIS_VERSION_PATCH
 
