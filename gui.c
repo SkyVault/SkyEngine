@@ -484,10 +484,7 @@ void BeginScrollPanelV(NodeId id, float x, float y, float width, float height,
         (*scroll) -= mdelta * 20.0f;
     }
 
-    if (*scroll < 0) {
-        *scroll = 0.0f;
-    }
-
+    if (*scroll < 0) *scroll = 0.0f;
     if (*scroll > max_height) *scroll = max_height;
 
     float ratio = (height / max_height);
@@ -499,9 +496,10 @@ void BeginScrollPanelV(NodeId id, float x, float y, float width, float height,
     DrawRectangleLines(x + width - scroll_w, y, scroll_w, height,
                        HIGHLIGHT_COLOR);
 
+    const float yy = y + height * scroll_ratio;
     // TODO(Dustin): Allow dragging the scrollbar
-    DrawRectangle(x + width - scroll_w, y + height * scroll_ratio, scroll_w,
-                  height * ratio, HIGHLIGHT_COLOR);
+    DrawRectangle(x + width - scroll_w, yy, scroll_w, (height / 2 * ratio),
+                  HIGHLIGHT_COLOR);
 
     BeginScissorMode(x, y, width - scroll_w, height);
 }

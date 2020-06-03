@@ -55,7 +55,7 @@ bool is_number(const char *str) {
 }
 
 void zero_out_map(Map *self) {
-    self->num_models = 0;
+    self->num_models = 4;
     self->num_props = 0;
     self->num_spawns = 0;
     self->num_exits = 0;
@@ -82,7 +82,7 @@ Map *create_map_from_script(const char *path, Game *game) {
 
     // Load the models and meshes
     for (int i = 0; i <= 4; i++) {
-        result->models[result->num_models++] = game->assets->models[i];
+        result->models[i] = game->assets->models[i];
     }
 
     result->floor_tile_models[0] = game->assets->models[5];
@@ -138,7 +138,6 @@ void load_map_from_script(Map *result, const char *path, Game *game) {
         janet_table_get(result_table, janet_ckeywordv("sun-direction"));
 
     if (janet_checktype(sun_dir_arr_val, JANET_ARRAY)) {
-        printf("sun here\n");
         JanetArray *arr = janet_unwrap_array(sun_dir_arr_val);
 
         const float x = janet_unwrap_number(arr->data[0]);
