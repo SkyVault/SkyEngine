@@ -55,7 +55,7 @@ bool is_number(const char *str) {
 }
 
 void zero_out_map(Map *self) {
-    self->num_models = 4;
+    self->num_models = 6;
     self->num_props = 0;
     self->num_spawns = 0;
     self->num_exits = 0;
@@ -81,7 +81,7 @@ Map *create_map_from_script(const char *path, Game *game) {
     zero_out_map(result);
 
     // Load the models and meshes
-    for (int i = 0; i <= 4; i++) {
+    for (int i = 0; i <= 6; i++) {
         result->models[i] = game->assets->models[i];
     }
 
