@@ -474,29 +474,32 @@ void render_editor_ui(Ed* self, Map* map, Game* game) {
             self->state = EDITOR_STATE_NONE;
         }
 
-        static float scroll_y = 0;
-        static float max_height = 0;
-        BeginScrollPanelV(id++, GetScreenWidth() / 2 - 150.0f,
-                          GetScreenHeight() / 2 + 20 + 30 * 2, 300 + 12, 300,
-                          &scroll_y, max_height);
+        {
+            static float scroll_y = 0;
+            static float max_height = 0;
+            BeginScrollPanelV(id++, GetScreenWidth() / 2 - 150.0f,
+                              GetScreenHeight() / 2 + 28, 300 + 12, 300,
+                              &scroll_y, max_height);
 
-        max_height = 0;
-        for (int i = 2; i < self->num_maps; i++) {
-            if (DoBtn(id++, GetScreenWidth() / 2 - 150.0f,
-                      GetScreenHeight() / 2 + 20 + 30 * (i - 1.0f) - scroll_y,
-                      300, 30, self->maps[i])) {
-                const char* path =
-                    TextFormat("resources/maps/%s", self->maps[i]);
-                if (FileExists(path)) {
-                    reset_map_to_zero(game->map, game);
-                    load_map_from_script(game->map, path, game);
-                    self->state = EDITOR_STATE_NONE;
+            max_height = 0;
+            for (int i = 2; i < self->num_maps; i++) {
+                if (DoBtn(
+                        id++, GetScreenWidth() / 2 - 150.0f,
+                        GetScreenHeight() / 2 + 20 + 30 * (i - 1.0f) - scroll_y,
+                        300, 30, self->maps[i])) {
+                    const char* path =
+                        TextFormat("resources/maps/%s", self->maps[i]);
+                    if (FileExists(path)) {
+                        reset_map_to_zero(game->map, game);
+                        load_map_from_script(game->map, path, game);
+                        self->state = EDITOR_STATE_NONE;
+                    }
                 }
+                max_height += 30;
             }
-            max_height += 30;
-        }
 
-        EndScrollPanelV();
+            EndScrollPanelV();
+        }
 
         if (DoBtn(id++, GetScreenWidth() / 2 + 200.0f, GetScreenHeight() / 2.0f,
                   30, 30, "X")) {
@@ -515,12 +518,40 @@ void render_editor_ui(Ed* self, Map* map, Game* game) {
 
         static char buffer[100] = {'\0'};
         if (DoTextInput(id++, buffer, 100, GetScreenWidth() / 2 - 150.0f,
-                        GetScreenHeight() / 2 - 25.0f, 300, 50)) {
+                        GetScreenHeight() / 2 + 28, 300, 50)) {
             tstr path = talloc(512);
             sprintf(path, "resources/maps/%s.janet", buffer);
             serialize_map(self, map, game, path);
             push_message(self, FormatText("Exported [%s]", path));
             self->state = EDITOR_STATE_NONE;
+        }
+
+        {
+            static float scroll_y = 0;
+            static float max_height = 0;
+            BeginScrollPanelV(id++, GetScreenWidth() / 2 - 150.0f,
+                              GetScreenHeight() / 2 + 20 + 30 * 2, 300 + 12,
+                              300, &scroll_y, max_height);
+
+            max_height = 0;
+            for (int i = 2; i < self->num_maps; i++) {
+                if (DoBtn(
+                        id++, GetScreenWidth() / 2 - 150.0f,
+                        GetScreenHeight() / 2 + 20 + 30 * (i - 1.0f) - scroll_y,
+                        300, 30, self->maps[i])) {
+                    const char* path =
+                        TextFormat("resources/maps/%s", self->maps[i]);
+                    if (FileExists(path)) {
+                        // reset_map_to_zero(game->map, game);
+                        // load_map_from_script(game->map, path, game);
+                        serialize_map(self, map, game, path);
+                        self->state = EDITOR_STATE_NONE;
+                    }
+                }
+                max_height += 30;
+            }
+
+            EndScrollPanelV();
         }
 
         if (DoBtn(id++, GetScreenWidth() / 2.f + 200, GetScreenHeight() / 2.0f,
@@ -811,8 +842,14 @@ void serialize_map(Ed* editor, Map* map, Game* game, const char* path) {
     char* start = it;
     memset(builder, '\0', sizeof(char) * memsize);
 
-    it += sprintf(it, "@{ :size @[%d %d]\n   :start @[%f %f]\n   :layers @[",
-                  map->width, map->height, map->player_x, map->player_z);
+    it += sprintf(it,
+                  "@{ :size @[%d %d]\n   :start @[%f %f]\n   :sun-direction "
+                  "@[%f %f %f]\n",
+                  map->width, map->height, map->player_x, map->player_z,
+                  game->assets->sun.direction.x, game->assets->sun.direction.y,
+                  game->assets->sun.direction.z);
+
+    it += sprintf(it, "    :layers @[");
 
     for (int layer = 0; layer < MAX_NUM_LAYERS; layer++) {
         it += sprintf(it, "\n      @{ :data ``");
