@@ -14,6 +14,13 @@ Node* create_node() {
     return node;
 }
 
+void free_node(Node* node) {
+    if (node->child) free_node(node->child);
+    if (node->next) free_node(node->next);
+    node->child = node->next = node->parent = NULL;
+    free(node);
+}
+
 Node* create_node_from_mesh(Mesh mesh) {
     Node* node = create_node();
     node->model = LoadModelFromMesh(mesh);
@@ -32,4 +39,9 @@ void add_child_node(Node* parent, Node* child) {
     child->parent = parent;
 }
 
-Transform get_transform_from_parent(Node* self) {}
+Transform get_transform(Node* self) {
+    Transform self_t = self->transform;
+    if (self->parent == NULL) return self_t;
+    Transform parent_t = get_transform(self->parent);
+    return add_transforms(self_t, parent_t);
+}

@@ -1,6 +1,7 @@
 #ifndef BENIS_NODE_H
 #define BENIS_NODE_H
 
+#include "maths.h"
 #include "raylib.h"
 #include "raymath.h"
 
@@ -19,6 +20,6 @@ Node* create_node_from_mesh_with_transform(Mesh mesh, Transform transform);
 
 void add_child_node(Node* parent, Node* child);
 
-Transform get_transform_from_parent(Node* self);
+Transform get_transform(Node* self);
 
 #endif  // BENIS_NODE_H
