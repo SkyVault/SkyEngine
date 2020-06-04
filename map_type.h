@@ -4,6 +4,7 @@
 #include <inttypes.h>
 
 #include "constants.h"
+#include "node.h"
 #include "prop.h"
 #include "raylib.h"
 #include "rlights.h"
@@ -49,6 +50,8 @@ typedef struct {
     Exit exits[MAX_DOORS];
 
     ActorSpawn spawns[MAX_ACTOR_SPAWNS];
+
+    Node* scene_root;
 
     int num_models;
     int num_props;
