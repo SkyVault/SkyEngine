@@ -152,6 +152,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="node.h" />
     <ClInclude Include="constants.h" />
     <ClInclude Include="assembler.h" />
     <ClInclude Include="assets.h" />
@@ -187,6 +188,7 @@
       <DisableSpecificWarnings Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">4703;%(DisableSpecificWarnings)</DisableSpecificWarnings>
       <DisableSpecificWarnings Condition="'$(Configuration)|$(Platform)'=='Release|x64'">4703;%(DisableSpecificWarnings)</DisableSpecificWarnings>
     </ClCompile>
+    <ClCompile Include="node.c" />
     <ClCompile Include="assembler.c" />
     <ClCompile Include="assets.c" />
     <ClCompile Include="behaviours.c" />
