@@ -279,7 +279,7 @@ void update_and_render_game_scene(Game *game, EcsWorld *ecs,
     flush_graphics(gfx, camera);
 
     // #if defined _DEBUG
-    render_editor(editor, map, game);
+    render_editor(editor, gfx, map, game);
     // #endif
 
     EndMode3D();
@@ -288,7 +288,7 @@ void update_and_render_game_scene(Game *game, EcsWorld *ecs,
     draw_player_gui(game, map);
 
     // #if defined _DEBUG
-    render_editor_ui(editor, map, game);
+    render_editor_ui(editor, gfx, map, game);
     // #endif
 
     DrawFPS(10, 10);

@@ -242,7 +242,7 @@ bool get_mouse_placement_loc(Game* game, float y, Vector3* loc) {
     return false;
 }
 
-void render_editor(Ed* self, Map* map, Game* game) {
+void render_editor(Ed* self, GfxState* gfx, Map* map, Game* game) {
     if (!self->open) return;
 
     Vector3 loc;
@@ -332,8 +332,7 @@ void render_editor(Ed* self, Map* map, Game* game) {
         Prop prop = prop_types[self->model];
         prop.position = loc;
 
-        DrawBillboardRec(*game->camera, tex, prop.region, loc, prop.scale,
-                         WHITE);
+        draw_prop(gfx, game, prop);
 
         if (IsMouseButtonPressed(MOUSE_LEFT_BUTTON) && !IsMouseOnUiElement()) {
             map->props[map->num_props++] = prop;
@@ -393,7 +392,7 @@ int sort_levenshtein(const void* a, const void* b) {
     return 0;
 }
 
-void render_editor_ui(Ed* self, Map* map, Game* game) {
+void render_editor_ui(Ed* self, GfxState* gfx, Map* map, Game* game) {
     Shader* shader = &game->assets->shaders[SHADER_PHONG_LIGHTING];
 
     int id = 200;
