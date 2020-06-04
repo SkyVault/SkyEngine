@@ -41,8 +41,11 @@ typedef struct Drawable {
 } Drawable;
 
 typedef struct {
-    Drawable drawables[MAX_NUMBER_OF_DRAWABLES];
-    int num_drawables;
+    Drawable opaque_drawables[MAX_NUMBER_OF_DRAWABLES];
+    Drawable transparent_drawables[MAX_NUMBER_OF_DRAWABLES];
+
+    int num_opaque_drawables;
+    int num_transparent_drawables;
 } GfxState;
 
 GfxState* create_gfx_state();
