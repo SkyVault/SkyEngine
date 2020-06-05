@@ -368,3 +368,5 @@ create_and_publish_build.py
 publish-log
 
 *.rdbg
+
+*.dll
