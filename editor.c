@@ -294,9 +294,14 @@ void render_editor(Ed* self, GfxState* gfx, Map* map, Game* game) {
 
     if (self->object_placement_type == PLACE_BLOCKS &&
         self->light_grabbed < 0 && self->state == EDITOR_STATE_NONE) {
-        DrawModel(map->models[self->model], clamped, CUBE_SIZE + 0.02f,
-                  (Color){(unsigned char)(occ * 255), 255,
-                          (unsigned char)(occ * 255), 150});
+        Transform transform;
+        transform.translation = clamped;
+        transform.rotation = QuaternionIdentity();
+        transform.scale = Vector3One();
+
+        draw_model(gfx, &map->models[self->model], transform,
+                   (Color){(unsigned char)(occ * 255), 255,
+                           (unsigned char)(occ * 255), 150});
 
         if (IsMouseButtonPressed(MOUSE_LEFT_BUTTON) && !game->lock_camera) {
             // Try to intersect
