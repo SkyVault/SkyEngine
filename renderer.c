@@ -63,6 +63,32 @@ void add_opaque_drawable(GfxState* gfx, Drawable drawable) {}
 
 void add_transparent_drawable(GfxState* gfx, Drawable drawable) {}
 
+void draw_model(GfxState* gfx, Model* model, Transform transform,
+                Color diffuse) {
+    if (diffuse.a < 255) {
+        if (gfx->num_transparent_drawables < MAX_NUMBER_OF_DRAWABLES) {
+            gfx->transparent_drawables[gfx->num_transparent_drawables++] =
+                (Drawable){
+                    .type = DrawType_Model,
+                    .flags = DrawFlag_Active,
+                    .transform = transform,
+                    .model = *model,
+                    .diffuse = diffuse,
+                };
+        }
+    } else {
+        if (gfx->num_opaque_drawables < MAX_NUMBER_OF_DRAWABLES) {
+            gfx->opaque_drawables[gfx->num_opaque_drawables++] = (Drawable){
+                .type = DrawType_Model,
+                .flags = DrawFlag_Active,
+                .transform = transform,
+                .model = *model,
+                .diffuse = diffuse,
+            };
+        }
+    }
+}
+
 void draw_models(GfxState* gfx, EcsWorld* ecs, EntId ent) {
     EntStruct* self = get_ent(ecs, ent);
 
