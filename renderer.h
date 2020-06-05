@@ -51,12 +51,16 @@ typedef struct {
 GfxState* create_gfx_state();
 
 void update_billboard(EcsWorld* ecs, EntId ent);
-void draw_billboard(GfxState* gfx, Camera* camera, EcsWorld* ecs, EntId ent);
+void draw_billboard_ent(GfxState* gfx, Camera* camera, EcsWorld* ecs,
+                        EntId ent);
 
 void update_models(EcsWorld* ecs, EntId ent);  // Animations?
 void draw_models(GfxState* gfx, EcsWorld* ecs, EntId ent);
 void draw_model(GfxState* gfx, Model* model, Transform transform,
                 Color diffuse);
+
+void draw_billboard(GfxState* gfx, Vector3 position, Texture texture,
+                    Rectangle region, float scale);
 
 void draw_prop(GfxState* gfx, Game* game, Prop prop);
 

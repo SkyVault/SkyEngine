@@ -321,7 +321,10 @@ void render_editor(Ed* self, GfxState* gfx, Map* map, Game* game) {
         }
     } else if (self->object_placement_type == PLACE_ACTORS) {
         Texture2D tex = game->assets->textures[TEX_GIRL_1 + self->model];
-        DrawBillboard(*game->camera, tex, loc, CUBE_SIZE, WHITE);
+        // DrawBillboard(*game->camera, tex, loc, CUBE_SIZE, WHITE);
+
+        draw_billboard(gfx, loc, tex, (Rectangle){0, 0, tex.width, tex.height},
+                       1.0f);
 
         if (IsMouseButtonPressed(MOUSE_LEFT_BUTTON) && !game->lock_camera) {
             assemble(ACTOR_GIRL_1 + self->model, game, loc.x, loc.y, loc.z, 0,

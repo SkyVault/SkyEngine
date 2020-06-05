@@ -13,7 +13,8 @@ GfxState* create_gfx_state() {
 
 void update_billboard(EcsWorld* ecs, EntId ent) {}
 
-void draw_billboard(GfxState* gfx, Camera* camera, EcsWorld* ecs, EntId ent) {
+void draw_billboard_ent(GfxState* gfx, Camera* camera, EcsWorld* ecs,
+                        EntId ent) {
     EntStruct* self = get_ent(ecs, ent);
 
     if (ent < 0 || self == NULL) return;
@@ -52,6 +53,28 @@ void draw_prop(GfxState* gfx, Game* game, Prop prop) {
                     (Billboard){.texture = game->assets->textures[TEX_PROPS],
                                 .material = {0},
                                 .scale = prop.scale},
+                .diffuse = WHITE,
+            };
+    }
+}
+
+void draw_billboard(GfxState* gfx, Vector3 position, Texture texture,
+                    Rectangle region, float scale) {
+    if (gfx->num_transparent_drawables < MAX_NUMBER_OF_DRAWABLES) {
+        gfx->transparent_drawables[gfx->num_transparent_drawables++] =
+            (Drawable){
+                .type = DrawType_Billboard,
+                .flags = DrawFlag_Active,
+                .region = region,
+                .transform =
+                    (Transform){
+                        .translation = position,
+                        .rotation = QuaternionIdentity(),
+                        .scale = (Vector3){1, 1, 1},
+                    },
+                .billboard =
+                    (Billboard){
+                        .texture = texture, .material = {0}, .scale = scale},
                 .diffuse = WHITE,
             };
     }
