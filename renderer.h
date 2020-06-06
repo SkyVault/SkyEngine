@@ -13,6 +13,15 @@
 
 #define MAX_NUMBER_OF_DRAWABLES (1000)
 
+#define FCOLOR(r, g, b, a)                                     \
+    (Color) {                                                  \
+        (unsigned char)((r)*255), (unsigned char)((g)*255),    \
+            (unsigned char)((b)*255), (unsigned char)((a)*255) \
+    }
+
+#define VEC3_TO_COLOR(v) FCOLOR(v.x, v.y, v.z, 1.0f)
+#define VEC4_TO_COLOR(v) FCOLOR(v.x, v.y, v.z, v.w)
+
 enum DrawFlags {
     DrawFlag_Active = 1 << 0,
     DrawFlag_NumDrawFlags = 1 << 1,

@@ -202,7 +202,7 @@ void render_drawable(Drawable* d, Camera* camera) {
         if (f.y > 1) f.y = 1;
         if (f.z > 1) f.z = 1;
 
-        d->diffuse = (Color){f.x * 255, f.y * 255, f.z * 255, 255};
+        d->diffuse = VEC3_TO_COLOR(f);
 
         DrawBillboardRec(*camera, d->billboard.texture, d->region, pos,
                          d->billboard.scale, d->diffuse);
