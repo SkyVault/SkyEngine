@@ -7,6 +7,7 @@
 #include "ecs.h"
 #include "game.h"
 #include "map_type.h"
+#include "node.h"
 #include "prop.h"
 #include "raylib.h"
 #include "raymath.h"
@@ -72,6 +73,8 @@ void draw_billboard(GfxState* gfx, Vector3 position, Texture texture,
                     Rectangle region, float scale);
 
 void draw_prop(GfxState* gfx, Game* game, Prop prop);
+
+void draw_node_tree(Node* node);
 
 void flush_graphics(GfxState* gfx, Camera* camera);
 

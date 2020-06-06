@@ -83,7 +83,7 @@ Map *create_map_from_script(const char *path, Game *game) {
     result->num_models = game->assets->num_models;
 
     // Load the models and meshes
-    for (int i = 0; i <= 6; i++) {
+    for (int i = 0; i <= result->num_models; i++) {
         result->models[i] = game->assets->models[i];
     }
 
@@ -96,6 +96,8 @@ Map *create_map_from_script(const char *path, Game *game) {
 
 void load_map_from_script(Map *result, const char *path, Game *game) {
     FILE *o = fopen(path, "r");
+
+    result->num_models = game->assets->num_models;
 
     fseek(o, 0L, SEEK_END);
     size_t len = ftell(o);

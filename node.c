@@ -3,6 +3,8 @@
 Node* create_node() {
     Node* node = malloc(sizeof(Node));
 
+    node->type = NODE_TYPE_EMPTY;
+
     node->transform = (Transform){.translation = Vector3Zero(),
                                   .rotation = QuaternionIdentity(),
                                   .scale = Vector3One()};
@@ -24,6 +26,7 @@ void free_node(Node* node) {
 Node* create_node_from_mesh(Mesh mesh) {
     Node* node = create_node();
     node->model = LoadModelFromMesh(mesh);
+    node->type = NODE_TYPE_MODEL;
     return node;
 }
 
@@ -31,6 +34,7 @@ Node* create_node_from_mesh_with_transform(Mesh mesh, Transform transform) {
     Node* node = create_node();
     node->model = LoadModelFromMesh(mesh);
     node->transform = transform;
+    node->type = NODE_TYPE_MODEL;
     return node;
 }
 
