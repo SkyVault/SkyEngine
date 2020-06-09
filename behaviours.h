@@ -8,6 +8,8 @@
 #include "raymath.h"
 #include "scripting.h"
 
+void register_janet_c_functions(Game* game);
+
 void update_behaviours(Game* game, EcsWorld* ecs, EntId id);
 
 #endif  // BENIS_BEHAVIOURS_H

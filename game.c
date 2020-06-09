@@ -12,6 +12,7 @@ Game* create_game(Assets* assets, Camera* camera, EcsWorld* ecs,
     game->editor_open = false;
     game->env = env;
     game->noclip = false;
+    static_ref = game;
     return game;
 }
 

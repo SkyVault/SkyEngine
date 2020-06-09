@@ -1,2 +1,3 @@
 (defn update[] 
-    (print "here"))
+
+    (move_entity 42 3.14159 2.0))

@@ -1,5 +1,24 @@
 #include "behaviours.h"
 
+Janet move_entity(int32_t argc, Janet* argv) {
+    janet_fixarity(argc, 3);
+
+    EntId ent_id = janet_getinteger(argv, 0);
+    float delta_x = janet_getnumber(argv, 1);
+    float delta_y = janet_getnumber(argv, 2);
+
+    printf("entid: [%d] dx dy: [%f %f]\n", ent_id, delta_x, delta_y);
+
+    Game* game = game_get_static_ref();
+
+    return janet_wrap_nil();
+}
+
+void register_janet_c_functions(Game* game) {
+    janet_def(game->env, "move_entity", janet_wrap_cfunction(move_entity),
+              NULL);
+}
+
 Actor create_actor(int type) {
     return (Actor){.type = type, .health = 3.0f, .flags = 0};
 }
@@ -65,8 +84,7 @@ void update_script(Game* game, EcsWorld* ecs, EntStruct* self, EntId id) {
             JanetFunction* func = janet_unwrap_function(result);
             JanetFiber* fiber = NULL;
             Janet out;
-            JanetSignal sig = janet_pcall(func, 0,
-                                          NULL, &out, &fiber);
+            JanetSignal sig = janet_pcall(func, 0, NULL, &out, &fiber);
         }
     }
 }

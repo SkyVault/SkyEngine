@@ -32,9 +32,15 @@ typedef struct {
     bool noclip;
 } Game;
 
+// TODO(Dustin): We really need to not do this, but for the sake of
+// simplicity...
+static Game* static_ref = NULL;
+
 Game* create_game(Assets* assets, Camera* camera, EcsWorld* ent_world,
                   JanetTable* env);
 
 void update_game(Game* game);
+
+static Game* game_get_static_ref() { return static_ref; }
 
 #endif  // BENIS_GAME_H
