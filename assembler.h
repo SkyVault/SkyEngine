@@ -2,12 +2,14 @@
 #define BENIS_ASSEMBLER_H
 
 #include "assets.h"
+#include "behaviours.h"
 #include "ecs.h"
 #include "entity_type.h"
-#include "renderer.h"
 #include "physics.h"
 #include "player.h"
 #include "raylib.h"
+#include "renderer.h"
+#include "scripting.h"
 #include "utils.h"
 
 typedef EntId (*Ass)(Game*, float, float, float, float, float);

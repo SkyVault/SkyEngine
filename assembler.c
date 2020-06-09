@@ -1,5 +1,7 @@
 #include "assembler.h"
 
+const char* code = "(defn update [] (print \"hello\"))";
+
 EntId ACTOR_PLAYER_C(Game* game, float x, float y, float z, float vx,
                      float vy) {
     EntId player_id = create_ent(game->ecs);
@@ -8,6 +10,12 @@ EntId ACTOR_PLAYER_C(Game* game, float x, float y, float z, float vx,
     add_comp(game->ecs, player, Transform, .translation = (Vector3){x, y, z});
     add_comp(game->ecs, player, Player, .n = 0);
     add_comp_obj(game->ecs, player, Physics, create_physics());
+
+    char* buff = malloc(strlen(code) + 1);
+    sprintf(buff, "%s", code);
+
+    // add_comp_obj(game->ecs, player, Script, create_script(game, buff));
+
     return player_id;
 }
 

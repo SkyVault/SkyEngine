@@ -39,8 +39,29 @@ void update_enemy(EcsWorld* ecs, Actor* actor, EntId id) {
     }
 }
 
-void update_behaviours(EcsWorld* ecs, EntId id) {
+void update_script(Game* game, EcsWorld* ecs, EntStruct* self, EntId id) {
+    Script* script = get_comp(ecs, self, Script);
+
+    if (!is_ent_alive(ecs, id)) {
+        // Clean up the script
+        // free(script->code);
+        // script->code = NULL;
+        return;
+    }
+
+    if (script->func != NULL) {
+        JanetFiber* fiber = NULL;
+        Janet out;
+        JanetSignal sig = janet_pcall(script->func, 0, NULL, &out, &fiber);
+    }
+}
+
+void update_behaviours(Game* game, EcsWorld* ecs, EntId id) {
     EntStruct* self = get_ent(ecs, id);
+
+    if (has_comp(ecs, self, Script)) {
+        update_script(game, ecs, self, id);
+    }
 
     if (!has_comp(ecs, self, Actor)) {
         return;

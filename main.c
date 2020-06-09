@@ -234,7 +234,7 @@ void update_and_render_game_scene(Game *game, EcsWorld *ecs,
         update_billboard(ecs, i);
         update_player(ecs, assets, game, i);
         update_doors(ecs, i);
-        update_behaviours(ecs, i);
+        update_behaviours(game, ecs, i);
         update_timed_destroy(ecs, i);
         update_physics(map, ecs, game, i);
     }

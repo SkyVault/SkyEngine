@@ -6,7 +6,8 @@
 #include "entity_type.h"
 #include "game.h"
 #include "raymath.h"
+#include "scripting.h"
 
-void update_behaviours(EcsWorld* ecs, EntId id);
+void update_behaviours(Game* game, EcsWorld* ecs, EntId id);
 
 #endif  // BENIS_BEHAVIOURS_H

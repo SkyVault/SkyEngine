@@ -86,6 +86,11 @@ void add_opaque_drawable(GfxState* gfx, Drawable drawable) {}
 
 void add_transparent_drawable(GfxState* gfx, Drawable drawable) {}
 
+void draw_node_tree(Node* node) {
+    if (node->type == NODE_TYPE_MODEL) {
+    }
+}
+
 void draw_model(GfxState* gfx, Model* model, Transform transform,
                 Color diffuse) {
     if (diffuse.a < 255) {
