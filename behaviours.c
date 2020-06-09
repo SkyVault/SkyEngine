@@ -49,10 +49,25 @@ void update_script(Game* game, EcsWorld* ecs, EntStruct* self, EntId id) {
         return;
     }
 
-    if (script->func != NULL) {
-        JanetFiber* fiber = NULL;
-        Janet out;
-        JanetSignal sig = janet_pcall(script->func, 0, NULL, &out, &fiber);
+    if (script->which < SCRIPTS_NUM_SCRIPTS && script->which >= 0) {
+        // TODO(Dustin):
+        // We need to use the pcall version so that we can A. Capture errors B.
+        // run larger scripts
+
+        // NOTE(Dustin): janet_call suspends the garbage
+        // collector, only use small scripts with this because muh memory
+
+        Janet result;
+        janet_dostring(game->env, game->assets->scripts[script->which], "main",
+                       &result);
+
+        if (janet_checktype(result, JANET_FUNCTION)) {
+            JanetFunction* func = janet_unwrap_function(result);
+            JanetFiber* fiber = NULL;
+            Janet out;
+            JanetSignal sig = janet_pcall(func, 0,
+                                          NULL, &out, &fiber);
+        }
     }
 }
 

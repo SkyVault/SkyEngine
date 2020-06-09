@@ -56,6 +56,9 @@ Assets* create_and_load_assets() {
 
     ass->fonts[FONT_MAIN_FONT] = LoadFont("resources/alagard_font.png");
 
+    ass->scripts[SCRIPTS_BASIC_ZOMBIE_AI] =
+        LoadText("resources/scripts/simple_zombie_ai.janet");
+
     Shader* shader = &ass->shaders[SHADER_PHONG_LIGHTING];
 
     shader->locs[LOC_VECTOR_VIEW] = GetShaderLocation(*shader, "viewPos");

@@ -36,6 +36,8 @@ enum Textures {
     TEX_NUM_TEXTURES,
 };
 
+enum Scripts { SCRIPTS_BASIC_ZOMBIE_AI, SCRIPTS_NUM_SCRIPTS };
+
 enum Meshes { MESH_CUBE, MESH_SKYBOX, MESH_PLANE, MESH_NUM_MESHES };
 
 enum { SHADER_VERTEX, SHADER_FRAGMENT };
@@ -69,6 +71,8 @@ typedef struct {
     struct Hotload shaders_hotload[SHADER_NUM_SHADERS];
 
     Font fonts[FONT_NUM_FONTS];
+
+    const char* scripts[SCRIPTS_NUM_SCRIPTS];
 
     Model* models;
     int num_models;

@@ -11,11 +11,6 @@ EntId ACTOR_PLAYER_C(Game* game, float x, float y, float z, float vx,
     add_comp(game->ecs, player, Player, .n = 0);
     add_comp_obj(game->ecs, player, Physics, create_physics());
 
-    char* buff = malloc(strlen(code) + 1);
-    sprintf(buff, "%s", code);
-
-    // add_comp_obj(game->ecs, player, Script, create_script(game, buff));
-
     return player_id;
 }
 
@@ -45,6 +40,8 @@ EntId ACTOR_GIRL_1_C(Game* game, float x, float y, float z, float vx,
              .material = (Material){0}, .scale = GLOBAL_SCALE);
 
     add_comp_obj(game->ecs, self, Actor, create_enemy_actor(ACTOR_GIRL_1));
+
+    add_comp(game->ecs, self, Script, .which = SCRIPTS_BASIC_ZOMBIE_AI);
 
     return self_id;
 }

@@ -180,6 +180,7 @@
     <ClInclude Include="tween.h" />
     <ClInclude Include="gui.h" />
     <ClCompile Include="dict.h" />
+    <ClCompile Include="scripting.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="janet.c">
@@ -209,6 +210,7 @@
     <ClCompile Include="gui.c" />
     <ClCompile Include="rlights.c" />
     <ClCompile Include="dict.c" />
+    <ClCompile Include="scripting.c" />
   </ItemGroup>
   <ItemGroup>
     <None Include="resources\cubemap_fs.glsl" />

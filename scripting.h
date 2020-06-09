@@ -5,9 +5,7 @@
 #include "janet.h"
 
 typedef struct {
-    JanetFunction* func;
+    int which;
 } Script;
-
-Script create_script(Game* game, const char* code);
 
 #endif  // HARP_SCRIPTING_H
