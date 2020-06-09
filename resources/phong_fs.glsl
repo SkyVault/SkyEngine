@@ -115,6 +115,11 @@ void main()
     finalColor = mix(colDiffuse, finalColor, colDiffuse);
     finalColor.a = colDiffuse.a;
 
+    // finalColor.r += 0.3;
+
+    // finalColor = vec4(1, 0, 1, 1);
+
+
     // finalColor = colDiffuse;
 
     if (texelColor.a < 0.1) discard;

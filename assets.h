@@ -1,6 +1,7 @@
 #ifndef BENIS_ASSETS_H
 #define BENIS_ASSETS_H
 
+#include <stdio.h>
 #include <stdlib.h>
 
 #include "raylib.h"
@@ -37,6 +38,8 @@ enum Textures {
 
 enum Meshes { MESH_CUBE, MESH_SKYBOX, MESH_PLANE, MESH_NUM_MESHES };
 
+enum { SHADER_VERTEX, SHADER_FRAGMENT };
+
 enum Shaders {
     SHADER_PHONG_LIGHTING,
     SHADER_PHONG_2_0_LIGHTING,
@@ -50,10 +53,21 @@ enum Fonts {
     FONT_NUM_FONTS,
 };
 
+struct Hotload {
+    bool hotload;
+    long last_time_modified[2];
+    const char* paths[2];
+
+    bool just_hotloaded;
+};
+
 typedef struct {
     Mesh meshes[MESH_NUM_MESHES];
     Texture2D textures[TEX_NUM_TEXTURES];
     Shader shaders[SHADER_NUM_SHADERS];
+
+    struct Hotload shaders_hotload[SHADER_NUM_SHADERS];
+
     Font fonts[FONT_NUM_FONTS];
 
     Model* models;
@@ -64,6 +78,12 @@ typedef struct {
     Sun sun;
 } Assets;
 
+Shader hotload_shader(Assets* self, const char* path_vs, const char* path_fs,
+                      int id);
+
 Assets* create_and_load_assets();
+
+// Used for hotloading and dynamic recomp
+void update_assets(Assets* self);
 
 #endif  // BENIS_ASSETS_H

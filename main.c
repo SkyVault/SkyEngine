@@ -386,6 +386,39 @@ int main() {
 
     while (!WindowShouldClose() && game->state == STATE_RUNNING) {
         map = game->map;
+        update_assets(assets);
+
+        if (assets->shaders_hotload[SHADER_PHONG_LIGHTING].just_hotloaded) {
+            // Rebind uniforms
+            SetShaderValue(
+                assets->shaders[SHADER_PHONG_LIGHTING],
+                assets->shaders[SHADER_PHONG_LIGHTING].locs[LOC_VECTOR_VIEW],
+                &game->camera->position, UNIFORM_VEC3);
+
+            UpdateSunValue(assets->shaders[SHADER_PHONG_LIGHTING], assets->sun);
+
+            for (int i = 0; i < assets->num_lights; i++) {
+                UpdateLightValues(assets->shaders[SHADER_PHONG_LIGHTING],
+                                  assets->lights[i]);
+            }
+
+            for (int i = 0; i < assets->num_models; i++) {
+                assets->models[i].materials[0].shader =
+                    assets->shaders[SHADER_PHONG_LIGHTING];
+            }
+
+            for (int i = 0; i < game->ecs->num_entities; i++) {
+                if (!is_ent_alive(game->ecs, i)) continue;
+
+                EntStruct *self = get_ent(game->ecs, i);
+
+                if (has_comp(game->ecs, self, Model)) {
+                    get_comp(game->ecs, self, Model)->materials[0].shader =
+                        game->assets->shaders[SHADER_PHONG_LIGHTING];
+                }
+            }
+        }
+
         switch (game->scene) {
             case SCENE_GAME: {
                 update_and_render_game_scene(game, ecs, particle_sys, map, gfx,

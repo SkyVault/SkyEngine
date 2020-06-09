@@ -2,49 +2,59 @@
 
 #define SUN_DIRECTION ((Vector3){10.2f, -20.0f, 10.3})
 
+Shader hotload_shader(Assets* self, const char* path_vs, const char* path_fs,
+                      int id) {
+    Shader result = LoadShader(path_vs, path_fs);
+
+    self->shaders_hotload[id].hotload = true;
+    self->shaders_hotload[id].paths[SHADER_VERTEX] = path_vs;
+    self->shaders_hotload[id].paths[SHADER_FRAGMENT] = path_fs;
+    self->shaders_hotload[id].last_time_modified[SHADER_VERTEX] =
+        GetFileModTime(path_vs);
+    self->shaders_hotload[id].last_time_modified[SHADER_FRAGMENT] =
+        GetFileModTime(path_fs);
+
+    return result;
+}
+
 Assets* create_and_load_assets() {
     Assets* ass = malloc(sizeof(Assets));
 
-    *ass = (Assets){
-        .meshes =
-            {
-                [MESH_CUBE] = GenMeshCube(1, 1, 1),
-                [MESH_SKYBOX] = GenMeshCube(200, 200, 200),
-                [MESH_PLANE] = GenMeshPlane(1, 1, 10, 10),
-            },
+    for (int i = 0; i < SHADER_NUM_SHADERS; i++) {
+        ass->shaders_hotload[i].hotload = false;
+        ass->shaders_hotload[i].just_hotloaded = false;
+    }
 
-        .textures =
-            {
-                [TEX_WALL_1] = LoadTexture("resources/wall_1.png"),
-                [TEX_WALL_2] = LoadTexture("resources/wall_2.png"),
-                [TEX_WALL_3] = LoadTexture("resources/wall_3.png"),
-                [TEX_PROPS] = LoadTexture("resources/props.png"),
-                [TEX_CHAINLINK_FENCE] = LoadTexture("resources/chainlink.png"),
-                [TEX_FLOOR_1] = LoadTexture("resources/floor_1.png"),
-                [TEX_CHAR_1] = LoadTexture("resources/char.png"),
-                [TEX_SALAMI] = LoadTexture("resources/salami.png"),
-                [TEX_PINEAPPLE] = LoadTexture("resources/pineapple.png"),
-                [TEX_ORANGE] = LoadTexture("resources/orange.png"),
-                [TEX_GIRL_1] = LoadTexture("resources/girls/girl_1.png"),
-                [TEX_GIRL_2] = LoadTexture("resources/girls/girl_2.png"),
-                [TEX_GIRL_3] = LoadTexture("resources/girls/girl_3.png"),
-                [TEX_GIRL_4] = LoadTexture("resources/girls/girl_4.png"),
-                [TEX_GRASS_1] = LoadTexture("resources/textures/grass_1.png"),
-            },
+    ass->meshes[MESH_CUBE] = GenMeshCube(1, 1, 1),
+    ass->meshes[MESH_SKYBOX] = GenMeshCube(200, 200, 200),
+    ass->meshes[MESH_PLANE] = GenMeshPlane(1, 1, 10, 10),
 
-        .shaders =
-            {
-                [SHADER_PHONG_LIGHTING] = LoadShader("resources/phong_vs.glsl",
-                                                     "resources/phong_fs.glsl"),
-                [SHADER_SKYBOX] = LoadShader("resources/skybox_vs.glsl",
-                                             "resources/skybox_fs.glsl"),
-                [SHADER_CUBEMAP] = LoadShader("resources/cubemap_vs.glsl",
-                                              "resources/cubemap_fs.glsl"),
-            },
+    ass->textures[TEX_WALL_1] = LoadTexture("resources/wall_1.png"),
+    ass->textures[TEX_WALL_2] = LoadTexture("resources/wall_2.png"),
+    ass->textures[TEX_WALL_3] = LoadTexture("resources/wall_3.png"),
+    ass->textures[TEX_PROPS] = LoadTexture("resources/props.png"),
+    ass->textures[TEX_CHAINLINK_FENCE] = LoadTexture("resources/chainlink.png"),
+    ass->textures[TEX_FLOOR_1] = LoadTexture("resources/floor_1.png"),
+    ass->textures[TEX_CHAR_1] = LoadTexture("resources/char.png"),
+    ass->textures[TEX_SALAMI] = LoadTexture("resources/salami.png"),
+    ass->textures[TEX_PINEAPPLE] = LoadTexture("resources/pineapple.png"),
+    ass->textures[TEX_ORANGE] = LoadTexture("resources/orange.png"),
+    ass->textures[TEX_GIRL_1] = LoadTexture("resources/girls/girl_1.png"),
+    ass->textures[TEX_GIRL_2] = LoadTexture("resources/girls/girl_2.png"),
+    ass->textures[TEX_GIRL_3] = LoadTexture("resources/girls/girl_3.png"),
+    ass->textures[TEX_GIRL_4] = LoadTexture("resources/girls/girl_4.png"),
+    ass->textures[TEX_GRASS_1] = LoadTexture("resources/textures/grass_1.png"),
 
-        .fonts = {
-            [FONT_MAIN_FONT] = LoadFont("resources/alagard_font.png"),
-        }};
+    ass->shaders[SHADER_PHONG_LIGHTING] =
+        hotload_shader(ass, "resources/phong_vs.glsl",
+                       "resources/phong_fs.glsl", SHADER_PHONG_LIGHTING);
+
+    ass->shaders[SHADER_SKYBOX] =
+        LoadShader("resources/skybox_vs.glsl", "resources/skybox_fs.glsl");
+    ass->shaders[SHADER_CUBEMAP] =
+        LoadShader("resources/cubemap_vs.glsl", "resources/cubemap_fs.glsl");
+
+    ass->fonts[FONT_MAIN_FONT] = LoadFont("resources/alagard_font.png");
 
     Shader* shader = &ass->shaders[SHADER_PHONG_LIGHTING];
 
@@ -113,4 +123,32 @@ Assets* create_and_load_assets() {
     ass->models[5] = floor_1;
 
     return ass;
+}
+
+void update_assets(Assets* self) {
+    for (int id = 0; id < SHADER_NUM_SHADERS; id++) {
+        struct Hotload* hot = &self->shaders_hotload[id];
+
+        if (hot->hotload == false) continue;
+
+        hot->just_hotloaded = false;
+
+        long times[] = {GetFileModTime(hot->paths[SHADER_VERTEX]),
+                        GetFileModTime(hot->paths[SHADER_FRAGMENT])};
+
+        for (int j = 0; j < 2; j++) {
+            // printf("times fs %d != %d\n", times[1],
+            // hot->last_time_modified[1]);
+            if (times[j] != hot->last_time_modified[j]) {
+                printf("Hotloading shader [%s] [%s]\n",
+                       hot->paths[SHADER_VERTEX], hot->paths[SHADER_FRAGMENT]);
+                UnloadShader(self->shaders[id]);
+                self->shaders[id] =
+                    hotload_shader(self, hot->paths[SHADER_VERTEX],
+                                   hot->paths[SHADER_FRAGMENT], id);
+
+                hot->just_hotloaded = true;
+            }
+        }
+    }
 }
