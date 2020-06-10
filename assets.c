@@ -36,6 +36,11 @@ Assets* create_and_load_assets(void) {
     ass->textures[TEX_WALL_1] = LoadTexture("resources/wall_1.png");
     ass->textures[TEX_WALL_2] = LoadTexture("resources/wall_2.png");
     ass->textures[TEX_WALL_3] = LoadTexture("resources/wall_3.png");
+    ass->textures[TEX_WALL_4] = LoadTexture("resources/wall_4.png");
+    ass->textures[TEX_WALL_5] = LoadTexture("resources/wall_5.png");
+
+    ass->textures[TEX_WALL_ATLAS] =
+        LoadTexture("resources/textures/blocks.png");
     ass->textures[TEX_PROPS] = LoadTexture("resources/props.png");
     ass->textures[TEX_CHAINLINK_FENCE] = LoadTexture("resources/chainlink.png");
     ass->textures[TEX_FLOOR_1] = LoadTexture("resources/floor_1.png");
@@ -81,13 +86,13 @@ Assets* create_and_load_assets(void) {
         SetTextureWrap(ass->textures[i], WRAP_REPEAT);
     }
 
-    ass->models = malloc(sizeof(Model) * 6);
-    ass->num_models = 6;
+    ass->num_models = 5;
+    ass->models = malloc(sizeof(Model) * ass->num_models);
 
-    Model default_wall = LoadModelFromMesh(ass->meshes[MESH_CUBE]);
-    default_wall.materials[0].maps[MAP_DIFFUSE].texture =
+    Model default_wall_1 = LoadModelFromMesh(ass->meshes[MESH_CUBE]);
+    default_wall_1.materials[0].maps[MAP_DIFFUSE].texture =
         ass->textures[TEX_WALL_1];
-    default_wall.materials[0].shader = ass->shaders[SHADER_PHONG_LIGHTING];
+    default_wall_1.materials[0].shader = ass->shaders[SHADER_PHONG_LIGHTING];
 
     Model default_wall_2 = LoadModelFromMesh(ass->meshes[MESH_CUBE]);
     default_wall_2.materials[0].maps[MAP_DIFFUSE].texture =
@@ -95,36 +100,25 @@ Assets* create_and_load_assets(void) {
     default_wall_2.materials[0].shader = ass->shaders[SHADER_PHONG_LIGHTING];
 
     Model default_wall_3 = LoadModelFromMesh(ass->meshes[MESH_CUBE]);
-    default_wall_2.materials[0].maps[MAP_DIFFUSE].texture =
+    default_wall_3.materials[0].maps[MAP_DIFFUSE].texture =
         ass->textures[TEX_WALL_3];
-    default_wall_2.materials[0].shader = ass->shaders[SHADER_PHONG_LIGHTING];
+    default_wall_3.materials[0].shader = ass->shaders[SHADER_PHONG_LIGHTING];
 
-    Model fence_1 = LoadModelFromMesh(ass->meshes[MESH_CUBE]);
-    fence_1.materials[0].maps[MAP_DIFFUSE].texture =
-        ass->textures[TEX_CHAINLINK_FENCE];
-    fence_1.materials[0].shader = ass->shaders[SHADER_PHONG_LIGHTING];
-    fence_1.transform = MatrixIdentity();
-    fence_1.transform =
-        MatrixMultiply(fence_1.transform, MatrixScale(0.01f, 1.0f, 1.0f));
+    Model default_wall_4 = LoadModelFromMesh(ass->meshes[MESH_CUBE]);
+    default_wall_4.materials[0].maps[MAP_DIFFUSE].texture =
+        ass->textures[TEX_WALL_4];
+    default_wall_4.materials[0].shader = ass->shaders[SHADER_PHONG_LIGHTING];
 
-    Model fence_2 = LoadModelFromMesh(ass->meshes[MESH_CUBE]);
-    fence_2.materials[0].maps[MAP_DIFFUSE].texture =
-        ass->textures[TEX_CHAINLINK_FENCE];
-    fence_2.materials[0].shader = ass->shaders[SHADER_PHONG_LIGHTING];
-    fence_2.transform = MatrixIdentity();
-    fence_2.transform =
-        MatrixMultiply(fence_2.transform, MatrixScale(1.0f, 1.0f, 0.01f));
+    Model default_wall_5 = LoadModelFromMesh(ass->meshes[MESH_CUBE]);
+    default_wall_5.materials[0].maps[MAP_DIFFUSE].texture =
+        ass->textures[TEX_WALL_5];
+    default_wall_5.materials[0].shader = ass->shaders[SHADER_PHONG_LIGHTING];
 
-    Model floor_1 = LoadModelFromMesh(ass->meshes[MESH_CUBE]);
-    floor_1.materials[0].maps[MAP_DIFFUSE].texture = ass->textures[TEX_FLOOR_1];
-    floor_1.materials[0].shader = ass->shaders[SHADER_PHONG_LIGHTING];
-
-    ass->models[0] = default_wall;
+    ass->models[0] = default_wall_1;
     ass->models[1] = default_wall_2;
     ass->models[2] = default_wall_3;
-    ass->models[3] = fence_1;
-    ass->models[4] = fence_2;
-    ass->models[5] = floor_1;
+    ass->models[3] = default_wall_4;
+    ass->models[4] = default_wall_5;
 
     return ass;
 }

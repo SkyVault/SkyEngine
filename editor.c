@@ -502,7 +502,7 @@ void render_editor_ui(Ed* self, GfxState* gfx, Map* map, Game* game) {
     // Notifications
     int last = self->object_placement_type;
     self->object_placement_type =
-        DoToggleGroupV(id++, "NONE|BLOCKS|ACTORS|PROPS|MARKERS|DELETE|", 0,
+        DoToggleGroupV(id++, "NONE|BLOCKS|ACTORS|PROPS|MARKERS|", 0,
                        GetScreenHeight() - (self->placement_toggle_height + 50),
                        &self->placement_toggle_height);
 
@@ -747,7 +747,7 @@ void render_editor_ui(Ed* self, GfxState* gfx, Map* map, Game* game) {
             cursor_y += 30;
 
             max_height = 0;
-            for (int i = 0; i < map->num_models; i++) {
+            for (int i = TEX_WALL_1; i < map->num_models; i++) {
                 const float size = models_panel_w - 10;
                 Model model = map->models[i];
                 Texture2D texture =

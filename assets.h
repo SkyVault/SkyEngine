@@ -9,10 +9,18 @@
 #include "raymath.h"
 #include "rlights.h"
 
+#define ATLAS_SIZE 1024
+#define ATLAS_TILE_SIZE 256
+#define ATLAS_TILES_WIDE (ATLAS_SIZE / ATLAS_TILE_SIZE)
+
 enum Textures {
     TEX_WALL_1,
     TEX_WALL_2,
     TEX_WALL_3,
+    TEX_WALL_4,
+    TEX_WALL_5,
+
+    TEX_WALL_ATLAS,
 
     TEX_PROPS,
 

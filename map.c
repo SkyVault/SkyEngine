@@ -98,7 +98,8 @@ Map *create_map_from_script(const char *path, Game *game) {
         result->models[i] = game->assets->models[i];
     }
 
-    result->floor_tile_models[0] = game->assets->models[5];
+    // result->floor_tile_models[0] = game->assets->models[5];
+    // result->floor_tile_models[0]
 
     load_map_from_script(result, path, game);
 
@@ -362,16 +363,16 @@ void render_map(Map *map, GfxState *gfx, Game *game) {
                               z * CUBE_SIZE + CUBE_SIZE / 2};
 
                 if (layer == 0) {
-                    DrawModel(map->floor_tile_models[0],
-                              (Vector3){pos.x, -CUBE_SIZE, pos.z}, CUBE_SIZE,
-                              WHITE);
+                    // DrawModel(map->floor_tile_models[0],
+                    //           (Vector3){pos.x, -CUBE_SIZE, pos.z}, CUBE_SIZE,
+                    //           WHITE);
                 }
 
                 if (map->walls[layer][x + z * map->width].active ||
                     map->walls[layer][x + z * map->width].model > 0) {
-                    DrawModel(map->models[map->walls[layer][x + z * map->width]
-                                              .model],
-                              pos, CUBE_SIZE, WHITE);
+                    int index = map->walls[layer][x + z * map->width].model;
+                    DrawModel(game->assets->models[index], pos, CUBE_SIZE,
+                              WHITE);
                 }
             }
         }
