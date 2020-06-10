@@ -502,7 +502,7 @@ void render_editor_ui(Ed* self, GfxState* gfx, Map* map, Game* game) {
     // Notifications
     int last = self->object_placement_type;
     self->object_placement_type =
-        DoToggleGroupV(id++, "NONE|BLOCKS|ACTORS|BILLBOARDS|MARKERS|DELETE|", 0,
+        DoToggleGroupV(id++, "NONE|BLOCKS|ACTORS|PROPS|MARKERS|DELETE|", 0,
                        GetScreenHeight() - (self->placement_toggle_height + 50),
                        &self->placement_toggle_height);
 
