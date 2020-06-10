@@ -337,22 +337,50 @@ void render_editor(Ed* self, GfxState* gfx, Map* map, Game* game) {
     } else if (self->object_placement_type == PLACE_ACTORS) {
         Texture2D tex = game->assets->textures[TEX_GIRL_1 + self->model];
         // DrawBillboard(*game->camera, tex, loc, CUBE_SIZE, WHITE);
+        if (IsKeyDown(KEY_LEFT_SHIFT)) {
+            DrawSphere((Vector3){loc.x, 0.0f, loc.z}, 0.01f, RED);
+            DrawSphere((Vector3){loc.x, 0.0f, loc.z}, 0.02f,
+                       (Color){255, 40, 0, 100});
 
-        draw_billboard(gfx, loc, tex, (Rectangle){0, 0, tex.width, tex.height},
-                       1.0f);
+            if (IsMouseButtonPressed(MOUSE_LEFT_BUTTON) &&
+                !IsMouseOnUiElement()) {
+                float closest_dist = FLOAT_MAX;
+                int index = -1;
+                for (int i = 0; i < map->num_spawns; i++) {
+                    float dist = Vector3Distance(map->spawns[i].position, loc);
+                    if (dist < closest_dist) {
+                        closest_dist = dist;
+                        // closest = map->spawns[i];
+                        index = i;
+                    }
+                }
 
-        DrawCylinder((Vector3){loc.x, -0.5f, loc.z}, 0.0001f, 0.3f, 0.3f, 20,
-                     (Color){130, 50, 100, 120});
+                if (closest_dist < INT_MAX) {
+                    if (closest_dist < 1.0f) {
+                        for (int i = index; i < map->num_spawns - 1; i++) {
+                            map->spawns[i] = map->spawns[i + 1];
+                        }
+                        map->num_spawns--;
+                    }
+                }
+            }
+        } else {
+            draw_billboard(gfx, loc, tex,
+                           (Rectangle){0, 0, tex.width, tex.height}, 1.0f);
 
-        if (IsMouseButtonPressed(MOUSE_LEFT_BUTTON) && !game->lock_camera) {
-            // assemble(ACTOR_GIRL_1 + self->model, game, loc.x, loc.y, loc.z,
-            // 0,
-            //  0);
+            DrawCylinder((Vector3){loc.x, -0.5f, loc.z}, 0.0001f, 0.3f, 0.3f,
+                         20, (Color){130, 50, 100, 120});
+            if (IsMouseButtonPressed(MOUSE_LEFT_BUTTON) && !game->lock_camera) {
+                // assemble(ACTOR_GIRL_1 + self->model, game, loc.x, loc.y,
+                // loc.z, 0,
+                //  0);
 
-            if (!add_actor_spawn(map, ACTOR_GIRL_1 + self->model, loc)) {
-                push_message(self, "Max entity spawns placed for chunk");
+                if (!add_actor_spawn(map, ACTOR_GIRL_1 + self->model, loc)) {
+                    push_message(self, "Max entity spawns placed for chunk");
+                }
             }
         }
+
     } else if (self->object_placement_type == PLACE_PROPS) {
         Texture2D tex = game->assets->textures[TEX_PROPS];
 
@@ -445,7 +473,7 @@ void render_editor_ui(Ed* self, GfxState* gfx, Map* map, Game* game) {
     // Notifications
     int last = self->object_placement_type;
     self->object_placement_type =
-        DoToggleGroupV(id++, "NONE|BLOCKS|ACTORS|BILLBOARDS|MARKERS|", 0,
+        DoToggleGroupV(id++, "NONE|BLOCKS|ACTORS|BILLBOARDS|MARKERS|DELETE|", 0,
                        GetScreenHeight() - (self->placement_toggle_height + 50),
                        &self->placement_toggle_height);
 
