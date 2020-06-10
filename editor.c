@@ -350,7 +350,6 @@ void render_editor(Ed* self, GfxState* gfx, Map* map, Game* game) {
                     float dist = Vector3Distance(map->spawns[i].position, loc);
                     if (dist < closest_dist) {
                         closest_dist = dist;
-                        // closest = map->spawns[i];
                         index = i;
                     }
                 }
@@ -384,15 +383,45 @@ void render_editor(Ed* self, GfxState* gfx, Map* map, Game* game) {
     } else if (self->object_placement_type == PLACE_PROPS) {
         Texture2D tex = game->assets->textures[TEX_PROPS];
 
-        Prop prop = prop_types[self->model];
-        prop.position = loc;
+        if (IsKeyDown(KEY_LEFT_SHIFT)) {
+            DrawSphere((Vector3){loc.x, 0.0f, loc.z}, 0.01f, RED);
+            DrawSphere((Vector3){loc.x, 0.0f, loc.z}, 0.02f,
+                       (Color){255, 40, 0, 100});
 
-        draw_prop(gfx, game, prop);
+            if (IsMouseButtonPressed(MOUSE_LEFT_BUTTON) &&
+                !IsMouseOnUiElement()) {
+                float closest_dist = FLOAT_MAX;
+                int index = -1;
+                for (int i = 0; i < map->num_props; i++) {
+                    float dist = Vector3Distance(map->props[i].position, loc);
+                    if (dist < closest_dist) {
+                        closest_dist = dist;
+                        index = i;
+                    }
+                }
 
-        if (IsMouseButtonPressed(MOUSE_LEFT_BUTTON) && !IsMouseOnUiElement()) {
-            map->props[map->num_props++] = prop;
-            printf("Added prop [%d]\n", map->num_props);
+                if (closest_dist < INT_MAX) {
+                    if (closest_dist < 1.0f) {
+                        for (int i = index; i < map->num_props - 1; i++) {
+                            map->props[i] = map->props[i + 1];
+                        }
+                        map->num_props--;
+                    }
+                }
+            }
+
+        } else {
+            Prop prop = prop_types[self->model];
+            prop.position = loc;
+            draw_prop(gfx, game, prop);
+
+            if (IsMouseButtonPressed(MOUSE_LEFT_BUTTON) &&
+                !IsMouseOnUiElement()) {
+                map->props[map->num_props++] = prop;
+                printf("Added prop [%d]\n", map->num_props);
+            }
         }
+
     } else if (self->object_placement_type == PLACE_MARKERS) {
         Color color = (Color){0, 100, 255, 100};
 
