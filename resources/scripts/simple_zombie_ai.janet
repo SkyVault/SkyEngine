@@ -10,16 +10,10 @@
 
 (defn update[self dt] 
     (def ppos (get-player-translation)) 
-    (def pos (get-translation self))
-
+    (def pos (get-translation self)) 
     (def [px py pz] ppos)
-    (def [x y z] pos)
-
-    (def dist (vec3-dist ppos pos))
-
-    (if (> *target-distance* dist)
-        (do
-            (def angle (math/atan2 (- pz z) (- px x)))
-            
+    (def [x y z] pos) 
+    (if (> *target-distance* (vec3-dist ppos pos))
+        (do (def angle (math/atan2 (- pz z) (- px x))) 
             (move-entity self (* dt (math/cos angle) *speed*) 0.0 
                               (* dt (math/sin angle) *speed*)))))
