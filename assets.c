@@ -17,33 +17,37 @@ Shader hotload_shader(Assets* self, const char* path_vs, const char* path_fs,
     return result;
 }
 
-Assets* create_and_load_assets() {
+Assets* create_and_load_assets(void) {
     Assets* ass = malloc(sizeof(Assets));
+
+    for (int i = 0; i < SCRIPTS_NUM_SCRIPTS; i++) {
+        ass->scripts[i] = NULL;
+    }
 
     for (int i = 0; i < SHADER_NUM_SHADERS; i++) {
         ass->shaders_hotload[i].hotload = false;
         ass->shaders_hotload[i].just_hotloaded = false;
     }
 
-    ass->meshes[MESH_CUBE] = GenMeshCube(1, 1, 1),
-    ass->meshes[MESH_SKYBOX] = GenMeshCube(200, 200, 200),
-    ass->meshes[MESH_PLANE] = GenMeshPlane(1, 1, 10, 10),
+    ass->meshes[MESH_CUBE] = GenMeshCube(1, 1, 1);
+    ass->meshes[MESH_SKYBOX] = GenMeshCube(200, 200, 200);
+    ass->meshes[MESH_PLANE] = GenMeshPlane(1, 1, 10, 10);
 
-    ass->textures[TEX_WALL_1] = LoadTexture("resources/wall_1.png"),
-    ass->textures[TEX_WALL_2] = LoadTexture("resources/wall_2.png"),
-    ass->textures[TEX_WALL_3] = LoadTexture("resources/wall_3.png"),
-    ass->textures[TEX_PROPS] = LoadTexture("resources/props.png"),
-    ass->textures[TEX_CHAINLINK_FENCE] = LoadTexture("resources/chainlink.png"),
-    ass->textures[TEX_FLOOR_1] = LoadTexture("resources/floor_1.png"),
-    ass->textures[TEX_CHAR_1] = LoadTexture("resources/char.png"),
-    ass->textures[TEX_SALAMI] = LoadTexture("resources/salami.png"),
-    ass->textures[TEX_PINEAPPLE] = LoadTexture("resources/pineapple.png"),
-    ass->textures[TEX_ORANGE] = LoadTexture("resources/orange.png"),
-    ass->textures[TEX_GIRL_1] = LoadTexture("resources/girls/girl_1.png"),
-    ass->textures[TEX_GIRL_2] = LoadTexture("resources/girls/girl_2.png"),
-    ass->textures[TEX_GIRL_3] = LoadTexture("resources/girls/girl_3.png"),
-    ass->textures[TEX_GIRL_4] = LoadTexture("resources/girls/girl_4.png"),
-    ass->textures[TEX_GRASS_1] = LoadTexture("resources/textures/grass_1.png"),
+    ass->textures[TEX_WALL_1] = LoadTexture("resources/wall_1.png");
+    ass->textures[TEX_WALL_2] = LoadTexture("resources/wall_2.png");
+    ass->textures[TEX_WALL_3] = LoadTexture("resources/wall_3.png");
+    ass->textures[TEX_PROPS] = LoadTexture("resources/props.png");
+    ass->textures[TEX_CHAINLINK_FENCE] = LoadTexture("resources/chainlink.png");
+    ass->textures[TEX_FLOOR_1] = LoadTexture("resources/floor_1.png");
+    ass->textures[TEX_CHAR_1] = LoadTexture("resources/char.png");
+    ass->textures[TEX_SALAMI] = LoadTexture("resources/salami.png");
+    ass->textures[TEX_PINEAPPLE] = LoadTexture("resources/pineapple.png");
+    ass->textures[TEX_ORANGE] = LoadTexture("resources/orange.png");
+    ass->textures[TEX_GIRL_1] = LoadTexture("resources/girls/girl_1.png");
+    ass->textures[TEX_GIRL_2] = LoadTexture("resources/girls/girl_2.png");
+    ass->textures[TEX_GIRL_3] = LoadTexture("resources/girls/girl_3.png");
+    ass->textures[TEX_GIRL_4] = LoadTexture("resources/girls/girl_4.png");
+    ass->textures[TEX_GRASS_1] = LoadTexture("resources/textures/grass_1.png");
 
     ass->shaders[SHADER_PHONG_LIGHTING] =
         hotload_shader(ass, "resources/phong_vs.glsl",
@@ -55,9 +59,6 @@ Assets* create_and_load_assets() {
         LoadShader("resources/cubemap_vs.glsl", "resources/cubemap_fs.glsl");
 
     ass->fonts[FONT_MAIN_FONT] = LoadFont("resources/alagard_font.png");
-
-    ass->scripts[SCRIPTS_BASIC_ZOMBIE_AI] =
-        LoadText("resources/scripts/simple_zombie_ai.janet");
 
     Shader* shader = &ass->shaders[SHADER_PHONG_LIGHTING];
 
@@ -126,6 +127,22 @@ Assets* create_and_load_assets() {
     ass->models[5] = floor_1;
 
     return ass;
+}
+
+void assets_load_scripts(Assets* self, JanetTable* env) {
+    Janet result;
+    janet_dostring(env, LoadText("resources/scripts/simple_zombie_ai.janet"),
+                   "main", &result);
+
+    JanetType type = janet_type(result);
+
+    if (janet_checktype(result, JANET_FUNCTION)) {
+        JanetFunction* func = janet_unwrap_function(result);
+        janet_gclock(func);
+        self->scripts[SCRIPTS_BASIC_ZOMBIE_AI] = func;
+    } else {
+        printf("Not a function\n");
+    }
 }
 
 void update_assets(Assets* self) {

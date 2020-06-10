@@ -130,32 +130,24 @@ void update_script(Game* game, EcsWorld* ecs, EntStruct* self, EntId id) {
         // re-evaluate the function every single time the entity updates.
         // Also we could stop storing the script as text in the assets.
 
-        Janet result;
-        janet_dostring(game->env, game->assets->scripts[script->which], "main",
-                       &result);
+        Janet* args = janet_tuple_begin(2);
+        args[0] = janet_wrap_integer(id);
+        args[1] = janet_wrap_number(GetFrameTime());
+        janet_tuple_end(args);
 
-        JanetType type = janet_type(result);
+        Janet tup = janet_wrap_tuple(args);
+        janet_gcroot(tup);
 
-        if (janet_checktype(result, JANET_FUNCTION)) {
-            Janet* args = janet_tuple_begin(2);
-            args[0] = janet_wrap_integer(id);
-            args[1] = janet_wrap_number(GetFrameTime());
-            janet_tuple_end(args);
+        JanetFiber* fiber = NULL;
+        Janet out;
+        JanetSignal sig = janet_pcall(game->assets->scripts[script->which], 2,
+                                      args, &out, &fiber);
 
-            Janet tup = janet_wrap_tuple(args);
-            janet_gcroot(tup);
-
-            JanetFunction* func = janet_unwrap_function(result);
-            JanetFiber* fiber = NULL;
-            Janet out;
-            JanetSignal sig = janet_pcall(func, 2, args, &out, &fiber);
-
-            if (sig == JANET_SIGNAL_ERROR) {
-                janet_stacktrace(fiber, out);
-            }
-
-            janet_gcunroot(tup);
+        if (sig == JANET_SIGNAL_ERROR) {
+            janet_stacktrace(fiber, out);
         }
+
+        janet_gcunroot(tup);
     }
 }
 

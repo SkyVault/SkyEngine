@@ -329,10 +329,10 @@ void render_editor(Ed* self, GfxState* gfx, Map* map, Game* game) {
         if (IsMouseButtonPressed(MOUSE_LEFT_BUTTON) && !game->lock_camera) {
             assemble(ACTOR_GIRL_1 + self->model, game, loc.x, loc.y, loc.z, 0,
                      0);
-            map->spawns[map->num_spawns++] = (ActorSpawn){
-                .type = ACTOR_GIRL_1 + self->model,
-                .position = (Vector3){loc.x, loc.y, loc.z},
-            };
+
+            if (!add_actor_spawn(map, ACTOR_GIRL_1 + self->model, loc)) {
+                push_message(self, "Max entity spawns placed for chunk");
+            }
         }
     } else if (self->object_placement_type == PLACE_PROPS) {
         Texture2D tex = game->assets->textures[TEX_PROPS];

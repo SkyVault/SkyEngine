@@ -24,9 +24,6 @@
     <ClInclude Include="node.h">
       <Filter>Source Files</Filter>
     </ClInclude>
-    <ClInclude Include="scripting.h">
-      <Filter>Source Files</Filter>
-    </ClInclude>
     <ClInclude Include="constants.h">
       <Filter>Source Files</Filter>
     </ClInclude>
@@ -178,6 +175,9 @@
     </ClCompile>
     <ClCompile Include="renderer.c">
       <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="scripting.h">
+      <Filter>Header Files</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

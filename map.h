@@ -41,7 +41,9 @@ void reload_map(Map *map, Game *game);
 void update_map(Map *map, Game *game);
 void render_map(Map *map, GfxState *gfx, Game *game);
 
-void add_exit(Map *map, Vector3 position, int id, int dest_id,
+bool add_exit(Map *map, Vector3 position, int id, int dest_id,
               const char *dest_path);
+
+bool add_actor_spawn(Map *self, int type, Vector3 position);
 
 #endif  // BENIS_MAP_H

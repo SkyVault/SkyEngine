@@ -43,8 +43,8 @@
 #define MAIN_SHADER SHADER_PHONG_LIGHTING
 
 void custom_logger(int msg_type, const char *text, va_list args) {
-    printf(text, args);
-    printf("\n");
+    // printf(text, args);
+    // printf("\n");
 }
 
 float timer = 0.0f;
@@ -300,7 +300,7 @@ int main() {
     SetConfigFlags(FLAG_WINDOW_RESIZABLE | FLAG_MSAA_4X_HINT);
     SetExitKey(-1);
     // SetTraceLogLevel(0);
-    // SetTraceLogCallback(custom_logger);
+    SetTraceLogCallback(custom_logger);
 
     InitWindow(SCREEN_WIDTH, SCREEN_HEIGHT, "DevWindow");
     SetTargetFPS(86);
@@ -325,11 +325,14 @@ int main() {
     camera.fovy = FOV;
     camera.type = CAMERA_PERSPECTIVE;
 
-    Assets *assets = create_and_load_assets();
+    Assets *assets = create_and_load_assets(env);
     EcsWorld *ecs = create_ecs_world();
 
     Game *game = create_game(assets, &camera, ecs, env);
     GfxState *gfx = create_gfx_state();
+
+    register_janet_c_functions(game);
+    assets_load_scripts(assets, env);
 
     // Load the skybox
     game->skybox = LoadModelFromMesh(assets->meshes[MESH_SKYBOX]);
@@ -373,7 +376,6 @@ int main() {
 
     update_game(game);
     EnableCursor();
-    register_janet_c_functions(game);
 
     // #if defined _DEBUG
     Ed *editor = create_editor();

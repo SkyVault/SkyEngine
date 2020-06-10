@@ -19,7 +19,7 @@
 #define MAX_MODELS (100)
 #define MAX_PROPS (10000)
 #define MAX_ACTOR_SPAWNS (100)
-#define MAX_DOORS (100)
+#define MAX_EXITS (100)
 
 typedef struct {
     uint8_t active;
@@ -47,7 +47,7 @@ typedef struct {
     Model floor_tile_models[1];
     Model models[MAX_MODELS];
     Prop props[MAX_PROPS];
-    Exit exits[MAX_DOORS];
+    Exit exits[MAX_EXITS];
 
     ActorSpawn spawns[MAX_ACTOR_SPAWNS];
 

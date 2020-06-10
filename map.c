@@ -3,6 +3,17 @@
 #include "rlgl.h"
 #include "utils.h"
 
+bool add_actor_spawn(Map *self, int type, Vector3 position) {
+    if (self->num_spawns < MAX_ACTOR_SPAWNS) {
+        self->spawns[self->num_spawns++] = (ActorSpawn){
+            .type = ACTOR_GIRL_1 + type,
+            .position = position,
+        };
+        return true;
+    }
+    return false;
+}
+
 EntStruct *create_door(Vector3 pos, Game *game) {
     EcsWorld *ecs = game->ecs;
     EntId id = create_ent(ecs);
@@ -392,15 +403,22 @@ void reload_map(Map *map, Game *game) {
     load_map_from_script(map, s, game);
 }
 
-void add_exit(Map *map, Vector3 position, int id, int dest_id,
+bool add_exit(Map *map, Vector3 position, int id, int dest_id,
               const char *dest_path) {
-    Exit result = (Exit){
-        .id = id, .dest_id = dest_id, .dest_path = NULL, .position = position};
+    if (map->num_exits < MAX_EXITS) {
+        Exit result = (Exit){.id = id,
+                             .dest_id = dest_id,
+                             .dest_path = NULL,
+                             .position = position};
 
-    size_t len = strlen(dest_path);
-    result.dest_path = malloc(len + 1);
-    result.dest_path[len] = '\0';
-    for (size_t i = 0; i < len; i++) result.dest_path[i] = dest_path[i];
+        size_t len = strlen(dest_path);
+        result.dest_path = malloc(len + 1);
+        result.dest_path[len] = '\0';
+        for (size_t i = 0; i < len; i++) result.dest_path[i] = dest_path[i];
 
-    map->exits[map->num_exits++] = result;
+        map->exits[map->num_exits++] = result;
+
+        return true;
+    }
+    return false;
 }

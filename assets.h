@@ -4,6 +4,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+#include "janet.h"
 #include "raylib.h"
 #include "raymath.h"
 #include "rlights.h"
@@ -72,7 +73,7 @@ typedef struct {
 
     Font fonts[FONT_NUM_FONTS];
 
-    const char* scripts[SCRIPTS_NUM_SCRIPTS];
+    JanetFunction* scripts[SCRIPTS_NUM_SCRIPTS];
 
     Model* models;
     int num_models;
@@ -85,7 +86,9 @@ typedef struct {
 Shader hotload_shader(Assets* self, const char* path_vs, const char* path_fs,
                       int id);
 
-Assets* create_and_load_assets();
+Assets* create_and_load_assets(void);
+
+void assets_load_scripts(Assets* self, JanetTable* env);
 
 // Used for hotloading and dynamic recomp
 void update_assets(Assets* self);
