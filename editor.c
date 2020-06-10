@@ -267,6 +267,21 @@ void render_editor(Ed* self, GfxState* gfx, Map* map, Game* game) {
                  4.0f, 20, (Color){0, 100, 255, 100});
 
     // Draw debug shapes
+    for (int i = 0; i < map->num_spawns; i++) {
+        Texture2D tex = game->assets->textures[TEX_GIRL_1 + self->model];
+
+        ActorSpawn s = map->spawns[i];
+
+        DrawCylinder((Vector3){s.position.x, -0.5f, s.position.z}, 0.0001f,
+                     0.3f, 0.3f, 20, (Color){130, 50, 100, 120});
+
+        DrawBillboardRec(*game->camera, tex,
+                         (Rectangle){0, 0, tex.width, tex.height}, s.position,
+                         1.0, (Color){255, 255, 255, 130});
+
+        // draw_billboard(gfx, s.position, tex,
+        //                (Rectangle){0, 0, tex.width, tex.height}, 1.0f);
+    }
 
     for (int light_i = 0; light_i < game->assets->num_lights; light_i++) {
         Light light = game->assets->lights[light_i];
@@ -326,9 +341,13 @@ void render_editor(Ed* self, GfxState* gfx, Map* map, Game* game) {
         draw_billboard(gfx, loc, tex, (Rectangle){0, 0, tex.width, tex.height},
                        1.0f);
 
+        DrawCylinder((Vector3){loc.x, -0.5f, loc.z}, 0.0001f, 0.3f, 0.3f, 20,
+                     (Color){130, 50, 100, 120});
+
         if (IsMouseButtonPressed(MOUSE_LEFT_BUTTON) && !game->lock_camera) {
-            assemble(ACTOR_GIRL_1 + self->model, game, loc.x, loc.y, loc.z, 0,
-                     0);
+            // assemble(ACTOR_GIRL_1 + self->model, game, loc.x, loc.y, loc.z,
+            // 0,
+            //  0);
 
             if (!add_actor_spawn(map, ACTOR_GIRL_1 + self->model, loc)) {
                 push_message(self, "Max entity spawns placed for chunk");
