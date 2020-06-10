@@ -1,5 +1,7 @@
 #include "game.h"
 
+static Game* static_ref = NULL;
+
 Game* create_game(Assets* assets, Camera* camera, EcsWorld* ecs,
                   JanetTable* env) {
     Game* game = malloc(sizeof(Game));
@@ -16,7 +18,10 @@ Game* create_game(Assets* assets, Camera* camera, EcsWorld* ecs,
     return game;
 }
 
+Game* game_get_static_ref() { return static_ref; }
+
 void update_game(Game* game) {
+    static_ref = game;
     if (game->lock_camera) {
         EnableCursor();
     } else {

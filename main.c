@@ -371,6 +371,8 @@ int main() {
              .rotation = QuaternionIdentity(),
              .scale = (Vector3){1.0, 1.0, 1.0});
 
+    update_game(game);
+    EnableCursor();
     register_janet_c_functions(game);
 
     // #if defined _DEBUG

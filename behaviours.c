@@ -1,22 +1,71 @@
 #include "behaviours.h"
 
 Janet move_entity(int32_t argc, Janet* argv) {
-    janet_fixarity(argc, 3);
+    janet_fixarity(argc, 4);
 
     EntId ent_id = janet_getinteger(argv, 0);
-    float delta_x = janet_getnumber(argv, 1);
-    float delta_y = janet_getnumber(argv, 2);
-
-    printf("entid: [%d] dx dy: [%f %f]\n", ent_id, delta_x, delta_y);
+    float delta_x = (float)janet_getnumber(argv, 1);
+    float delta_y = (float)janet_getnumber(argv, 2);
+    float delta_z = (float)janet_getnumber(argv, 3);
 
     Game* game = game_get_static_ref();
+
+    EntStruct* self = get_ent(game->ecs, ent_id);
+    Transform* transform = get_comp(game->ecs, self, Transform);
+    transform->translation.x += delta_x;
+    transform->translation.y += delta_y;
+    transform->translation.z += delta_z;
 
     return janet_wrap_nil();
 }
 
+Janet get_player_translation(int32_t argc, Janet* argv) {
+    janet_fixarity(argc, 0);
+
+    Game* game = game_get_static_ref();
+
+    EntId player = get_first_with(game->ecs, Player);
+    Janet* tup = janet_tuple_begin(3);
+    tup[0] = tup[1] = tup[2] = janet_wrap_number(0.0f);
+
+    if (is_ent_alive(game->ecs, player)) {
+        Vector3 translation =
+            get_comp(game->ecs, get_ent(game->ecs, player), Transform)
+                ->translation;
+
+        tup[0] = janet_wrap_number(translation.x);
+        tup[1] = janet_wrap_number(translation.y);
+        tup[2] = janet_wrap_number(translation.z);
+    }
+
+    return janet_wrap_tuple(tup);
+}
+
+Janet get_translation(int32_t argc, Janet* argv) {
+    janet_fixarity(argc, 1);
+    EntId id = janet_getinteger(argv, 0);
+
+    Game* game = game_get_static_ref();
+
+    EntStruct* self = get_ent(game->ecs, id);
+
+    Vector3 trans = get_comp(game->ecs, self, Transform)->translation;
+
+    Janet* tup = janet_tuple_begin(3);
+    tup[0] = janet_wrap_number(trans.x);
+    tup[1] = janet_wrap_number(trans.y);
+    tup[2] = janet_wrap_number(trans.z);
+
+    return janet_wrap_tuple(tup);
+}
+
 void register_janet_c_functions(Game* game) {
-    janet_def(game->env, "move_entity", janet_wrap_cfunction(move_entity),
+    janet_def(game->env, "move-entity", janet_wrap_cfunction(move_entity),
               NULL);
+    janet_def(game->env, "get-player-translation",
+              janet_wrap_cfunction(get_player_translation), NULL);
+    janet_def(game->env, "get-translation",
+              janet_wrap_cfunction(get_translation), NULL);
 }
 
 Actor create_actor(int type) {
@@ -73,18 +122,39 @@ void update_script(Game* game, EcsWorld* ecs, EntStruct* self, EntId id) {
         // We need to use the pcall version so that we can A. Capture errors B.
         // run larger scripts
 
-        // NOTE(Dustin): janet_call suspends the garbage
+        // NOTE(Dustin)[1]: janet_call suspends the garbage
         // collector, only use small scripts with this because muh memory
+
+        // NOTE(Dustin)[2]: We could later use janet_gcroot to keep a
+        // JanetFunction from being garbage collected, that way we dont need to
+        // re-evaluate the function every single time the entity updates.
+        // Also we could stop storing the script as text in the assets.
 
         Janet result;
         janet_dostring(game->env, game->assets->scripts[script->which], "main",
                        &result);
 
+        JanetType type = janet_type(result);
+
         if (janet_checktype(result, JANET_FUNCTION)) {
+            Janet* args = janet_tuple_begin(2);
+            args[0] = janet_wrap_integer(id);
+            args[1] = janet_wrap_number(GetFrameTime());
+            janet_tuple_end(args);
+
+            Janet tup = janet_wrap_tuple(args);
+            janet_gcroot(tup);
+
             JanetFunction* func = janet_unwrap_function(result);
             JanetFiber* fiber = NULL;
             Janet out;
-            JanetSignal sig = janet_pcall(func, 0, NULL, &out, &fiber);
+            JanetSignal sig = janet_pcall(func, 2, args, &out, &fiber);
+
+            if (sig == JANET_SIGNAL_ERROR) {
+                janet_stacktrace(fiber, out);
+            }
+
+            janet_gcunroot(tup);
         }
     }
 }
