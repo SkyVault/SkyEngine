@@ -89,33 +89,42 @@ void main()
 
             float specCo = 0.0;
             if (NdotL > 0.0) specCo = pow(max(0.0, dot(viewD, reflect(-(light), normal))), 16); // 16 refers to shine
-            specular += specCo*atten;
+            specular += specCo*atten*lights[i].color.rgb;
         }
     }
 
     vec3 sun_color = calculate_sun(sun, normal, viewD);
 
-    finalColor = (texelColor*((colDiffuse + vec4(specular, 1.0))*vec4(lightDot, 1.0)));
-    finalColor += texelColor * vec4(sun_color, 1.0);
+    vec4 result = vec4(0, 0, 0, 1);
+
+    result = vec4(texelColor.rgb, 1.0) * colDiffuse; 
+    result *= vec4(sun_color, 1.0) + vec4(lightDot, 1.0) + vec4(specular, 1.0);
+    result.a = colDiffuse.a;
+    // result += vec4(lightDot, 1.0);
+
+    finalColor = result;
+
+    // finalColor = (texelColor*((colDiffuse + vec4(specular, 1.0))*vec4(lightDot, 1.0)));
+    // finalColor += texelColor * vec4(sun_color, 1.0);
     
-    // Gamma correction
-    finalColor = pow(finalColor, vec4(1.0/2.2)); 
+    // // Gamma correction
+    // finalColor = pow(finalColor, vec4(1.0/2.0)); 
 
     // Fog
     float dist = length(viewPos - fragPosition);
 
-    const vec4 fogColor = vec4(0.0, 0.0, 0.0, 0.5);
+    const vec4 fogColor = vec4(0.0, 0.0, 0.0, 0.0);
 
-    float fogDensity = 0.0015;
-    float fogFactor = 1.0/exp((dist*fogDensity*8)*(dist*fogDensity));
+    float fogDensity = 0.05;
+    float fogFactor = 1.0/exp((dist*fogDensity*0.02)*(dist*fogDensity));
 
     fogFactor = clamp(fogFactor, 0.0, 1.0);
 
     finalColor = mix(fogColor, finalColor, fogFactor);
-    finalColor = mix(colDiffuse, finalColor, colDiffuse);
-    finalColor.a = colDiffuse.a;
+    // finalColor = mix(colDiffuse, finalColor, colDiffuse);
+    // finalColor.a = colDiffuse.a;
 
-    // finalColor.r += 0.3;
+    // finalColor = texelColor;
 
     // finalColor = vec4(1, 0, 1, 1);
 

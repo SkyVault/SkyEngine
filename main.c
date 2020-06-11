@@ -2,6 +2,9 @@
 #include <janet.h>
 #include <stdio.h>
 
+#define SCREEN_WIDTH (1280)
+#define SCREEN_HEIGHT ((int)((SCREEN_WIDTH) * (160.0 / 240.0)))
+
 #include "assembler.h"
 #include "assets.h"
 #include "behaviours.h"
@@ -32,14 +35,11 @@
 
 #define BENIS_VERSION_MAJOR "0"
 #define BENIS_VERSION_MINOR "1"
-#define BENIS_VERSION_PATCH "13"
+#define BENIS_VERSION_PATCH "14"
 #define BENIS_VERSION \
     BENIS_VERSION_MAJOR "." BENIS_VERSION_MINOR "." BENIS_VERSION_PATCH
 
-#define SCREEN_WIDTH (1280)
-#define SCREEN_HEIGHT ((int)((SCREEN_WIDTH) * (160.0 / 240.0)))
 #define MAX_COLUMNS (20)
-
 #define MAIN_SHADER SHADER_PHONG_LIGHTING
 
 void custom_logger(int msg_type, const char *text, va_list args) {
@@ -68,7 +68,6 @@ const int rgbs[] = {
 typedef struct {
     int fire_pixels[FIRE_WIDTH * FIRE_HEIGHT];
     Color pallet[NUM_RGBS / 3];
-
     RenderTexture2D target;
 } MainMenuState;
 
@@ -334,33 +333,41 @@ void update_and_render_game_scene(Game *game, EcsWorld *ecs,
         rlDisableWireMode();
     }
 
-    BeginMode3D(*camera);
+    begin_rendering(gfx);
+    {
+        BeginMode3D(*camera);
 
-    rlViewport(0, 0, GetScreenWidth(), GetScreenHeight());
+        rlViewport(0, 0, gfx->render_texture.texture.width,
+                   gfx->render_texture.texture.height);
 
-    render_map(map, gfx, game);
+        render_map(map, gfx, game);
 
-    for (int i = 0; i < ecs->max_num_entities; i++) {
-        if (!is_ent_alive(ecs, i)) continue;
-        draw_billboard_ent(gfx, camera, ecs, i);
-        draw_models(gfx, ecs, i);
+        for (int i = 0; i < ecs->max_num_entities; i++) {
+            if (!is_ent_alive(ecs, i)) continue;
+            draw_billboard_ent(gfx, camera, ecs, i);
+            draw_models(gfx, ecs, i);
+        }
+
+        render_particle_system(particle_sys);
+
+        glDisable(GL_CULL_FACE);
+        DrawModel(game->skybox, (Vector3){0, 0, 0}, 100.0f, WHITE);
+        glEnable(GL_CULL_FACE);
+
+        // Do the final draw to the screen
+        flush_graphics(gfx, camera);
+
+        // #if defined _DEBUG
+        render_editor(editor, gfx, map, game);
+        // #endif
+
+        EndMode3D();
     }
+    end_rendering(gfx);
 
-    render_particle_system(particle_sys);
+    draw_final_texture_to_screen(gfx);
 
-    glDisable(GL_CULL_FACE);
-    DrawModel(game->skybox, (Vector3){0, 0, 0}, 100.0f, WHITE);
-    glEnable(GL_CULL_FACE);
-
-    // Do the final draw to the screen
-    flush_graphics(gfx, camera);
-
-    // #if defined _DEBUG
-    render_editor(editor, gfx, map, game);
-    // #endif
-
-    EndMode3D();
-
+    // DrawTexture(gfx->render_texture.texture, 0, 0, WHITE);
     UpdateGui();
     draw_player_gui(game, map);
 
@@ -369,7 +376,6 @@ void update_and_render_game_scene(Game *game, EcsWorld *ecs,
     // #endif
 
     DrawFPS(10, 10);
-
     EndDrawing();
 }
 
@@ -394,7 +400,8 @@ int main() {
     JanetTable *env = janet_core_env(NULL);
     janet_dostring(env, "(print `Initializing Janet`)", "main", NULL);
 
-    // Define the camera to look into our 3d world (position, target, up vector)
+    // Define the camera to look into our 3d world (position, target, up
+    // vector)
     Camera camera = {0};
     camera.position = (Vector3){1.0f, ACTOR_HEIGHT, 1.0f};
     camera.target = (Vector3){0.0f, 0.0f, 0.0f};

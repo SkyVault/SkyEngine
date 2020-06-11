@@ -8,6 +8,11 @@ GfxState* create_gfx_state() {
     }
     gfx->num_opaque_drawables = 0;
     gfx->num_transparent_drawables = 0;
+
+    gfx->render_texture =
+        LoadRenderTexture(RESOLUTION_WIDTH, RESOLUTION_HEIGHT);
+    // LoadRenderTexture(GetScreenWidth(), GetScreenHeight());
+
     return gfx;
 }
 
@@ -218,6 +223,22 @@ void render_drawable(Drawable* d, Camera* camera) {
     }
 }
 
+void begin_rendering(GfxState* gfx) {
+    BeginTextureMode(gfx->render_texture);
+    ClearBackground((Color){0, 0, 0, 100});
+}
+
+void end_rendering(GfxState* gfx) { EndTextureMode(); }
+
+void draw_final_texture_to_screen(GfxState* gfx) {
+    DrawTexturePro(gfx->render_texture.texture,
+                   (Rectangle){0, 0, gfx->render_texture.texture.width,
+                               -gfx->render_texture.texture.height},
+                   (Rectangle){0, 0, GetScreenWidth(),
+                               GetScreenWidth() * RESOLUTION_ASPECT},
+                   (Vector2){0, 0}, 0.0f, WHITE);
+}
+
 void flush_graphics(GfxState* gfx, Camera* camera) {
     scamera = camera;
 
@@ -240,6 +261,5 @@ void flush_graphics(GfxState* gfx, Camera* camera) {
         render_drawable(d, camera);
         gfx->transparent_drawables[i] = (Drawable){0};
     }
-
     gfx->num_transparent_drawables = 0;
 }

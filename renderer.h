@@ -3,6 +3,11 @@
 
 #include <stdlib.h>
 
+#define RESOLUTION_WIDTH (320)
+#define RESOLUTION_HEIGHT (224)
+#define RESOLUTION_ASPECT \
+    (((float)RESOLUTION_HEIGHT) / ((float)RESOLUTION_WIDTH))
+
 #include "billboard.h"
 #include "ecs.h"
 #include "game.h"
@@ -56,6 +61,8 @@ typedef struct {
 
     int num_opaque_drawables;
     int num_transparent_drawables;
+
+    RenderTexture2D render_texture;
 } GfxState;
 
 GfxState* create_gfx_state();
@@ -75,6 +82,10 @@ void draw_billboard(GfxState* gfx, Vector3 position, Texture texture,
 void draw_prop(GfxState* gfx, Game* game, Prop prop);
 
 void draw_node_tree(Node* node);
+
+void begin_rendering(GfxState* gfx);
+void end_rendering(GfxState* gfx);
+void draw_final_texture_to_screen(GfxState* gfx);
 
 void flush_graphics(GfxState* gfx, Camera* camera);
 
