@@ -21,7 +21,7 @@
     }
 
 #define VEC3_TO_COLOR(v) FCOLOR(v.x, v.y, v.z, 1.0f)
-#define VEC4_TO_COLOR(v) FCOLOR(v.x, v.y, v.z, v.w)
+#define VEC4_TO_COLOR(v) FCOLOR((v).x, (v).y, (v).z, (v).w)
 
 enum DrawFlags {
     DrawFlag_Active = 1 << 0,

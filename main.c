@@ -32,7 +32,7 @@
 
 #define BENIS_VERSION_MAJOR "0"
 #define BENIS_VERSION_MINOR "1"
-#define BENIS_VERSION_PATCH "10"
+#define BENIS_VERSION_PATCH "11"
 #define BENIS_VERSION \
     BENIS_VERSION_MAJOR "." BENIS_VERSION_MINOR "." BENIS_VERSION_PATCH
 
@@ -49,9 +49,48 @@ void custom_logger(int msg_type, const char *text, va_list args) {
 
 float timer = 0.0f;
 
-void update_and_render_menu_scene(Game *game, EcsWorld *ecs,
-                                  ParticleSystem *particle_sys, Map *map,
-                                  GfxState *gfx) {
+#define FIRE_WIDTH (1280 / 4)
+#define FIRE_HEIGHT (96)
+
+const int rgbs[] = {
+    0x07, 0x07, 0x07, 0x1F, 0x07, 0x07, 0x2F, 0x0F, 0x07, 0x47, 0x0F, 0x07,
+    0x57, 0x17, 0x07, 0x67, 0x1F, 0x07, 0x77, 0x1F, 0x07, 0x8F, 0x27, 0x07,
+    0x9F, 0x2F, 0x07, 0xAF, 0x3F, 0x07, 0xBF, 0x47, 0x07, 0xC7, 0x47, 0x07,
+    0xDF, 0x4F, 0x07, 0xDF, 0x57, 0x07, 0xDF, 0x57, 0x07, 0xD7, 0x5F, 0x07,
+    0xD7, 0x5F, 0x07, 0xD7, 0x67, 0x0F, 0xCF, 0x6F, 0x0F, 0xCF, 0x77, 0x0F,
+    0xCF, 0x7F, 0x0F, 0xCF, 0x87, 0x17, 0xC7, 0x87, 0x17, 0xC7, 0x8F, 0x17,
+    0xC7, 0x97, 0x1F, 0xBF, 0x9F, 0x1F, 0xBF, 0x9F, 0x1F, 0xBF, 0xA7, 0x27,
+    0xBF, 0xA7, 0x27, 0xBF, 0xAF, 0x2F, 0xB7, 0xAF, 0x2F, 0xB7, 0xB7, 0x2F,
+    0xB7, 0xB7, 0x37, 0xCF, 0xCF, 0x6F, 0xDF, 0xDF, 0x9F, 0xEF, 0xEF, 0xC7,
+    0xFF, 0xFF, 0xFF};
+
+#define NUM_RGBS (sizeof(rgbs) / sizeof(rgbs[0]))
+typedef struct {
+    int fire_pixels[FIRE_WIDTH * FIRE_HEIGHT];
+    Color pallet[NUM_RGBS / 3];
+
+    RenderTexture2D target;
+} MainMenuState;
+
+void spread_fire(MainMenuState *state, int src) {
+    int rnd = (int)floor((rand_f() * 3.0f)) & 3;
+    int dst = src - rnd + 1;
+    state->fire_pixels[dst - FIRE_WIDTH] = state->fire_pixels[src] - (rnd & 1);
+}
+
+void do_fire(MainMenuState *state) {
+    for (int x = 0; x < FIRE_WIDTH; x++) {
+        for (int y = FIRE_HEIGHT - 1; y >= 0; y--) {
+            spread_fire(state, y * FIRE_WIDTH + x);
+        }
+    }
+}
+
+bool do_controls_modal = false;
+
+void update_and_render_menu_scene(MainMenuState *state, Game *game,
+                                  EcsWorld *ecs, ParticleSystem *particle_sys,
+                                  Map *map, GfxState *gfx) {
     Assets *assets = game->assets;
     Camera *camera = game->camera;
 
@@ -70,8 +109,46 @@ void update_and_render_menu_scene(Game *game, EcsWorld *ecs,
         game->scene = SCENE_GAME;
     }
 
+    // symulate the fire
+    do_fire(state);
+
     BeginDrawing();
-    ClearBackground((Color){10, 20, 21, 255});
+    ClearBackground((Color){255, 155, 155, 255});
+
+    const float height = FIRE_HEIGHT * 4;
+
+    // Draw fun fire thingy
+    BeginTextureMode(state->target);
+    ClearBackground((Color){0, 0, 0, 0});
+    for (int x = 0; x < FIRE_WIDTH; x++) {
+        for (int y = 0; y < FIRE_HEIGHT; y++) {
+            int i = state->fire_pixels[y * FIRE_WIDTH + x];
+
+            if (GetTime() < 20.0f) {
+                float c = (float)i / 36.0f;
+                if (c > 1.0f) c = 1.0f;
+                if (c < 0.0f) c = 0.0f;
+                Vector4 v = (Vector4){1, 1, 1, c};
+                Color color = VEC4_TO_COLOR(v);
+                DrawRectangle(x, FIRE_HEIGHT - y, 1, 1, color);
+            } else {
+                DrawRectangle(x, GetScreenHeight() - (height) + y, 1, 1,
+                              state->pallet[i]);
+            }
+        }
+    }
+    EndTextureMode();
+
+    const int h =
+        GetScreenWidth() * (((float)(FIRE_HEIGHT)) / ((float)(FIRE_WIDTH)));
+
+    // DrawTexture(state->target.texture, 0, GetScreenHeight() - (height),
+    // WHITE);
+    DrawTexturePro(state->target.texture,
+                   (Rectangle){0, 0, state->target.texture.width,
+                               state->target.texture.height},
+                   (Rectangle){0, GetScreenHeight() - h, GetScreenWidth(), h},
+                   Vector2Zero(), 0.0f, WHITE);
 
     Texture2D t = assets->textures[TEX_GIRL_1];
 
@@ -85,9 +162,9 @@ void update_and_render_menu_scene(Game *game, EcsWorld *ecs,
     const float shw = GetScreenWidth() / 2;
     const float shh = GetScreenHeight() / 2;
 
-    DoCenterXLabel(100, GetScreenWidth(), 30, 50, "Benis Shooter 3D");
+    DoCenterXLabel(100, GetScreenWidth(), 30, 100, "Benis Shooter 3D");
 
-    DoCenterXLabel(100, GetScreenWidth() + cosf(GetTime() * 2) * 50.0f, 70, 30,
+    DoCenterXLabel(100, GetScreenWidth() + cosf(GetTime() * 2) * 50.0f, 120, 30,
                    TextFormat("Edit Version: %s", BENIS_VERSION));
 
     // Buttons
@@ -121,8 +198,8 @@ void update_and_render_menu_scene(Game *game, EcsWorld *ecs,
     if (Hot(id)) scaler_t += GetFrameTime() * 2.0f
 
     bool shrink = true;
-    static bool do_controls_modal = false;
-
+    static bool do_exit_modal = false;
+#if 1
     {
         DO_SCALING();
         GEASE(1.0f);
@@ -155,13 +232,11 @@ void update_and_render_menu_scene(Game *game, EcsWorld *ecs,
         DO_SCALING();
         GEASE(1.2f);
         if (DO_BTN("Controls") && !do_controls_modal) {
-            do_controls_modal = true;
+            // do_controls_modal = true;
         }
         if (Hot(id)) shrink = false;
         ++id;
     }
-
-    static bool do_exit_modal = false;
 
     {
         DO_SCALING();
@@ -170,28 +245,29 @@ void update_and_render_menu_scene(Game *game, EcsWorld *ecs,
         if (Hot(id)) shrink = false;
         ++id;
     }
+#endif
 
     if (shrink) scaler_t -= GetFrameTime();
     if (scaler_t > 1.0f) scaler_t = 1.0f;
     if (scaler_t < 0.0f) scaler_t = 0.0f;
 
     if (do_controls_modal) {
-        DoModal();
-        Unlock();
+        // DoModal();
+        // Unlock();
 
-        DoCenterXLabel(++id, GetScreenWidth(), 130, 30, "W|A|S|D / move");
-        DoCenterXLabel(++id, GetScreenWidth(), 160, 30,
-                       "Left click / throw orange");
-        DoCenterXLabel(++id, GetScreenWidth(), 190, 30,
-                       "Right click / throw pineapple bomb");
-        DoCenterXLabel(++id, GetScreenWidth(), 220, 30,
-                       "Escape / release mouse");
+        // DoCenterXLabel(++id, GetScreenWidth(), 130, 30, "W|A|S|D / move");
+        // DoCenterXLabel(++id, GetScreenWidth(), 160, 30,
+        //                "Left click / throw orange");
+        // DoCenterXLabel(++id, GetScreenWidth(), 190, 30,
+        //                "Right click / throw pineapple bomb");
+        // DoCenterXLabel(++id, GetScreenWidth(), 220, 30,
+        //                "Escape / release mouse");
 
-        if (DoBtn(id++, GetScreenWidth() / 2, 400, 30, 30, "X")) {
-            do_controls_modal = false;
-        }
+        // if (DoBtn(id++, GetScreenWidth() / 2, 400, 30, 30, "X")) {
+        //     do_controls_modal = false;
+        // }
 
-        Lock();
+        // Lock();
     } else if (do_exit_modal) {
         DoModal();
 
@@ -300,7 +376,7 @@ int main() {
     SetConfigFlags(FLAG_WINDOW_RESIZABLE | FLAG_MSAA_4X_HINT);
     SetExitKey(-1);
     // SetTraceLogLevel(0);
-    SetTraceLogCallback(custom_logger);
+    // SetTraceLogCallback(custom_logger);
 
     InitWindow(SCREEN_WIDTH, SCREEN_HEIGHT, "DevWindow");
     SetTargetFPS(86);
@@ -390,6 +466,26 @@ int main() {
     // glBlendFunc(GL_ZERO, GL_SRC_COLOR);
     // glBlendFunc(GL_ONE, GL_ONE);
 
+    MainMenuState *menu_state = malloc(sizeof(MainMenuState));
+
+    menu_state->target = LoadRenderTexture(FIRE_WIDTH, FIRE_HEIGHT);
+
+    for (int i = 0; i < (NUM_RGBS / 3); i++) {
+        menu_state->pallet[i] = (Color){
+            rgbs[i * 3 + 0],
+            rgbs[i * 3 + 1],
+            rgbs[i * 3 + 2],
+            255,
+        };
+    }
+
+    for (int i = 0; i < FIRE_WIDTH * FIRE_HEIGHT; i++)
+        menu_state->fire_pixels[i] = 0;
+
+    for (int i = 0; i < FIRE_WIDTH; i++) {
+        menu_state->fire_pixels[(FIRE_HEIGHT - 1) * FIRE_WIDTH + i] = 36;
+    }
+
     while (!WindowShouldClose() && game->state == STATE_RUNNING) {
         map = game->map;
         update_assets(assets);
@@ -433,7 +529,8 @@ int main() {
             }
 
             case SCENE_MAIN_MENU: {
-                update_and_render_menu_scene(game, ecs, particle_sys, map, gfx);
+                update_and_render_menu_scene(menu_state, game, ecs,
+                                             particle_sys, map, gfx);
                 break;
             }
         }

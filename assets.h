@@ -4,7 +4,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-#include "janet.h"
+#include <janet.h>
 #include "raylib.h"
 #include "raymath.h"
 #include "rlights.h"
