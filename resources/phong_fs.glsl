@@ -64,8 +64,6 @@ void main()
     float linear = 0.09;
     float quadratic = 0.032;
 
-    // NOTE: Implement here your fragment shader code
-
     for (int i = 0; i < MAX_LIGHTS; i++)
     {
         if (lights[i].enabled == 1)
@@ -93,20 +91,15 @@ void main()
         }
     }
 
-    vec3 sun_color = calculate_sun(sun, normal, viewD);
-
+    vec3 sun_color = calculate_sun(sun, normal, viewD); 
     vec4 result = vec4(0, 0, 0, 1);
 
     result = vec4(texelColor.rgb, 1.0) * colDiffuse; 
     result *= vec4(sun_color, 1.0) + vec4(lightDot, 1.0) + vec4(specular, 1.0);
     result.a = colDiffuse.a;
-    // result += vec4(lightDot, 1.0);
 
     finalColor = result;
 
-    // finalColor = (texelColor*((colDiffuse + vec4(specular, 1.0))*vec4(lightDot, 1.0)));
-    // finalColor += texelColor * vec4(sun_color, 1.0);
-    
     // // Gamma correction
     // finalColor = pow(finalColor, vec4(1.0/2.0)); 
 
@@ -118,18 +111,6 @@ void main()
     float fogDensity = 0.05;
     float fogFactor = 1.0/exp((dist*fogDensity*0.02)*(dist*fogDensity));
 
-    fogFactor = clamp(fogFactor, 0.0, 1.0);
-
+    fogFactor = clamp(fogFactor, 0.0, 1.0); 
     finalColor = mix(fogColor, finalColor, fogFactor);
-    // finalColor = mix(colDiffuse, finalColor, colDiffuse);
-    // finalColor.a = colDiffuse.a;
-
-    // finalColor = texelColor;
-
-    // finalColor = vec4(1, 0, 1, 1);
-
-
-    // finalColor = colDiffuse;
-
-    if (texelColor.a < 0.1) discard;
 }
