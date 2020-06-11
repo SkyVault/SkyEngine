@@ -591,7 +591,7 @@ void render_editor_ui(Ed* self, GfxState* gfx, Map* map, Game* game) {
 
         Lock();
     } else if (self->state == EDITOR_STATE_EXPORT_MODAL) {
-        id += 10;
+        id += 60;
 
         DoModal();
         Unlock();

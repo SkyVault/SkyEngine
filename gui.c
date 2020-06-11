@@ -7,6 +7,12 @@
 
 #define GET_STATE() struct NState* state = &GuiState.states[id];
 
+void ResetGui() {
+    for (int i = 0; i < MAX_NUM_STATES; i++) {
+        GuiState.states[i] = (struct NState){0};
+    }
+}
+
 void InitGui() {
     // GuiState.font = LoadFont("resources/HappyTime.otf");
     GuiState.font = GetFontDefault();

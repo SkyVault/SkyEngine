@@ -28,8 +28,10 @@ struct NState {
     Vector4 v;
 };
 
+#define MAX_NUM_STATES (4096)
+
 static struct {
-    struct NState states[4096];
+    struct NState states[MAX_NUM_STATES];
     float px, py;
     Font font;
 
@@ -38,6 +40,7 @@ static struct {
 } GuiState = {.px = 0.0f, .py = 0.0f, .locked = false};
 
 void InitGui();
+void ResetGui();
 void UpdateGui();
 
 void DoPanel(NodeId id, float x, float y, float width, float height);

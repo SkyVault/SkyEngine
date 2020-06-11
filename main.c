@@ -32,7 +32,7 @@
 
 #define BENIS_VERSION_MAJOR "0"
 #define BENIS_VERSION_MINOR "1"
-#define BENIS_VERSION_PATCH "12"
+#define BENIS_VERSION_PATCH "13"
 #define BENIS_VERSION \
     BENIS_VERSION_MAJOR "." BENIS_VERSION_MINOR "." BENIS_VERSION_PATCH
 
@@ -205,6 +205,7 @@ void update_and_render_menu_scene(MainMenuState *state, Game *game,
         GEASE(1.0f);
         if (DO_BTN("Start New Game :)")) {
             game->scene = SCENE_GAME;
+            ResetGui();
         }
         if (Hot(id)) shrink = false;
         ++id;

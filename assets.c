@@ -38,6 +38,7 @@ Assets* create_and_load_assets(void) {
     ass->textures[TEX_WALL_3] = LoadTexture("resources/wall_3.png");
     ass->textures[TEX_WALL_4] = LoadTexture("resources/wall_4.png");
     ass->textures[TEX_WALL_5] = LoadTexture("resources/wall_5.png");
+    ass->textures[TEX_WALL_6] = LoadTexture("resources/wall_6.png");
 
     ass->textures[TEX_WALL_ATLAS] =
         LoadTexture("resources/textures/blocks.png");
