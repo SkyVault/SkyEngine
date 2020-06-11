@@ -86,7 +86,7 @@ Assets* create_and_load_assets(void) {
         SetTextureWrap(ass->textures[i], WRAP_REPEAT);
     }
 
-    ass->num_models = 5;
+    ass->num_models = 6;
     ass->models = malloc(sizeof(Model) * ass->num_models);
 
     Model default_wall_1 = LoadModelFromMesh(ass->meshes[MESH_CUBE]);
@@ -114,11 +114,17 @@ Assets* create_and_load_assets(void) {
         ass->textures[TEX_WALL_5];
     default_wall_5.materials[0].shader = ass->shaders[SHADER_PHONG_LIGHTING];
 
+    Model default_wall_6 = LoadModelFromMesh(ass->meshes[MESH_CUBE]);
+    default_wall_6.materials[0].maps[MAP_DIFFUSE].texture =
+        ass->textures[TEX_WALL_6];
+    default_wall_6.materials[0].shader = ass->shaders[SHADER_PHONG_LIGHTING];
+
     ass->models[0] = default_wall_1;
     ass->models[1] = default_wall_2;
     ass->models[2] = default_wall_3;
     ass->models[3] = default_wall_4;
     ass->models[4] = default_wall_5;
+    ass->models[5] = default_wall_6;
 
     return ass;
 }

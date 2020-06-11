@@ -80,7 +80,7 @@ void spread_fire(MainMenuState *state, int src) {
 
 void do_fire(MainMenuState *state) {
     for (int x = 0; x < FIRE_WIDTH; x++) {
-        for (int y = FIRE_HEIGHT - 1; y >= 0; y--) {
+        for (int y = FIRE_HEIGHT - 1; y >= 1; y--) {
             spread_fire(state, y * FIRE_WIDTH + x);
         }
     }
@@ -374,12 +374,12 @@ void update_and_render_game_scene(Game *game, EcsWorld *ecs,
 
 int main() {
     SetConfigFlags(FLAG_WINDOW_RESIZABLE | FLAG_MSAA_4X_HINT);
-    SetExitKey(-1);
     // SetTraceLogLevel(0);
     // SetTraceLogCallback(custom_logger);
 
     InitWindow(SCREEN_WIDTH, SCREEN_HEIGHT, "DevWindow");
     SetTargetFPS(86);
+    SetExitKey(0);
 
     // glew
     GLenum err = glewInit();

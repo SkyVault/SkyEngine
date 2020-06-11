@@ -1,10 +1,10 @@
 #ifndef BENIS_ASSETS_H
 #define BENIS_ASSETS_H
 
+#include <janet.h>
 #include <stdio.h>
 #include <stdlib.h>
 
-#include <janet.h>
 #include "raylib.h"
 #include "raymath.h"
 #include "rlights.h"
@@ -19,6 +19,7 @@ enum Textures {
     TEX_WALL_3,
     TEX_WALL_4,
     TEX_WALL_5,
+    TEX_WALL_6,
 
     TEX_WALL_ATLAS,
 
