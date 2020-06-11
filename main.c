@@ -3,7 +3,7 @@
 #include <stdio.h>
 
 #define SCREEN_WIDTH (1280)
-#define SCREEN_HEIGHT ((int)((SCREEN_WIDTH) * (160.0 / 240.0)))
+#define SCREEN_HEIGHT ((int)((SCREEN_WIDTH) * (9.0f / 16.0f)))
 
 #include "assembler.h"
 #include "assets.h"
@@ -171,9 +171,9 @@ void update_and_render_menu_scene(MainMenuState *state, Game *game,
     // Buttons
     int id = 0;
     const float btn_w = GetScreenWidth() / 2.2f;
-    const float btn_h = 80.0f;
-    const float margin = 30.0f;
-    const float tot_h = (btn_h + margin) * 4;
+    const float btn_h = 50.0f;
+    const float margin = 10.0f;
+    const float tot_h = (btn_h + margin) * 5;
     const float oy = 0.0f;
 
     static float timer = 0.0f;
@@ -190,9 +190,9 @@ void update_and_render_menu_scene(MainMenuState *state, Game *game,
     float mo = Hot(id) ? (float)ease(TWEEN_LINEAR, scaler_t) * 30.0f : 0.0f; \
     const float xx = -btn_w + (float)ease(EASING, t) * btn_w
 
-#define DO_BTN(txt)                                                    \
-    DoBtn(id, shw + xx - btn_w / 2 - mo / 2,                           \
-          (btn_h + margin) * id + tot_h / 2 + oy - mo / 2, btn_w + mo, \
+#define DO_BTN(txt)                                                         \
+    DoBtn(id, shw + xx - btn_w / 2 - mo / 2,                                \
+          (shh - (tot_h / 2)) + (btn_h + margin) * id - mo / 2, btn_w + mo, \
           btn_h + mo, txt)
 
 #define DO_SCALING() \

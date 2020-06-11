@@ -3,8 +3,8 @@
 
 #include <stdlib.h>
 
-#define RESOLUTION_WIDTH (320)
-#define RESOLUTION_HEIGHT (224)
+#define RESOLUTION_WIDTH (480)
+#define RESOLUTION_HEIGHT (480 * (9.0 / 16.0))
 #define RESOLUTION_ASPECT \
     (((float)RESOLUTION_HEIGHT) / ((float)RESOLUTION_WIDTH))
 

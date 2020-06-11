@@ -19,6 +19,14 @@ out vec3 fragNormal;
 
 out float fragAffine;
 
+vec4 snap(vec4 vertex, vec2 resolution){
+    vec4 result = vertex;
+    result.xyz = vertex.xyz / vertex.w;
+    result.xy = floor(resolution * result.xy) / resolution;
+    result.xyz *= vertex.w;
+    return result;
+}
+
 void main() {
     // Send vertex attributes to fragment shader
     fragPosition = vec3(matModel*vec4(vertexPosition, 1.0f));
@@ -29,7 +37,7 @@ void main() {
     fragNormal = normalize(normalMatrix*vertexNormal);
 
     // Calculate uv position simulating affine texture mapping
-    gl_Position = mvp*vec4(vertexPosition, 1.0);
+    gl_Position = snap(mvp*vec4(vertexPosition, 1.0), vec2(320.0/2.5, 224.0/2.5));
     // fragTexCoord = vertexTexCoord; 
 
     vec3 vertex_mv = vec3(matView * vec4(fragPosition, 1.0));

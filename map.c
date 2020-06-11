@@ -179,8 +179,8 @@ void load_map_from_script(Map *result, const char *path, Game *game) {
         result->player_z = janet_unwrap_number(start_arr->data[1]);
     } else {
         printf("Map(%s)::load Missing start, going with default (5 5)");
-        result->player_x = 5;
-        result->player_z = 5;
+        result->player_x = 5.5f;
+        result->player_z = 5.5f;
     }
 
     result->num_layers = MAX_NUM_LAYERS;
