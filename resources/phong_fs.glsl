@@ -6,6 +6,8 @@ in vec2 fragTexCoord;
 in vec4 fragColor;
 in vec3 fragNormal;
 
+in float fragAffine;
+
 // Input uniform values
 uniform sampler2D texture0;
 uniform vec4 colDiffuse;
@@ -52,7 +54,7 @@ vec3 calculate_sun(Sun sun, vec3 normal, vec3 viewDir){
 void main()
 {
     // Texel color fetching from texture sampler
-    vec4 texelColor = texture(texture0, fragTexCoord);
+    vec4 texelColor = texture(texture0, fragTexCoord/fragAffine);
     vec3 lightDot = vec3(0.0);
     vec3 normal = normalize(fragNormal);
     vec3 viewD = normalize(viewPos - fragPosition);

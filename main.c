@@ -326,6 +326,9 @@ void update_and_render_game_scene(Game *game, EcsWorld *ecs,
     SetShaderValue(*shader, shader->locs[LOC_VECTOR_VIEW], &camera->position,
                    UNIFORM_VEC3);
 
+    Matrix view = GetCameraMatrix(*camera);
+    SetShaderValueMatrix(*shader, shader->locs[LOC_MATRIX_VIEW], view);
+
     BeginDrawing();
     ClearBackground((Color){100, 210, 255, 255});
 
@@ -507,11 +510,19 @@ int main() {
                 assets->shaders[SHADER_PHONG_LIGHTING].locs[LOC_VECTOR_VIEW],
                 &game->camera->position, UNIFORM_VEC3);
 
+            assets->sun = CreateSun(assets->shaders[SHADER_PHONG_LIGHTING],
+                                    assets->sun.direction, assets->sun.ambient,
+                                    assets->sun.diffuse);
             UpdateSunValue(assets->shaders[SHADER_PHONG_LIGHTING], assets->sun);
 
             for (int i = 0; i < assets->num_lights; i++) {
+                Light self = assets->lights[i];
+                Light light = CreateLight(
+                    LIGHT_POINT, self.position, self.target, self.color,
+                    assets->shaders[SHADER_PHONG_LIGHTING]);
                 UpdateLightValues(assets->shaders[SHADER_PHONG_LIGHTING],
-                                  assets->lights[i]);
+                                  light);
+                assets->lights[i] = light;
             }
 
             for (int i = 0; i < assets->num_models; i++) {

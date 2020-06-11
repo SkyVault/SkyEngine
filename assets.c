@@ -69,6 +69,8 @@ Assets* create_and_load_assets(void) {
     Shader* shader = &ass->shaders[SHADER_PHONG_LIGHTING];
 
     shader->locs[LOC_VECTOR_VIEW] = GetShaderLocation(*shader, "viewPos");
+
+    shader->locs[LOC_MATRIX_VIEW] = GetShaderLocation(*shader, "matView");
     shader->locs[LOC_MATRIX_MODEL] = GetShaderLocation(*shader, "matModel");
 
     ass->sun = CreateSun(*shader, SUN_DIRECTION, (Color){70, 70, 70, 255},
