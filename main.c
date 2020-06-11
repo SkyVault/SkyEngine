@@ -117,6 +117,8 @@ void update_and_render_menu_scene(MainMenuState *state, Game *game,
     const float height = FIRE_HEIGHT * 4;
 
     // Draw fun fire thingy
+
+    // if (ticks % 4 == 0) {
     BeginTextureMode(state->target);
     ClearBackground((Color){0, 0, 0, 0});
     for (int x = 0; x < FIRE_WIDTH; x++) {
@@ -131,12 +133,12 @@ void update_and_render_menu_scene(MainMenuState *state, Game *game,
                 Color color = VEC4_TO_COLOR(v);
                 DrawRectangle(x, FIRE_HEIGHT - y, 1, 1, color);
             } else {
-                DrawRectangle(x, GetScreenHeight() - (height) + y, 1, 1,
-                              state->pallet[i]);
+                DrawRectangle(x, FIRE_HEIGHT - y, 1, 1, state->pallet[i]);
             }
         }
     }
     EndTextureMode();
+    // }
 
     const int h =
         GetScreenWidth() * (((float)(FIRE_HEIGHT)) / ((float)(FIRE_WIDTH)));
