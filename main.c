@@ -86,6 +86,7 @@ void do_fire(MainMenuState *state) {
 }
 
 bool do_controls_modal = false;
+bool do_exit_modal = false;
 
 void update_and_render_menu_scene(MainMenuState *state, Game *game,
                                   EcsWorld *ecs, ParticleSystem *particle_sys,
@@ -118,14 +119,13 @@ void update_and_render_menu_scene(MainMenuState *state, Game *game,
 
     // Draw fun fire thingy
 
-    // if (ticks % 4 == 0) {
     BeginTextureMode(state->target);
     ClearBackground((Color){0, 0, 0, 0});
     for (int x = 0; x < FIRE_WIDTH; x++) {
         for (int y = 0; y < FIRE_HEIGHT; y++) {
             int i = state->fire_pixels[y * FIRE_WIDTH + x];
 
-            if (GetTime() < 20.0f) {
+            if (!do_exit_modal && GetTime() < 20.0f) {
                 float c = (float)i / 36.0f;
                 if (c > 1.0f) c = 1.0f;
                 if (c < 0.0f) c = 0.0f;
@@ -138,7 +138,6 @@ void update_and_render_menu_scene(MainMenuState *state, Game *game,
         }
     }
     EndTextureMode();
-    // }
 
     const int h =
         GetScreenWidth() * (((float)(FIRE_HEIGHT)) / ((float)(FIRE_WIDTH)));
@@ -199,7 +198,6 @@ void update_and_render_menu_scene(MainMenuState *state, Game *game,
     if (Hot(id)) scaler_t += GetFrameTime() * 2.0f
 
     bool shrink = true;
-    static bool do_exit_modal = false;
 #if 1
     {
         DO_SCALING();
@@ -230,11 +228,13 @@ void update_and_render_menu_scene(MainMenuState *state, Game *game,
         ++id;
     }
 
+    int first = false;
     {
         DO_SCALING();
         GEASE(1.2f);
         if (DO_BTN("Controls") && !do_controls_modal) {
-            // do_controls_modal = true;
+            first = true;
+            do_controls_modal = true;
         }
         if (Hot(id)) shrink = false;
         ++id;
@@ -249,27 +249,33 @@ void update_and_render_menu_scene(MainMenuState *state, Game *game,
     }
 #endif
 
+    if (DoBtn(id++, shw + 300, (shh - (tot_h / 2)), 200, btn_h, "Edit")) {
+        game->scene = SCENE_EDIT;
+    }
+
     if (shrink) scaler_t -= GetFrameTime();
     if (scaler_t > 1.0f) scaler_t = 1.0f;
     if (scaler_t < 0.0f) scaler_t = 0.0f;
 
     if (do_controls_modal) {
-        // DoModal();
-        // Unlock();
+        DoModal();
+        Unlock();
 
-        // DoCenterXLabel(++id, GetScreenWidth(), 130, 30, "W|A|S|D / move");
-        // DoCenterXLabel(++id, GetScreenWidth(), 160, 30,
-        //                "Left click / throw orange");
-        // DoCenterXLabel(++id, GetScreenWidth(), 190, 30,
-        //                "Right click / throw pineapple bomb");
-        // DoCenterXLabel(++id, GetScreenWidth(), 220, 30,
-        //                "Escape / release mouse");
+        DoCenterXLabel(++id, GetScreenWidth(), 130, 30, "W|A|S|D / move");
+        DoCenterXLabel(++id, GetScreenWidth(), 160, 30,
+                       "Left click / throw orange");
+        DoCenterXLabel(++id, GetScreenWidth(), 190, 30,
+                       "Right click / throw pineapple bomb");
+        DoCenterXLabel(++id, GetScreenWidth(), 220, 30,
+                       "Escape / release mouse");
 
-        // if (DoBtn(id++, GetScreenWidth() / 2, 400, 30, 30, "X")) {
-        //     do_controls_modal = false;
-        // }
+        if (IsMouseButtonPressed(MOUSE_LEFT_BUTTON) && !first) {
+            do_controls_modal = false;
+        }
 
-        // Lock();
+        if (first) first = false;
+
+        Lock();
     } else if (do_exit_modal) {
         DoModal();
 
@@ -294,9 +300,10 @@ void update_and_render_menu_scene(MainMenuState *state, Game *game,
 #undef DO_SCALING
 }
 
-void update_and_render_game_scene(Game *game, EcsWorld *ecs,
-                                  ParticleSystem *particle_sys, Map *map,
-                                  GfxState *gfx, Ed *editor) {
+void update_and_render_game_scene_with_editor(Game *game, EcsWorld *ecs,
+                                              ParticleSystem *particle_sys,
+                                              Map *map, GfxState *gfx,
+                                              Ed *editor) {
     Assets *assets = game->assets;
     Camera *camera = game->camera;
 
@@ -320,7 +327,9 @@ void update_and_render_game_scene(Game *game, EcsWorld *ecs,
     update_map(map, game);
 
     // #if defined _DEBUG
-    update_editor(editor, map, game);
+    if (editor != NULL) {
+        update_editor(editor, map, game);
+    }
     // #endif
 
     SetShaderValue(*shader, shader->locs[LOC_VECTOR_VIEW], &camera->position,
@@ -363,7 +372,9 @@ void update_and_render_game_scene(Game *game, EcsWorld *ecs,
         flush_graphics(gfx, camera);
 
         // #if defined _DEBUG
-        render_editor(editor, gfx, map, game);
+        if (editor != NULL) {
+            render_editor(editor, gfx, map, game);
+        }
         // #endif
 
         EndMode3D();
@@ -377,11 +388,20 @@ void update_and_render_game_scene(Game *game, EcsWorld *ecs,
     draw_player_gui(game, map);
 
     // #if defined _DEBUG
-    render_editor_ui(editor, gfx, map, game);
+    if (editor != NULL) {
+        render_editor_ui(editor, gfx, map, game);
+    }
     // #endif
 
     DrawFPS(10, 10);
     EndDrawing();
+}
+
+void update_and_render_game_scene(Game *game, EcsWorld *ecs,
+                                  ParticleSystem *particle_sys, Map *map,
+                                  GfxState *gfx) {
+    update_and_render_game_scene_with_editor(game, ecs, particle_sys, map, gfx,
+                                             NULL);
 }
 
 int main() {
@@ -544,8 +564,13 @@ int main() {
 
         switch (game->scene) {
             case SCENE_GAME: {
-                update_and_render_game_scene(game, ecs, particle_sys, map, gfx,
-                                             editor);
+                update_and_render_game_scene(game, ecs, particle_sys, map, gfx);
+                break;
+            }
+
+            case SCENE_EDIT: {
+                update_and_render_game_scene_with_editor(
+                    game, ecs, particle_sys, map, gfx, editor);
                 break;
             }
 

@@ -11,7 +11,7 @@
 #include "rlights.h"
 
 enum State { STATE_RUNNING, STATE_PAUSED, STATE_QUITTING };
-enum Scenes { SCENE_MAIN_MENU, SCENE_GAME, SCENE_SETTINGS };
+enum Scenes { SCENE_MAIN_MENU, SCENE_GAME, SCENE_EDIT, SCENE_SETTINGS };
 
 typedef struct {
     Assets* assets;

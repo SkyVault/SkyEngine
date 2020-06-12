@@ -493,7 +493,19 @@ void render_editor_ui(Ed* self, GfxState* gfx, Map* map, Game* game) {
         return;
     }
 
-    // DoColorPicker(&id, 300, 300, 300, 200);
+    {
+        const int x = GetScreenWidth() / 2 + 50.0f + 8.0f;
+        const int y = 0;
+        const int w = 50;
+        const int h = 25;
+
+        if (DoBtn(id++, x, y, w, h, "")) {
+            self->open = false;
+        }
+
+        DrawTriangle((Vector2){x + 12, y + 4}, (Vector2){x + 12, y + h - 4},
+                     (Vector2){x + w - 12, y + ((h / 2))}, GREEN);
+    }
 
     if (DoBtn(id++, GetScreenWidth() / 2 - 50.0f, 0, 100, 25, "Play")) {
         self->open = false;
@@ -531,7 +543,7 @@ void render_editor_ui(Ed* self, GfxState* gfx, Map* map, Game* game) {
     }
 
     if (self->state == EDITOR_STATE_LOAD_MODAL) {
-        id += 10;
+        id += 100;
         DoModal();
         Unlock();
 
@@ -591,7 +603,7 @@ void render_editor_ui(Ed* self, GfxState* gfx, Map* map, Game* game) {
 
         Lock();
     } else if (self->state == EDITOR_STATE_EXPORT_MODAL) {
-        id += 60;
+        id += 100;
 
         DoModal();
         Unlock();
@@ -601,7 +613,7 @@ void render_editor_ui(Ed* self, GfxState* gfx, Map* map, Game* game) {
 
         static char buffer[100] = {'\0'};
         if (DoTextInput(id++, buffer, 100, GetScreenWidth() / 2 - 150.0f,
-                        GetScreenHeight() / 2 + 28, 300, 50)) {
+                        GetScreenHeight() / 2, 300, 50)) {
             tstr path = talloc(512);
             sprintf(path, "resources/maps/%s.janet", buffer);
             serialize_map(self, map, game, path);
@@ -645,7 +657,7 @@ void render_editor_ui(Ed* self, GfxState* gfx, Map* map, Game* game) {
         Lock();
 
     } else if (self->state == EDITOR_STATE_EXIT_PLACEMENT_MODAL) {
-        id += 12;
+        id += 100;
         DoModal();
         Unlock();
 
