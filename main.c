@@ -413,6 +413,7 @@ int main() {
     SetTargetFPS(86);
     SetExitKey(0);
 
+#if 1
     // glew
     GLenum err = glewInit();
     if (err != GLEW_OK) {
@@ -519,7 +520,9 @@ int main() {
     for (int i = 0; i < FIRE_WIDTH; i++) {
         menu_state->fire_pixels[(FIRE_HEIGHT - 1) * FIRE_WIDTH + i] = 36;
     }
+#endif
 
+#if 1
     while (!WindowShouldClose() && game->state == STATE_RUNNING) {
         map = game->map;
         update_assets(assets);
@@ -586,5 +589,7 @@ int main() {
     }
 
     janet_deinit();
+#endif
+
     CloseWindow();
 }

@@ -347,7 +347,14 @@ void load_region_from_script(Region *result, const char *path, Game *game) {
         }
     }
 
+    Transform transform;
+    transform.translation = (Vector3){2, 0, 2};
+    transform.scale = Vector3One();
+    transform.rotation = QuaternionIdentity();
+
     result->scene_root = create_node();
+    result->scene_root->child = create_node_from_model_with_transform(
+        game->assets->models[6], transform);
 
     fclose(o);
 }

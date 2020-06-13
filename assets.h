@@ -40,6 +40,8 @@ enum Textures {
     TEX_GIRL_3,
     TEX_GIRL_4,
 
+    TEX_BARREL,
+
     // Terrain Textures
     TEX_GRASS_1,
 
@@ -48,7 +50,13 @@ enum Textures {
 
 enum Scripts { SCRIPTS_BASIC_ZOMBIE_AI, SCRIPTS_NUM_SCRIPTS };
 
-enum Meshes { MESH_CUBE, MESH_SKYBOX, MESH_PLANE, MESH_NUM_MESHES };
+enum Meshes {
+    MESH_CUBE,
+    MESH_SKYBOX,
+    MESH_PLANE,
+    MESH_BARREL,
+    MESH_NUM_MESHES
+};
 
 enum { SHADER_VERTEX, SHADER_FRAGMENT };
 

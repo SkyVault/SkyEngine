@@ -55,6 +55,8 @@ Assets* create_and_load_assets(void) {
     ass->textures[TEX_GIRL_4] = LoadTexture("resources/girls/girl_4.png");
     ass->textures[TEX_GRASS_1] = LoadTexture("resources/textures/grass_1.png");
 
+    ass->textures[TEX_BARREL] = LoadTexture("resources/textures/barrel.png");
+
     ass->shaders[SHADER_PHONG_LIGHTING] =
         hotload_shader(ass, "resources/phong_vs.glsl",
                        "resources/phong_fs.glsl", SHADER_PHONG_LIGHTING);
@@ -89,7 +91,7 @@ Assets* create_and_load_assets(void) {
         SetTextureWrap(ass->textures[i], WRAP_REPEAT);
     }
 
-    ass->num_models = 6;
+    ass->num_models = 7;
     ass->models = malloc(sizeof(Model) * ass->num_models);
 
     Model default_wall_1 = LoadModelFromMesh(ass->meshes[MESH_CUBE]);
@@ -128,6 +130,11 @@ Assets* create_and_load_assets(void) {
     ass->models[3] = default_wall_4;
     ass->models[4] = default_wall_5;
     ass->models[5] = default_wall_6;
+
+    Model barrel = LoadModel("resources/models/barrel.obj");
+    barrel.materials[0].maps[MAP_DIFFUSE].texture = ass->textures[TEX_BARREL];
+    barrel.materials[0].shader = ass->shaders[SHADER_PHONG_LIGHTING];
+    ass->models[6] = barrel;
 
     return ass;
 }
