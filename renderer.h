@@ -88,7 +88,7 @@ void begin_rendering(GfxState* gfx);
 void end_rendering(GfxState* gfx);
 void draw_final_texture_to_screen(GfxState* gfx);
 
-void draw_root_node(Node* node);
+void draw_root_node(GfxState* gfx, Node* node);
 
 void flush_graphics(GfxState* gfx, Camera* camera);
 
