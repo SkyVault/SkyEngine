@@ -3,7 +3,7 @@
 #define GRAVITY (10.0f)
 #define GROUND (-1.6f)
 
-void update_physics(Map* map, EcsWorld* ecs, Game* game, EntId ent) {
+void update_physics(Region* map, EcsWorld* ecs, Game* game, EntId ent) {
     EntStruct* self = get_ent(ecs, ent);
     if (!has_comp(ecs, self, Physics) || !has_comp(ecs, self, Transform)) {
         return;

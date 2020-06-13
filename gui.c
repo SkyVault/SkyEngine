@@ -487,7 +487,7 @@ void BeginScrollPanelV(NodeId id, float x, float y, float width, float height,
 
     if (state->hot && scroll != NULL) {
         int mdelta = GetMouseWheelMove();
-        (*scroll) -= mdelta * 20.0f;
+        (*scroll) -= mdelta * 40.0f;
     }
 
     if (*scroll < 0) *scroll = 0.0f;

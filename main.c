@@ -13,8 +13,8 @@
 #include "ecs.h"
 #include "editor.h"
 #include "game.h"
+#include "gameworld.h"
 #include "gui.h"
-#include "map.h"
 #include "particles.h"
 #include "raylib.h"
 #include "raymath.h"
@@ -90,7 +90,7 @@ bool do_exit_modal = false;
 
 void update_and_render_menu_scene(MainMenuState *state, Game *game,
                                   EcsWorld *ecs, ParticleSystem *particle_sys,
-                                  Map *map, GfxState *gfx) {
+                                  Region *self, GfxState *gfx) {
     Assets *assets = game->assets;
     Camera *camera = game->camera;
 
@@ -302,7 +302,7 @@ void update_and_render_menu_scene(MainMenuState *state, Game *game,
 
 void update_and_render_game_scene_with_editor(Game *game, EcsWorld *ecs,
                                               ParticleSystem *particle_sys,
-                                              Map *map, GfxState *gfx,
+                                              Region *map, GfxState *gfx,
                                               Ed *editor) {
     Assets *assets = game->assets;
     Camera *camera = game->camera;
@@ -324,7 +324,7 @@ void update_and_render_game_scene_with_editor(Game *game, EcsWorld *ecs,
         update_physics(map, ecs, game, i);
     }
 
-    update_map(map, game);
+    update_region(map, game);
 
     // #if defined _DEBUG
     if (editor != NULL) {
@@ -354,7 +354,7 @@ void update_and_render_game_scene_with_editor(Game *game, EcsWorld *ecs,
         rlViewport(0, 0, gfx->render_texture.texture.width,
                    gfx->render_texture.texture.height);
 
-        render_map(map, gfx, game);
+        render_region(map, gfx, game);
 
         for (int i = 0; i < ecs->max_num_entities; i++) {
             if (!is_ent_alive(ecs, i)) continue;
@@ -398,7 +398,7 @@ void update_and_render_game_scene_with_editor(Game *game, EcsWorld *ecs,
 }
 
 void update_and_render_game_scene(Game *game, EcsWorld *ecs,
-                                  ParticleSystem *particle_sys, Map *map,
+                                  ParticleSystem *particle_sys, Region *map,
                                   GfxState *gfx) {
     update_and_render_game_scene_with_editor(game, ecs, particle_sys, map, gfx,
                                              NULL);
@@ -464,8 +464,8 @@ int main() {
 
     InitGui();
 
-    game->map = create_map_from_script("resources/maps/edit.janet", game);
-    Map *map = game->map;
+    game->map = create_region_from_script("resources/maps/edit.janet", game);
+    Region *map = game->map;
 
     assemble(ACTOR_PLAYER, game, map->player_x, (ACTOR_HEIGHT - GLOBAL_SCALE),
              map->player_z, 0, 0);
@@ -492,6 +492,7 @@ int main() {
 
     rlEnableBackfaceCulling();
     rlEnableDepthTest();
+    glClearDepth(1.0f);
 
     glEnable(GL_BLEND);
     glBlendEquation(GL_FUNC_ADD);

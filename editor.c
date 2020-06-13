@@ -11,7 +11,7 @@ bool get_mouse_placement_loc(Game* game, float y, Vector3* loc);
 // TODO(Dustin): Refactor this somehow
 static Game* game_s = NULL;
 static Ed* editor_s = NULL;
-static Map* map_s = NULL;
+static Region* map_s = NULL;
 
 // TODO(Dustin):
 //  Create a on exit save modal
@@ -66,7 +66,7 @@ void push_message(Ed* self, const char* mesg) {
     };
 }
 
-void do_mouse_picking(Ed* self, Map* map, Game* game) {}
+void do_mouse_picking(Ed* self, Region* map, Game* game) {}
 
 void push_command_output(Ed* self, const char* str) {
     char* copy = malloc(strlen(str));
@@ -75,7 +75,7 @@ void push_command_output(Ed* self, const char* str) {
     self->history[self->history_size++] = copy;
 }
 
-void render_console(Ed* self, Map* map, Game* game, int id) {
+void render_console(Ed* self, Region* map, Game* game, int id) {
     const float speed = 10.0f;
     if (self->do_console) {
         self->console_y = lerp_t(self->console_y, GetScreenHeight() / 4,
@@ -119,7 +119,7 @@ void toggle_model_selector_modal(Ed* self) {
         self->state = EDITOR_STATE_NONE;
 }
 
-void update_editor(Ed* self, Map* map, Game* game) {
+void update_editor(Ed* self, Region* map, Game* game) {
     // Refactor
     editor_s = self;
     map_s = map;
@@ -242,7 +242,7 @@ bool get_mouse_placement_loc(Game* game, float y, Vector3* loc) {
     return false;
 }
 
-void render_editor(Ed* self, GfxState* gfx, Map* map, Game* game) {
+void render_editor(Ed* self, GfxState* gfx, Region* map, Game* game) {
     if (!self->open) return;
 
     Vector3 loc;
@@ -476,7 +476,7 @@ int sort_levenshtein(const void* a, const void* b) {
     return 0;
 }
 
-void render_editor_ui(Ed* self, GfxState* gfx, Map* map, Game* game) {
+void render_editor_ui(Ed* self, GfxState* gfx, Region* map, Game* game) {
     Shader* shader = &game->assets->shaders[SHADER_PHONG_LIGHTING];
 
     int id = 200;
@@ -532,7 +532,7 @@ void render_editor_ui(Ed* self, GfxState* gfx, Map* map, Game* game) {
         }
     }
 
-    // Map loading and unloading
+    // Region loading and unloading
     if (DoBtn(id++, 100, GetScreenHeight() - 50.0f, 100, 50, "Export")) {
         // self->do_export_modal = true;
         self->state = EDITOR_STATE_EXPORT_MODAL;
@@ -562,8 +562,8 @@ void render_editor_ui(Ed* self, GfxState* gfx, Map* map, Game* game) {
 
                 push_message(self, msg);
             } else {
-                reset_map_to_zero(game->map, game);
-                load_map_from_script(game->map, path, game);
+                reset_region_to_zero(game->map, game);
+                load_region_from_script(game->map, path, game);
             }
 
             self->state = EDITOR_STATE_NONE;
@@ -585,8 +585,8 @@ void render_editor_ui(Ed* self, GfxState* gfx, Map* map, Game* game) {
                     const char* path =
                         TextFormat("resources/maps/%s", self->maps[i]);
                     if (FileExists(path)) {
-                        reset_map_to_zero(game->map, game);
-                        load_map_from_script(game->map, path, game);
+                        reset_region_to_zero(game->map, game);
+                        load_region_from_script(game->map, path, game);
                         self->state = EDITOR_STATE_NONE;
                     }
                 }
@@ -609,7 +609,7 @@ void render_editor_ui(Ed* self, GfxState* gfx, Map* map, Game* game) {
         Unlock();
 
         DoCenterXLabel(id++, (float)GetScreenWidth(),
-                       (float)GetScreenHeight() / 2 - 100, 30, "Map Name");
+                       (float)GetScreenHeight() / 2 - 100, 30, "Region Name");
 
         static char buffer[100] = {'\0'};
         if (DoTextInput(id++, buffer, 100, GetScreenWidth() / 2 - 150.0f,
@@ -637,8 +637,8 @@ void render_editor_ui(Ed* self, GfxState* gfx, Map* map, Game* game) {
                     const char* path =
                         TextFormat("resources/maps/%s", self->maps[i]);
                     if (FileExists(path)) {
-                        // reset_map_to_zero(game->map, game);
-                        // load_map_from_script(game->map, path, game);
+                        // reset_region_to_zero(game->map, game);
+                        // load_region_from_script(game->map, path, game);
                         serialize_map(self, map, game, path);
                         self->state = EDITOR_STATE_NONE;
                     }
@@ -930,7 +930,7 @@ void render_editor_ui(Ed* self, GfxState* gfx, Map* map, Game* game) {
     }
 }
 
-void serialize_map(Ed* editor, Map* map, Game* game, const char* path) {
+void serialize_map(Ed* editor, Region* map, Game* game, const char* path) {
     const int memsize = (1024 * 1000);  // Allocate 1m for the output buffer
     char* builder = malloc(sizeof(char) * memsize);
     char* it = builder;
@@ -1012,6 +1012,6 @@ void serialize_map(Ed* editor, Map* map, Game* game, const char* path) {
     return;
 }
 
-void unserialize_map(Ed* editor, Map* map, Game* game, const char* path) {}
+void unserialize_map(Ed* editor, Region* map, Game* game, const char* path) {}
 
 // #endif

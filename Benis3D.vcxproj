@@ -164,9 +164,9 @@
     <ClInclude Include="editor.h" />
     <ClInclude Include="entity_types.h" />
     <ClInclude Include="game.h" />
-    <ClInclude Include="map.h" />
+    <ClInclude Include="gameworld.h" />
     <ClInclude Include="prop.h" />
-    <ClInclude Include="map_type.h" />
+    <ClInclude Include="gameworld_types.h" />
     <ClInclude Include="maths.h" />
     <ClInclude Include="renderer.h" />
     <ClInclude Include="particles.h" />
@@ -198,7 +198,7 @@
     <ClCompile Include="editor.c" />
     <ClCompile Include="game.c" />
     <ClCompile Include="main.c" />
-    <ClCompile Include="map.c" />
+    <ClCompile Include="gameworld.c" />
     <ClCompile Include="maths.c" />
     <ClCompile Include="renderer.c" />
     <ClCompile Include="particles.c" />

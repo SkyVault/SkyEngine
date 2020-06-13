@@ -48,7 +48,7 @@
     <ClInclude Include="game.h">
       <Filter>Source Files</Filter>
     </ClInclude>
-    <ClInclude Include="map.h">
+    <ClInclude Include="gameworld.h">
       <Filter>Source Files</Filter>
     </ClInclude>
     <ClInclude Include="maths.h">

@@ -6,10 +6,10 @@
 
 #include "ecs.h"
 #include "game.h"
-#include "map_type.h"
+#include "gameworld_types.h"
 #include "physics_type.h"
 #include "raylib.h"
 
-void update_physics(Map* map, EcsWorld* ecs, Game* game, EntId ent);
+void update_physics(Region* map, EcsWorld* ecs, Game* game, EntId ent);
 
 #endif  // BENIS_PHYSICS_H

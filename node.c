@@ -43,9 +43,9 @@ void add_child_node(Node* parent, Node* child) {
     child->parent = parent;
 }
 
-Transform get_transform(Node* self) {
+Transform get_transform_from_node(Node* self) {
     Transform self_t = self->transform;
     if (self->parent == NULL) return self_t;
-    Transform parent_t = get_transform(self->parent);
+    Transform parent_t = get_transform_from_node(self->parent);
     return add_transforms(self_t, parent_t);
 }

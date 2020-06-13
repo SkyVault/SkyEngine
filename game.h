@@ -7,7 +7,7 @@
 
 #include "assets.h"
 #include "ecs.h"
-#include "map_type.h"
+#include "gameworld_types.h"
 #include "rlights.h"
 
 enum State { STATE_RUNNING, STATE_PAUSED, STATE_QUITTING };
@@ -17,7 +17,7 @@ typedef struct {
     Assets* assets;
     Camera* camera;
     EcsWorld* ecs;
-    Map* map;
+    Region* map;
 
     JanetTable* env;
 

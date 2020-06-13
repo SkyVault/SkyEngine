@@ -3,19 +3,20 @@
 
 #include <stdlib.h>
 
-#define RESOLUTION_WIDTH (480)
-#define RESOLUTION_HEIGHT (480 * (9.0 / 16.0))
+#define RESOLUTION_WIDTH (480 * 2)
+#define RESOLUTION_HEIGHT (RESOLUTION_WIDTH * (9.0 / 16.0))
 #define RESOLUTION_ASPECT \
     (((float)RESOLUTION_HEIGHT) / ((float)RESOLUTION_WIDTH))
 
 #include "billboard.h"
 #include "ecs.h"
 #include "game.h"
-#include "map_type.h"
+#include "gameworld_types.h"
 #include "node.h"
 #include "prop.h"
 #include "raylib.h"
 #include "raymath.h"
+#include "rlgl.h"
 
 #define MAX_NUMBER_OF_DRAWABLES (1000)
 
@@ -86,6 +87,8 @@ void draw_node_tree(Node* node);
 void begin_rendering(GfxState* gfx);
 void end_rendering(GfxState* gfx);
 void draw_final_texture_to_screen(GfxState* gfx);
+
+void draw_root_node(Node* node);
 
 void flush_graphics(GfxState* gfx, Camera* camera);
 

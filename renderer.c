@@ -9,8 +9,8 @@ GfxState* create_gfx_state() {
     gfx->num_opaque_drawables = 0;
     gfx->num_transparent_drawables = 0;
 
-    gfx->render_texture =
-        LoadRenderTexture(RESOLUTION_WIDTH, RESOLUTION_HEIGHT);
+    gfx->render_texture = rlLoadRenderTexture(
+        RESOLUTION_WIDTH, RESOLUTION_HEIGHT, UNCOMPRESSED_R8G8B8A8, 24, true);
     // LoadRenderTexture(GetScreenWidth(), GetScreenHeight());
 
     return gfx;
@@ -237,6 +237,40 @@ void draw_final_texture_to_screen(GfxState* gfx) {
                    (Rectangle){0, 0, GetScreenWidth(),
                                GetScreenWidth() * RESOLUTION_ASPECT},
                    (Vector2){0, 0}, 0.0f, WHITE);
+}
+
+void draw_root_node(GfxState* gfx, Node* node) {
+    if (!node) return;
+
+    Transform transform = get_transform_from_node(node);
+
+    DrawGizmo(transform.translation);
+
+    switch (node->type) {
+        case NODE_TYPE_MODEL: {
+            draw_model(gfx, &node->model, transform, WHITE);
+            break;
+        }
+
+        case NODE_TYPE_BILLBOARD: {
+            draw_billboard(gfx, transform.translation, node->billboard.texture,
+                           (Rectangle){0, 0, node->billboard.texture.width,
+                                       node->billboard.texture.height},
+                           1.0f);
+            break;
+        }
+
+        default: {
+        }
+    }
+
+    if (node->next) {
+        draw_root_node(gfx, node->next);
+    }
+
+    if (node->child) {
+        draw_root_node(gfx, node->child);
+    }
 }
 
 void flush_graphics(GfxState* gfx, Camera* camera) {

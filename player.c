@@ -238,12 +238,12 @@ void update_player(EcsWorld* ecs, Assets* ass, Game* game, EntId id) {
         if (Vector3Distance(exit.position, transform->translation) < 0.5) {
             printf("HERE%d\n", rand());
 
-            reset_map_to_zero(game->map, game);
+            reset_region_to_zero(game->map, game);
         }
     }
 }
 
-void draw_player_gui(Game* game, Map* map) {
+void draw_player_gui(Game* game, Region* map) {
     //
     const float timer = (float)GetTime();
 

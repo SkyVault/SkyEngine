@@ -35,6 +35,6 @@ inline Node* create_empty() { return create_node(); }
 
 void add_child_node(Node* parent, Node* child);
 
-Transform get_transform(Node* self);
+Transform get_transform_from_node(Node* self);
 
 #endif  // BENIS_NODE_H

@@ -7,12 +7,12 @@
 #include "components.h"
 #include "ecs.h"
 #include "entity_type.h"
+#include "gameworld_types.h"
 #include "gui.h"
-#include "map_type.h"
-#include "renderer.h"
 #include "physics.h"
 #include "raylib.h"
 #include "raymath.h"
+#include "renderer.h"
 
 typedef struct {
     int n;
@@ -53,6 +53,6 @@ static CameraData CAMERA = {.mode = 0,
                             .panControl = 2};
 
 void update_player(EcsWorld* ecs, Assets* ass, Game* camera, EntId self);
-void draw_player_gui(Game* game, Map* map);
+void draw_player_gui(Game* game, Region* map);
 
 #endif  // BENIS_PLAYER_H

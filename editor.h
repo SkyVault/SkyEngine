@@ -5,7 +5,7 @@
 
 #include "assembler.h"
 #include "game.h"
-#include "map.h"
+#include "gameworld.h"
 
 #ifdef _WIN32
 // #include <Windows.h>
@@ -91,12 +91,12 @@ Ed* create_editor();
 
 void push_message(Ed* self, const char* mesg);
 
-void serialize_map(Ed* editor, Map* map, Game* game, const char* path);
-void unserialize_map(Ed* editor, Map* map, Game* game, const char* path);
+void serialize_map(Ed* editor, Region* map, Game* game, const char* path);
+void unserialize_map(Ed* editor, Region* map, Game* game, const char* path);
 
-void update_editor(Ed* editor, Map* map, Game* game);
-void render_editor(Ed* editor, GfxState* gfx, Map* map, Game* game);
-void render_editor_ui(Ed* editor, GfxState* gfx, Map* map, Game* game);
+void update_editor(Ed* editor, Region* map, Game* game);
+void render_editor(Ed* editor, GfxState* gfx, Region* map, Game* game);
+void render_editor_ui(Ed* editor, GfxState* gfx, Region* map, Game* game);
 
 // #endif
 
