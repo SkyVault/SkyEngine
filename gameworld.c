@@ -356,6 +356,11 @@ void load_region_from_script(Region *result, const char *path, Game *game) {
     result->scene_root->child = create_node_from_model_with_transform(
         *((Model *)dict_get(game->assets->models_dict, "barrel")), transform);
 
+    transform.translation.x += 2;
+    transform.translation.y += 2;
+    result->scene_root->child->next = create_node_from_model_with_transform(
+        *((Model *)dict_get(game->assets->models_dict, "monkey")), transform);
+
     fclose(o);
 }
 

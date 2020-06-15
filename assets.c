@@ -133,12 +133,21 @@ Assets* create_and_load_assets(void) {
     ass->models[4] = default_wall_5;
     ass->models[5] = default_wall_6;
 
-    Model barrel = LoadModel("resources/models/barrel.obj");
-    barrel.materials[0].maps[MAP_DIFFUSE].texture = ass->textures[TEX_BARREL];
-    barrel.materials[0].shader = ass->shaders[SHADER_PHONG_LIGHTING];
-    ass->models[6] = barrel;
+    {
+        Model barrel = LoadModel("resources/models/barrel.obj");
+        barrel.materials[0].maps[MAP_DIFFUSE].texture =
+            ass->textures[TEX_BARREL];
+        barrel.materials[0].shader = ass->shaders[SHADER_PHONG_LIGHTING];
+        ass->models[6] = barrel;
 
-    dict_add(ass->models_dict, "barrel", alloc_model_from(barrel));
+        dict_add(ass->models_dict, "barrel", alloc_model_from(barrel));
+    }
+
+    {
+        Model monkey = LoadModel("resources/models/monkey.obj");
+        monkey.materials[0].shader = ass->shaders[SHADER_PHONG_LIGHTING];
+        dict_add(ass->models_dict, "monkey", alloc_model_from(monkey));
+    }
 
     return ass;
 }
