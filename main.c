@@ -341,11 +341,11 @@ void update_and_render_game_scene_with_editor(Game *game, EcsWorld *ecs,
     BeginDrawing();
     ClearBackground((Color){100, 210, 255, 255});
 
-    if (IsKeyDown(KEY_TAB)) {
-        rlEnableWireMode();
-    } else {
-        rlDisableWireMode();
-    }
+    // if (IsKeyDown(KEY_TAB)) {
+    //     rlEnableWireMode();
+    // } else {
+    //     rlDisableWireMode();
+    // }
 
     begin_rendering(gfx);
     {

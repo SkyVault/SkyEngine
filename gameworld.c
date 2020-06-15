@@ -354,7 +354,7 @@ void load_region_from_script(Region *result, const char *path, Game *game) {
 
     result->scene_root = create_node();
     result->scene_root->child = create_node_from_model_with_transform(
-        game->assets->models[6], transform);
+        *((Model *)dict_get(game->assets->models_dict, "barrel")), transform);
 
     fclose(o);
 }
@@ -397,6 +397,11 @@ void render_region(Region *self, GfxState *gfx, Game *game) {
 
 void reset_region_to_zero(Region *self, Game *game) {
     zero_out_region(self);
+
+    if (self->scene_root) {
+        destroy_node_tree(self->scene_root);
+        self->scene_root = NULL;
+    }
 
     if (self->path.len > 0 && self->path.buff != NULL) {
         free(self->path.buff);

@@ -20,6 +20,8 @@ Shader hotload_shader(Assets* self, const char* path_vs, const char* path_fs,
 Assets* create_and_load_assets(void) {
     Assets* ass = malloc(sizeof(Assets));
 
+    ass->models_dict = create_dict();
+
     for (int i = 0; i < SCRIPTS_NUM_SCRIPTS; i++) {
         ass->scripts[i] = NULL;
     }
@@ -135,6 +137,8 @@ Assets* create_and_load_assets(void) {
     barrel.materials[0].maps[MAP_DIFFUSE].texture = ass->textures[TEX_BARREL];
     barrel.materials[0].shader = ass->shaders[SHADER_PHONG_LIGHTING];
     ass->models[6] = barrel;
+
+    dict_add(ass->models_dict, "barrel", alloc_model_from(barrel));
 
     return ass;
 }

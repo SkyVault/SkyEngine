@@ -18,6 +18,12 @@ Dict* create_dict() {
     return result;
 }
 
+void dict_addi(Dict* self, int key, void* value) {
+    dict_add(self, (uint32_t)key, value);
+}
+
+void* dict_geti(Dict* self, int key) { return dict_get(self, (uint32_t)key); }
+
 void dict_add(Dict* self, void* key, void* value) {
     uint32_t index = hash(key);
 

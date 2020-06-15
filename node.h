@@ -34,6 +34,8 @@ Node* create_node_from_mesh_with_transform(Mesh mesh, Transform transform);
 Node* create_node_from_model(Model model);
 Node* create_node_from_model_with_transform(Model model, Transform transform);
 
+void destroy_node_tree(Node* node);
+
 inline Node* create_empty() { return create_node(); }
 
 void add_child_node(Node* parent, Node* child);

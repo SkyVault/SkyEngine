@@ -23,6 +23,8 @@ void free_node(Node* node) {
     free(node);
 }
 
+void destroy_node_tree(Node* node) { free_node(node); }
+
 Node* create_node_from_mesh(Mesh mesh) {
     Node* node = create_node();
     node->model = LoadModelFromMesh(mesh);

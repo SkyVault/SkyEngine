@@ -764,6 +764,7 @@ void render_editor_ui(Ed* self, GfxState* gfx, Region* map, Game* game) {
                 Model model = map->models[i];
                 Texture2D texture =
                     model.materials[0].maps[MAP_DIFFUSE].texture;
+
                 // DrawTexturePro(
                 //     texture, (Rectangle){0, 0, texture.width,
                 //     texture.height}, (Rectangle){lx + 30, cursor_y -

@@ -236,7 +236,7 @@ void update_player(EcsWorld* ecs, Assets* ass, Game* game, EntId id) {
         Exit exit = game->map->exits[i];
 
         if (Vector3Distance(exit.position, transform->translation) < 0.5) {
-            printf("HERE%d\n", rand());
+            // Load the region from the exits
 
             reset_region_to_zero(game->map, game);
         }

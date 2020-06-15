@@ -5,6 +5,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+#include "dict.h"
 #include "raylib.h"
 #include "raymath.h"
 #include "rlights.h"
@@ -95,10 +96,18 @@ typedef struct {
     Model* models;
     int num_models;
 
+    Dict* models_dict;
+
     Light lights[MAX_LIGHTS];
     int num_lights;
     Sun sun;
 } Assets;
+
+inline Model* alloc_model_from(Model model) {
+    Model* result = (Model*)malloc(sizeof(Model));
+    *result = model;
+    return result;
+}
 
 Shader hotload_shader(Assets* self, const char* path_vs, const char* path_fs,
                       int id);

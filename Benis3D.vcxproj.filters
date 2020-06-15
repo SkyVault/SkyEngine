@@ -102,6 +102,9 @@
     <ClInclude Include="renderer.h">
       <Filter>Source Files</Filter>
     </ClInclude>
+    <ClCompile Include="dict.h">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="node.c">

@@ -153,6 +153,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="node.h" />
+    <ClCompile Include="dict.h" />
     <ClInclude Include="constants.h" />
     <ClInclude Include="assembler.h" />
     <ClInclude Include="assets.h" />
@@ -179,7 +180,6 @@
     <ClInclude Include="utils.h" />
     <ClInclude Include="tween.h" />
     <ClInclude Include="gui.h" />
-    <ClCompile Include="dict.h" />
     <ClCompile Include="scripting.h" />
   </ItemGroup>
   <ItemGroup>
@@ -190,6 +190,7 @@
       <DisableSpecificWarnings Condition="'$(Configuration)|$(Platform)'=='Release|x64'">4703;%(DisableSpecificWarnings)</DisableSpecificWarnings>
     </ClCompile>
     <ClCompile Include="node.c" />
+    <ClCompile Include="dict.c" />
     <ClCompile Include="assembler.c" />
     <ClCompile Include="assets.c" />
     <ClCompile Include="behaviours.c" />
@@ -209,7 +210,6 @@
     <ClCompile Include="tween.c" />
     <ClCompile Include="gui.c" />
     <ClCompile Include="rlights.c" />
-    <ClCompile Include="dict.c" />
     <ClCompile Include="scripting.c" />
   </ItemGroup>
   <ItemGroup>
