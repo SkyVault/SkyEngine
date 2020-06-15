@@ -6,6 +6,7 @@
 #include "assembler.h"
 #include "game.h"
 #include "gameworld.h"
+#include "node.h"
 
 #ifdef _WIN32
 // #include <Windows.h>
@@ -55,6 +56,8 @@ typedef struct {
     bool open;
 
     Model models[MESH_NUM_MESHES];
+
+    Node* selected_node;
 
     Note notes[100];
     int num_notes;

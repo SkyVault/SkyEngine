@@ -361,6 +361,23 @@ void load_region_from_script(Region *result, const char *path, Game *game) {
     result->scene_root->child->next = create_node_from_model_with_transform(
         *((Model *)dict_get(game->assets->models_dict, "monkey")), transform);
 
+    {
+        Model terrain_m = LoadModel("resources/models/terrain.obj");
+        terrain_m.materials[0].maps[MAP_DIFFUSE].texture =
+            game->assets->textures[TEX_GRASS_1];
+        terrain_m.materials[0].shader =
+            game->assets->shaders[SHADER_PHONG_LIGHTING];
+
+        Transform trans;
+        trans.translation =
+            (Vector3){(32 * CUBE_SIZE) / 2, 1.49, (32 * CUBE_SIZE / 2)};
+        trans.rotation = QuaternionIdentity();
+        trans.scale = Vector3One();
+
+        result->scene_root->child->next->next =
+            create_node_from_model_with_transform(terrain_m, trans);
+    }
+
     fclose(o);
 }
 

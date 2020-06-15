@@ -161,7 +161,7 @@ void assets_load_scripts(Assets* self, JanetTable* env) {
 
     if (janet_checktype(result, JANET_FUNCTION)) {
         JanetFunction* func = janet_unwrap_function(result);
-        janet_gclock(func);
+        janet_gclock(func);  // Ensure that the function doesn't get gc'd
         self->scripts[SCRIPTS_BASIC_ZOMBIE_AI] = func;
     } else {
         printf("Not a function\n");

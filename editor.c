@@ -52,6 +52,8 @@ Ed* create_editor() {
     editor->editing_exit = -1;
     editor->light_grabbed = -1;
 
+    editor->selected_node = NULL;
+
     // Exit handler, portable?
     atexit(on_exit);
 
@@ -66,7 +68,44 @@ void push_message(Ed* self, const char* mesg) {
     };
 }
 
-void do_mouse_picking(Ed* self, Region* map, Game* game) {}
+Node* check_if_clicked(Ray ray, Node* node) {
+    if (node == NULL) return node;
+
+    if (node->type == NODE_TYPE_MODEL) {
+        BoundingBox box = MeshBoundingBox(node->model.meshes[0]);
+
+        Vector3 pos = get_transform_from_node(node).translation;
+        box.min = Vector3Add(box.min, pos);
+        box.max = Vector3Add(box.max, pos);
+
+        if (CheckCollisionRayBox(ray, box)) {
+            if (GetCollisionRayModel(ray, node->model).hit) {
+                return node;
+            }
+        }
+    }
+
+    if (node->child) {
+        Node* child = check_if_clicked(ray, node->child);
+        if (child != NULL) return child;
+    }
+
+    if (node->next) {
+        Node* next = check_if_clicked(ray, node->next);
+        if (next != NULL) return next;
+    }
+
+    return NULL;
+}
+
+void do_mouse_picking(Ed* self, Region* map, Game* game) {
+    if (IsMouseButtonPressed(MOUSE_LEFT_BUTTON) && map->scene_root != NULL) {
+        Ray ray =
+            GetMouseRay((Vector2){GetScreenWidth() / 2, GetScreenHeight() / 2},
+                        *game->camera);
+        self->selected_node = check_if_clicked(ray, map->scene_root);
+    }
+}
 
 void push_command_output(Ed* self, const char* str) {
     char* copy = malloc(strlen(str));
@@ -134,6 +173,8 @@ void update_editor(Ed* self, Region* map, Game* game) {
     // if (IsKeyPressed(KEY_E)) {
     //     self->state = EDITOR_STATE_EXPORT_MODAL;
     // }
+
+    do_mouse_picking(self, map, game);
 
     if (IsKeyPressed(KEY_E)) {
         toggle_model_selector_modal(self);
@@ -242,6 +283,32 @@ bool get_mouse_placement_loc(Game* game, float y, Vector3* loc) {
     return false;
 }
 
+void draw_node_tree_bounding_boxes(Node* node) {
+    if (node == NULL) return;
+
+    if (node->type == NODE_TYPE_MODEL) {
+        Transform trans = get_transform_from_node(node);
+        Vector3 scale = trans.scale;
+        Quaternion rot = trans.rotation;
+        Vector3 pos = trans.translation;
+
+        Matrix m = MatrixIdentity();
+        m = MatrixMultiply(m, MatrixScale(scale.x, scale.y, scale.z));
+        m = MatrixMultiply(m, QuaternionToMatrix(rot));
+        m = MatrixMultiply(m, MatrixTranslate(pos.x, pos.y, pos.z));
+        node->model.transform = m;
+
+        BoundingBox box = MeshBoundingBox(node->model.meshes[0]);
+        box.min = Vector3Add(box.min, pos);
+        box.max = Vector3Add(box.max, pos);
+
+        DrawBoundingBox(box, (Color){255, 0, 255, 200});
+    }
+
+    if (node->child) draw_node_tree_bounding_boxes(node->child);
+    if (node->next) draw_node_tree_bounding_boxes(node->next);
+}
+
 void render_editor(Ed* self, GfxState* gfx, Region* map, Game* game) {
     if (!self->open) return;
 
@@ -265,6 +332,19 @@ void render_editor(Ed* self, GfxState* gfx, Region* map, Game* game) {
 
     DrawCylinder((Vector3){map->player_x, -3.0f, map->player_z}, 0.2f, 0.2f,
                  4.0f, 20, (Color){0, 100, 255, 100});
+
+    if (self->selected_node != NULL) {
+        Node* node = self->selected_node;
+
+        if (node->type == NODE_TYPE_MODEL) {
+            Transform trans = node->transform;
+
+            DrawModelWiresEx(node->model, Vector3Zero(), (Vector3){0, 0, 0},
+                             0.0f, trans.scale, (Color){255, 0, 255, 200});
+        }
+    }
+
+    draw_node_tree_bounding_boxes(map->scene_root);
 
     // Draw debug shapes
     for (int i = 0; i < map->num_spawns; i++) {
