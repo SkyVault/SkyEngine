@@ -68,6 +68,9 @@ typedef struct {
 
 GfxState* create_gfx_state();
 
+Transform transform_identity();
+Transform transform_translation(Vector3 v);
+
 void update_billboard(EcsWorld* ecs, EntId ent);
 void draw_billboard_ent(GfxState* gfx, Camera* camera, EcsWorld* ecs,
                         EntId ent);

@@ -292,3 +292,17 @@ void flush_graphics(GfxState* gfx, Camera* camera) {
     }
     gfx->num_transparent_drawables = 0;
 }
+
+Transform transform_identity() {
+    Transform transform;
+    transform.translation = Vector3Zero();
+    transform.rotation = QuaternionIdentity();
+    transform.scale = Vector3One();
+    return transform;
+}
+
+Transform transform_translation(Vector3 v) {
+    Transform transform = transform_identity();
+    transform.translation = v;
+    return transform;
+}
