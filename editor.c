@@ -1019,86 +1019,80 @@ void render_editor_ui(Ed* self, GfxState* gfx, Region* map, Game* game) {
 }
 
 void serialize_map(Ed* editor, Region* map, Game* game, const char* path) {
-    //StringBuilder *sb = sb_create();
-    //char* result;
+    StringBuilder *sb = sb_create();
+    char* result;
 
-    const int memsize = (1024 * 1000);  // Allocate 1m for the output buffer
-    char* builder = malloc(sizeof(char) * memsize);
-    char* it = builder;
-    char* start = it;
-    memset(builder, '\0', sizeof(char) * memsize);
+    sb_appendf(sb, "@{ :size @[%d %d]\n   :start @[%f %f]\n   :sun-direction @[%f %f %f]\n",
+               map->width, map->height, map->player_x, map->player_z,
+               game->assets->sun.direction.x, game->assets->sun.direction.y,
+               game->assets->sun.direction.z);
 
-    it += sprintf(it,
-                  "@{ :size @[%d %d]\n   :start @[%f %f]\n   :sun-direction "
-                  "@[%f %f %f]\n",
-                  map->width, map->height, map->player_x, map->player_z,
-                  game->assets->sun.direction.x, game->assets->sun.direction.y,
-                  game->assets->sun.direction.z);
-
-    it += sprintf(it, "    :layers @[");
+    sb_append(sb, "    :layers @[");
 
     for (int layer = 0; layer < MAX_NUM_LAYERS; layer++) {
-        it += sprintf(it, "\n      @{ :data ``");
+        sb_append(sb, "\n      @{ :data ``");
 
         for (int y = 0; y < map->height; y++) {
             for (int x = 0; x < map->width; x++) {
                 Wall wall = map->walls[layer][x + y * map->width];
                 if (wall.active) {
-                    it += sprintf(it, "%d", wall.model + 1);
+                    sb_appendf(sb, "%d", wall.model + 1);
                 } else {
-                    it += sprintf(it, ".");
+                    sb_append(sb, ".");
                 }
             }
         }
-        it += sprintf(it, "`` }");
+        sb_append(sb, "`` }");
     }
 
-    it += sprintf(it, "]\n   :props @[");
+    sb_append(sb, "]\n   :props @[");
 
     for (int prop = 0; prop < map->num_props; prop++) {
         Prop p = map->props[prop];
-        it += sprintf(it, "@[%f %f %f %f %f %f %f %f]\n", p.region.x,
-                      p.region.y, p.region.width, p.region.height, p.position.x,
-                      p.position.y, p.position.z, p.scale);
+        sb_appendf(sb, "@[%f %f %f %f %f %f %f %f]\n", p.region.x,
+                       p.region.y, p.region.width, p.region.height, p.position.x,
+                       p.position.y, p.position.z, p.scale);
     }
 
-    it += sprintf(it, "]\n   :lights @[");
+    sb_append(sb, "]\n   :lights @[");
 
     for (int i = 0; i < game->assets->num_lights; i++) {
         Light light = game->assets->lights[i];
 
-        it += sprintf(it, "\n      @[%s  %f %f %f  %d %d %d]",
+        sb_appendf(sb, "\n      @[%s  %f %f %f  %d %d %d]",
                       (light.enabled ? "true" : "false"), light.position.x,
                       light.position.y, light.position.z, light.color.r,
                       light.color.g, light.color.b);
     }
 
-    it += sprintf(it, "]\n   :actors @[");
+    sb_append(sb, "]\n   :actors @[");
 
     for (int i = 0; i < map->num_spawns; i++) {
         ActorSpawn s = map->spawns[i];
-        it += sprintf(it, "\n      @[%d  %f %f %f]", s.type - ACTOR_GIRL_1,
+        sb_appendf(sb, "\n      @[%d  %f %f %f]", s.type - ACTOR_GIRL_1,
                       s.position.x, s.position.y, s.position.z);
     }
 
-    it += sprintf(it, "]\n   :exits @[");
+    sb_append(sb, "]\n   :exits @[");
 
     for (int i = 0; i < map->num_exits; i++) {
         Exit e = map->exits[i];
         //                           id   x  y  z  destId destPath
-        it += sprintf(it, "\n      @[%d  %f %f %f  %d \"%s\"]", e.id,
+        sb_appendf(sb, "\n      @[%d  %f %f %f  %d \"%s\"]", e.id,
                       e.position.x, e.position.y, e.position.z, e.dest_id,
                       e.dest_path);
     }
 
-    it += sprintf(it, "]}");
+    sb_append(sb, "]}");
 
-    const size_t bytes = strlen(it);
-    printf("Written b: [%zu] kb: [%zu]\n", bytes, bytes / 2);
+    result = sb_concat(sb);
 
     FILE* f = fopen(path, "w");
-    fwrite(builder, sizeof(char), strlen(builder), f);
+    fwrite(result, sizeof(char), strlen(result), f);
     fclose(f);
+
+    free(result);
+    sb_free(sb);
 
     return;
 }
