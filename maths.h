@@ -84,7 +84,7 @@ V2 v2_sub_f(V2 a, float b);
 V2 v2_div_f(V2 a, float b);
 V2 v2_mul_f(V2 a, float b);
 
-inline Transform add_transforms(Transform a, Transform b) {
+static Transform add_transforms(Transform a, Transform b) {
     Transform result = {0};
     result.translation = Vector3Add(a.translation, b.translation);
     result.rotation = QuaternionMultiply(a.rotation, b.rotation);

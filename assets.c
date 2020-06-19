@@ -93,7 +93,7 @@ Assets* create_and_load_assets(void) {
         SetTextureWrap(ass->textures[i], WRAP_REPEAT);
     }
 
-    ass->num_models = 7;
+    ass->num_models = 6;
     ass->models = malloc(sizeof(Model) * ass->num_models);
 
     Model default_wall_1 = LoadModelFromMesh(ass->meshes[MESH_CUBE]);
@@ -133,15 +133,14 @@ Assets* create_and_load_assets(void) {
     ass->models[4] = default_wall_5;
     ass->models[5] = default_wall_6;
 
-    {
-        Model barrel = LoadModel("resources/models/barrel.obj");
-        barrel.materials[0].maps[MAP_DIFFUSE].texture =
-            ass->textures[TEX_BARREL];
-        barrel.materials[0].shader = ass->shaders[SHADER_PHONG_LIGHTING];
-        ass->models[6] = barrel;
-
-        dict_add(ass->models_dict, "barrel", alloc_model_from(barrel));
-    }
+    //{
+    //Model barrel = LoadModel("resources/models/barrel.obj");
+    //barrel.materials[0].maps[MAP_DIFFUSE].texture =
+    //ass->textures[TEX_BARREL];
+    //barrel.materials[0].shader = ass->shaders[SHADER_PHONG_LIGHTING];
+    //ass->models[6] = barrel;
+    //dict_add(ass->models_dict, "barrel", alloc_model_from(barrel));
+    //}
 
     {
         Model monkey = LoadModel("resources/models/monkey.obj");
@@ -160,8 +159,10 @@ void assets_load_scripts(Assets* self, JanetTable* env) {
     JanetType type = janet_type(result);
 
     if (janet_checktype(result, JANET_FUNCTION)) {
+	int lock = janet_gclock();
         JanetFunction* func = janet_unwrap_function(result);
-        janet_gclock(func);  // Ensure that the function doesn't get gc'd
+	janet_gcunlock(lock);
+        
         self->scripts[SCRIPTS_BASIC_ZOMBIE_AI] = func;
     } else {
         printf("Not a function\n");

@@ -10,6 +10,9 @@
 #define TO_STR(x) MACROSTR(x),
 #define TO_ENUM(x) x,
 
+#define min(x, y) ((x) < (y) ? (x) : (y))
+#define max(x, y) ((x) > (y) ? (x) : (y))
+
 int getline(char **lineptr, size_t *n, FILE *stream);
 
 #define TMEM_SIZE (0x800000)

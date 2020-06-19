@@ -74,7 +74,7 @@ int find_free_comp(struct CompList* list);
 
 #define CAT(a, b) a##b
 
-inline void* alloc_or_die(size_t size) {
+static void* alloc_or_die(size_t size) {
     void* mem = malloc(size);
 
     if (mem == NULL) {

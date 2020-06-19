@@ -16,7 +16,7 @@ typedef struct Node {
     int type;
 
     union {
-        Model model;
+        struct { Model model; char name[256]; };
         Billboard billboard;
     };
 
@@ -31,8 +31,8 @@ Node* create_node();
 Node* create_node_from_mesh(Mesh mesh);
 Node* create_node_from_mesh_with_transform(Mesh mesh, Transform transform);
 
-Node* create_node_from_model(Model model);
-Node* create_node_from_model_with_transform(Model model, Transform transform);
+Node* create_node_from_model(Model model, const char* name);
+Node* create_node_from_model_with_transform(Model model, const char* name, Transform transform);
 
 void destroy_node_tree(Node* node);
 

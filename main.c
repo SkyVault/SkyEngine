@@ -413,6 +413,30 @@ int main() {
     SetTargetFPS(86);
     SetExitKey(0);
 
+    // Dict test
+    if (0) {
+        {
+            void* test = (void*)hash("hello");
+            if (hash("hello") == (unsigned int)test) {
+                printf("HMM< IT WORKS<\n");
+            }
+        }
+
+        Dict* test = create_dict();
+        dict_add(test, "Hello", &(int[]){32});
+        dict_add(test, "World", &(int[]){69});
+
+        if (dict_has(test, "Hello")) {
+            printf("DICT KV: %s %d\n", "Hello", *((int*)dict_get(test, "Hello")));
+        }
+
+        if (dict_has(test, "What")) {
+            printf("Not supposed to be here\n");
+        }
+
+        return 0;
+    }
+
 #if 1
     // glew
     GLenum err = glewInit();
@@ -435,7 +459,7 @@ int main() {
     camera.fovy = FOV;
     camera.type = CAMERA_PERSPECTIVE;
 
-    Assets *assets = create_and_load_assets(env);
+    Assets *assets = create_and_load_assets();
     EcsWorld *ecs = create_ecs_world();
 
     Game *game = create_game(assets, &camera, ecs, env);

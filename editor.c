@@ -1,4 +1,5 @@
 #include "editor.h"
+#include "sb.h"
 
 // #if defined _DEBUG
 
@@ -1018,6 +1019,9 @@ void render_editor_ui(Ed* self, GfxState* gfx, Region* map, Game* game) {
 }
 
 void serialize_map(Ed* editor, Region* map, Game* game, const char* path) {
+    //StringBuilder *sb = sb_create();
+    //char* result;
+
     const int memsize = (1024 * 1000);  // Allocate 1m for the output buffer
     char* builder = malloc(sizeof(char) * memsize);
     char* it = builder;

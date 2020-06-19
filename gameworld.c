@@ -82,6 +82,7 @@ void zero_out_region(Region *self) {
 Region *create_region_from_script(const char *path, Game *game) {
     Region *result = malloc(sizeof(Region));
     result->current_map = -1;
+    result->scene_root = NULL;
 
     size_t psize = strlen(path);
     result->path.buff = malloc(sizeof(char) * psize + 1);
@@ -354,12 +355,12 @@ void load_region_from_script(Region *result, const char *path, Game *game) {
 
     result->scene_root = create_node();
     result->scene_root->child = create_node_from_model_with_transform(
-        *((Model *)dict_get(game->assets->models_dict, "barrel")), transform);
+        *((Model*)dict_get_or(game->assets->models_dict, "monkey", &game->assets->models[0])), "monkey", transform);
 
     transform.translation.x += 2;
     transform.translation.y += 2;
     result->scene_root->child->next = create_node_from_model_with_transform(
-        *((Model *)dict_get(game->assets->models_dict, "monkey")), transform);
+        *((Model *)dict_get_or(game->assets->models_dict, "barrel", &game->assets->models[0])), "barrel", transform);
 
     {
         Model terrain_m = LoadModel("resources/models/terrain.obj");
@@ -375,7 +376,7 @@ void load_region_from_script(Region *result, const char *path, Game *game) {
         trans.scale = Vector3One();
 
         result->scene_root->child->next->next =
-            create_node_from_model_with_transform(terrain_m, trans);
+            create_node_from_model_with_transform(terrain_m, "terrain", trans);
     }
 
     fclose(o);

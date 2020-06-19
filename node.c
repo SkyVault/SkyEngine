@@ -40,18 +40,20 @@ Node* create_node_from_mesh_with_transform(Mesh mesh, Transform transform) {
     return node;
 }
 
-Node* create_node_from_model(Model model) {
+Node* create_node_from_model(Model model, const char* name) {
     Node* node = create_node();
     node->model = model;
     node->type = NODE_TYPE_MODEL;
+    sprintf(node->name, "%s", name);
     return node;
 }
 
-Node* create_node_from_model_with_transform(Model model, Transform transform) {
+Node* create_node_from_model_with_transform(Model model, const char* name, Transform transform) {
     Node* node = create_node();
     node->model = model;
     node->transform = transform;
     node->type = NODE_TYPE_MODEL;
+    sprintf(node->name, "%s", name);
     return node;
 }
 

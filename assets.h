@@ -103,7 +103,7 @@ typedef struct {
     Sun sun;
 } Assets;
 
-inline Model* alloc_model_from(Model model) {
+static Model* alloc_model_from(Model model) {
     Model* result = (Model*)malloc(sizeof(Model));
     *result = model;
     return result;

@@ -3,6 +3,8 @@
 
 // #if defined _DEBUG
 
+#include <limits.h>
+
 #include "assembler.h"
 #include "game.h"
 #include "gameworld.h"
