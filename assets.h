@@ -5,7 +5,8 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-#include "dict.h"
+//#include "dict.h"
+#include "map.h"
 #include "raylib.h"
 #include "raymath.h"
 #include "rlights.h"
@@ -96,7 +97,7 @@ typedef struct {
     Model* models;
     int num_models;
 
-    Dict* models_dict;
+    map_void_t* models_dict;
 
     Light lights[MAX_LIGHTS];
     int num_lights;
