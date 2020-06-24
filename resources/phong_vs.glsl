@@ -37,7 +37,7 @@ void main() {
     fragNormal = normalize(normalMatrix*vertexNormal);
 
     // Calculate uv position simulating affine texture mapping
-    gl_Position = snap(mvp*vec4(vertexPosition, 1.0), vec2(320.0/2.5, 224.0/2.5));
+    gl_Position = snap(mvp*vec4(vertexPosition, 1.0), vec2(320.0/1.5, 224.0/1.5));
     // fragTexCoord = vertexTexCoord; 
 
     vec3 vertex_mv = vec3(matView * vec4(fragPosition, 1.0));

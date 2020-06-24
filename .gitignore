@@ -372,3 +372,5 @@ publish-log
 *.rdbg
 
 *.dll
+
+tags

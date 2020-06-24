@@ -7,1096 +7,1093 @@
 #define MARGIN (8)
 #define NOTE_HEIGHT (75)
 
-bool get_mouse_placement_loc(Game* game, float y, Vector3* loc);
+bool get_mouse_placement_loc(Game *game, float y, Vector3 *loc);
 
 // TODO(Dustin): Refactor this somehow
-static Game* game_s = NULL;
-static Ed* editor_s = NULL;
-static Region* map_s = NULL;
+static Game *game_s = NULL;
+static Ed *editor_s = NULL;
+static Region *map_s = NULL;
 
 // TODO(Dustin):
 //  Create a on exit save modal
 // That way we can remove the statics above and just have the editor
 
 void on_exit(void) {
-    // serialize_map(editor_s, map_s, game_s, "resources/maps/unsaved-backup");
+  // serialize_map(editor_s, map_s, game_s, "resources/maps/unsaved-backup");
 }
 
-Ed* create_editor() {
-    Ed* editor = malloc(sizeof(Ed));
+Ed *create_editor() {
+  Ed *editor = malloc(sizeof(Ed));
 
-    if (editor == NULL) {
-        printf("Failed to allocate memory for the editor\n");
-        exit(EXIT_FAILURE);
-    }
+  if (editor == NULL) {
+    printf("Failed to allocate memory for the editor\n");
+    exit(EXIT_FAILURE);
+  }
 
-    editor->open = false;
-    editor->num_notes = 0;
-    editor->which = 0;
-    editor->model = 0;
-    editor->y = 0;
+  editor->open = false;
+  editor->num_notes = 0;
+  editor->which = 0;
+  editor->model = 0;
+  editor->y = 0;
 
-    editor->lights_panel_y = (float)GetScreenHeight();
-    editor->models_panel_y = (float)GetScreenHeight();
+  editor->lights_panel_y = (float)GetScreenHeight();
+  editor->models_panel_y = (float)GetScreenHeight();
 
-    editor->object_placement_type = PLACE_BLOCKS;
+  editor->object_placement_type = PLACE_BLOCKS;
 
-    editor->state = EDITOR_STATE_NONE;
+  editor->state = EDITOR_STATE_NONE;
 
-    editor->maps = GetDirectoryFiles("resources/maps/", &editor->num_maps);
-    editor->which_marker = MARKER_PLAYER_START;
-    editor->console_y = 0.0f;
-    editor->do_console = false;
+  editor->maps = GetDirectoryFiles("resources/maps/", &editor->num_maps);
+  editor->which_marker = MARKER_PLAYER_START;
+  editor->console_y = 0.0f;
+  editor->do_console = false;
 
-    editor->history_size = 0;
+  editor->history_size = 0;
 
-    editor->editing_exit = -1;
-    editor->light_grabbed = -1;
+  editor->editing_exit = -1;
+  editor->light_grabbed = -1;
 
-    editor->selected_node = NULL;
+  editor->selected_node = NULL;
 
-    // Exit handler, portable?
-    atexit(on_exit);
+  // Exit handler, portable?
+  atexit(on_exit);
 
-    return editor;
+  return editor;
 }
 
-void push_message(Ed* self, const char* mesg) {
-    self->notes[self->num_notes++] = (Note){
-        .mesg = mesg,
-        .time = 4.0f,
-        .active = true,
-    };
+void push_message(Ed *self, const char *mesg) {
+  self->notes[self->num_notes++] = (Note){
+      .mesg = mesg,
+      .time = 4.0f,
+      .active = true,
+  };
 }
 
-Node* check_if_clicked(Ray ray, Node* node) {
-    if (node == NULL) return node;
+Node *check_if_clicked(Ray ray, Node *node) {
+  if (node == NULL)
+    return node;
 
-    if (node->type == NODE_TYPE_MODEL) {
-        BoundingBox box = MeshBoundingBox(node->model.meshes[0]);
+  if (node->type == NODE_TYPE_MODEL) {
+    BoundingBox box = MeshBoundingBox(node->model.meshes[0]);
 
-        Vector3 pos = get_transform_from_node(node).translation;
-        box.min = Vector3Add(box.min, pos);
-        box.max = Vector3Add(box.max, pos);
+    Vector3 pos = get_transform_from_node(node).translation;
+    box.min = Vector3Add(box.min, pos);
+    box.max = Vector3Add(box.max, pos);
 
-        if (CheckCollisionRayBox(ray, box)) {
-            if (GetCollisionRayModel(ray, node->model).hit) {
-                return node;
-            }
-        }
+    if (CheckCollisionRayBox(ray, box)) {
+      if (GetCollisionRayModel(ray, node->model).hit) {
+        return node;
+      }
     }
+  }
 
-    if (node->child) {
-        Node* child = check_if_clicked(ray, node->child);
-        if (child != NULL) return child;
-    }
+  if (node->child) {
+    Node *child = check_if_clicked(ray, node->child);
+    if (child != NULL)
+      return child;
+  }
 
-    if (node->next) {
-        Node* next = check_if_clicked(ray, node->next);
-        if (next != NULL) return next;
-    }
+  if (node->next) {
+    Node *next = check_if_clicked(ray, node->next);
+    if (next != NULL)
+      return next;
+  }
 
-    return NULL;
+  return NULL;
 }
 
-void do_mouse_picking(Ed* self, Region* map, Game* game) {
-    if (IsMouseButtonPressed(MOUSE_LEFT_BUTTON) && map->scene_root != NULL) {
-        Ray ray =
-            GetMouseRay((Vector2){GetScreenWidth() / 2, GetScreenHeight() / 2},
-                        *game->camera);
-        self->selected_node = check_if_clicked(ray, map->scene_root);
-    }
+void do_mouse_picking(Ed *self, Region *map, Game *game) {
+  if (IsMouseButtonPressed(MOUSE_LEFT_BUTTON) && map->scene_root != NULL) {
+    Ray ray = GetMouseRay(
+        (Vector2){GetScreenWidth() / 2, GetScreenHeight() / 2}, *game->camera);
+    self->selected_node = check_if_clicked(ray, map->scene_root);
+  }
 }
 
-void push_command_output(Ed* self, const char* str) {
-    char* copy = malloc(strlen(str));
-    sprintf(copy, "%s", str);
+void push_command_output(Ed *self, const char *str) {
+  char *copy = malloc(strlen(str));
+  sprintf(copy, "%s", str);
 
-    self->history[self->history_size++] = copy;
+  self->history[self->history_size++] = copy;
 }
 
-void render_console(Ed* self, Region* map, Game* game, int id) {
-    const float speed = 10.0f;
-    if (self->do_console) {
-        self->console_y = lerp_t(self->console_y, GetScreenHeight() / 4,
-                                 speed * GetFrameTime());
-    } else {
-        self->console_y = lerp_t(self->console_y, 0, speed * GetFrameTime());
-    }
+void render_console(Ed *self, Region *map, Game *game, int id) {
+  const float speed = 10.0f;
+  if (self->do_console) {
+    self->console_y =
+        lerp_t(self->console_y, GetScreenHeight() / 4, speed * GetFrameTime());
+  } else {
+    self->console_y = lerp_t(self->console_y, 0, speed * GetFrameTime());
+  }
 
-    float cursor_y = -GetScreenHeight() / 4 + self->console_y;
-    float height = GetScreenHeight() / 4;
+  float cursor_y = -GetScreenHeight() / 4 + self->console_y;
+  float height = GetScreenHeight() / 4;
 
-    DoFrame(id++, 0, cursor_y, GetScreenWidth(), GetScreenHeight() / 4, 0.8f);
+  do_frame(0, cursor_y, GetScreenWidth(), GetScreenHeight() / 4, 0.8f);
 
-    static char input[512] = {'\0'};
-    DoTextInput(id++, input, 512, 0, cursor_y + height - 32, GetScreenWidth(),
+  static char input[512] = {'\0'};
+  do_text_input(id++, input, 512, 0, cursor_y + height - 32, GetScreenWidth(),
                 32);
 
-    if (IsKeyPressed(KEY_ENTER)) {
-        push_command_output(self, input);
-    }
+  if (IsKeyPressed(KEY_ENTER)) {
+    push_command_output(self, input);
+  }
 
-    const float font_size = 30;
+  const float font_size = 30;
 
-    float y = 0;
-    for (int i = self->history_size - 1; i >= 0; i--) {
-        const float yy = self->console_y - (32 + font_size + y);
-        DrawRectangle(0, yy, GetScreenWidth(), font_size,
-                      (Color){0, 0, 0, 100});
-        DrawTextEx(GetFont(), FormatText("[%d]", i), (Vector2){2, yy},
-                   font_size, 1, WHITE);
-        DoLabel(id++, self->history[i], 75, yy, GetScreenWidth() - 2, font_size,
-                font_size);
-        y += 34;
-    }
+  float y = 0;
+  for (int i = self->history_size - 1; i >= 0; i--) {
+    const float yy = self->console_y - (32 + font_size + y);
+    DrawRectangle(0, yy, GetScreenWidth(), font_size, (Color){0, 0, 0, 100});
+    DrawTextEx(GetFont(), FormatText("[%d]", i), (Vector2){2, yy}, font_size, 1,
+               WHITE);
+    do_label(self->history[i], 75, yy, GetScreenWidth() - 2, font_size,
+             font_size);
+    y += 34;
+  }
 }
 
-void toggle_model_selector_modal(Ed* self) {
-    if (self->state != EDITOR_STATE_MODEL_SELECTOR_MODAL)
-        self->state = EDITOR_STATE_MODEL_SELECTOR_MODAL;
-    else
-        self->state = EDITOR_STATE_NONE;
+void toggle_model_selector_modal(Ed *self) {
+  if (self->state != EDITOR_STATE_MODEL_SELECTOR_MODAL)
+    self->state = EDITOR_STATE_MODEL_SELECTOR_MODAL;
+  else
+    self->state = EDITOR_STATE_NONE;
 }
 
-void update_editor(Ed* self, Region* map, Game* game) {
-    // Refactor
-    editor_s = self;
-    map_s = map;
-    game_s = game;
+void update_editor(Ed *self, Region *map, Game *game) {
+  // Refactor
+  editor_s = self;
+  map_s = map;
+  game_s = game;
 
-    game->noclip = self->open;
-    if ((IsKeyPressed(KEY_TAB) && IsKeyDown(KEY_LEFT_SHIFT)))
-        self->open = !self->open;
+  game->noclip = self->open;
+  if ((IsKeyPressed(KEY_TAB) && IsKeyDown(KEY_LEFT_SHIFT)))
+    self->open = !self->open;
 
-    game->editor_open = self->open;
+  game->editor_open = self->open;
 
-    // if (IsKeyPressed(KEY_E)) {
-    //     self->state = EDITOR_STATE_EXPORT_MODAL;
-    // }
+  // if (IsKeyPressed(KEY_E)) {
+  //     self->state = EDITOR_STATE_EXPORT_MODAL;
+  // }
 
-    do_mouse_picking(self, map, game);
+  do_mouse_picking(self, map, game);
 
-    if (IsKeyPressed(KEY_E)) {
-        toggle_model_selector_modal(self);
-        game->lock_camera = true;
+  if (IsKeyPressed(KEY_E)) {
+    toggle_model_selector_modal(self);
+    game->lock_camera = true;
+  }
+
+  if (IsKeyPressed(KEY_T) && !game->lock_camera) {
+    self->do_console = !self->do_console;
+  }
+
+  if (!self->open)
+    return;
+
+  for (int i = self->num_notes - 1; i >= 0; i--) {
+    Note *note = &self->notes[i];
+    if (note->time <= 0)
+      note->active = false;
+    if (!note->active)
+      continue;
+    note->time -= GetFrameTime();
+  }
+
+  for (int i = 0; i < MESH_NUM_MESHES; i++) {
+    self->models[i] = LoadModelFromMesh(game->assets->meshes[i]);
+  }
+
+  EntId player_id = get_first_with(game->ecs, Player);
+  if (player_id >= 0) {
+    EntStruct *player = get_ent(game->ecs, player_id);
+
+    if (IsKeyPressed(KEY_SPACE)) {
+      self->y++;
+      get_comp(game->ecs, player, Transform)->translation.y =
+          self->y * (float)CUBE_SIZE + (GLOBAL_SCALE - ACTOR_HEIGHT);
     }
 
-    if (IsKeyPressed(KEY_T) && !game->lock_camera) {
-        self->do_console = !self->do_console;
+    if (IsKeyPressed(KEY_LEFT_SHIFT)) {
+      self->y--;
+      if (self->y < 0)
+        self->y = 0;
+      get_comp(game->ecs, player, Transform)->translation.y =
+          self->y * (float)CUBE_SIZE + (ACTOR_HEIGHT - GLOBAL_SCALE);
     }
+  }
 
-    if (!self->open) return;
+  int sc = GetMouseWheelMove();
 
-    for (int i = self->num_notes - 1; i >= 0; i--) {
-        Note* note = &self->notes[i];
-        if (note->time <= 0) note->active = false;
-        if (!note->active) continue;
-        note->time -= GetFrameTime();
+  if (sc != 0 && !IsMouseOnUiElement()) {
+    if (self->object_placement_type == PLACE_MARKERS) {
+      if (sc > 0)
+        self->which_marker++;
+      if (sc < 0)
+        self->which_marker--;
+      self->which_marker %= (MARKER_NUM_MARKERS);
+    } else {
+      if (sc > 0)
+        self->model++;
+      if (sc < 0)
+        self->model--;
     }
+  }
 
-    for (int i = 0; i < MESH_NUM_MESHES; i++) {
-        self->models[i] = LoadModelFromMesh(game->assets->meshes[i]);
-    }
+  int ms = map->num_models;
 
-    EntId player_id = get_first_with(game->ecs, Player);
-    if (player_id >= 0) {
-        EntStruct* player = get_ent(game->ecs, player_id);
+  if (self->object_placement_type == PLACE_PROPS) {
+    ms = sizeof(prop_types) / sizeof(prop_types[0]);
+  }
 
-        if (IsKeyPressed(KEY_SPACE)) {
-            self->y++;
-            get_comp(game->ecs, player, Transform)->translation.y =
-                self->y * (float)CUBE_SIZE + (GLOBAL_SCALE - ACTOR_HEIGHT);
-        }
+  if (self->model >= ms) {
+    self->model = 0;
+  }
 
-        if (IsKeyPressed(KEY_LEFT_SHIFT)) {
-            self->y--;
-            if (self->y < 0) self->y = 0;
-            get_comp(game->ecs, player, Transform)->translation.y =
-                self->y * (float)CUBE_SIZE + (ACTOR_HEIGHT - GLOBAL_SCALE);
-        }
-    }
+  if (self->model < 0) {
+    self->model = ms - 1;
+  }
 
-    int sc = GetMouseWheelMove();
-
-    if (sc != 0 && !IsMouseOnUiElement()) {
-        if (self->object_placement_type == PLACE_MARKERS) {
-            if (sc > 0) self->which_marker++;
-            if (sc < 0) self->which_marker--;
-            self->which_marker %= (MARKER_NUM_MARKERS);
-        } else {
-            if (sc > 0) self->model++;
-            if (sc < 0) self->model--;
-        }
-    }
-
-    int ms = map->num_models;
-
-    if (self->object_placement_type == PLACE_PROPS) {
-        ms = sizeof(prop_types) / sizeof(prop_types[0]);
-    }
-
-    if (self->model >= ms) {
-        self->model = 0;
-    }
-
-    if (self->model < 0) {
-        self->model = ms - 1;
-    }
-
-    if (self->light_grabbed >= 0) {
-        // TODO(Dustin): move this to a seperate function
-        Vector3 loc = Vector3Zero();
-        bool hit = get_mouse_placement_loc(
-            game, self->y * (float)(GLOBAL_SCALE), &loc);
-
-        game->assets->lights[self->light_grabbed].position = loc;
-        UpdateLightValues(game->assets->shaders[SHADER_PHONG_LIGHTING],
-                          game->assets->lights[self->light_grabbed]);
-
-        if (IsMouseButtonPressed(MOUSE_LEFT_BUTTON)) {
-            self->light_grabbed = -1;
-        }
-    }
-}
-
-bool get_mouse_placement_loc(Game* game, float y, Vector3* loc) {
-    Ray ray =
-        GetMouseRay((Vector2){GetScreenWidth() / 2, GetScreenHeight() / 2 - 50},
-                    *game->camera);
-
-    RayHitInfo nearestHit = {0};
-    nearestHit.distance = FLOAT_MAX;
-    nearestHit.hit = false;
-
-    // Check ray collision aginst ground plane
-    RayHitInfo groundHitInfo = GetCollisionRayGround(ray, 0.0f);
-
-    if ((groundHitInfo.hit) && (groundHitInfo.distance < nearestHit.distance)) {
-        nearestHit = groundHitInfo;
-    }
-
-    if (nearestHit.hit) {
-        *loc = nearestHit.position;
-        return true;
-    }
-
-    return false;
-}
-
-void draw_node_tree_bounding_boxes(Node* node) {
-    if (node == NULL) return;
-
-    if (node->type == NODE_TYPE_MODEL) {
-        Transform trans = get_transform_from_node(node);
-        Vector3 scale = trans.scale;
-        Quaternion rot = trans.rotation;
-        Vector3 pos = trans.translation;
-
-        Matrix m = MatrixIdentity();
-        m = MatrixMultiply(m, MatrixScale(scale.x, scale.y, scale.z));
-        m = MatrixMultiply(m, QuaternionToMatrix(rot));
-        m = MatrixMultiply(m, MatrixTranslate(pos.x, pos.y, pos.z));
-        node->model.transform = m;
-
-        BoundingBox box = MeshBoundingBox(node->model.meshes[0]);
-        box.min = Vector3Add(box.min, pos);
-        box.max = Vector3Add(box.max, pos);
-
-        DrawBoundingBox(box, (Color){255, 0, 255, 200});
-    }
-
-    if (node->child) draw_node_tree_bounding_boxes(node->child);
-    if (node->next) draw_node_tree_bounding_boxes(node->next);
-}
-
-void render_editor(Ed* self, GfxState* gfx, Region* map, Game* game) {
-    if (!self->open) return;
-
-    Vector3 loc;
-
+  if (self->light_grabbed >= 0) {
+    // TODO(Dustin): move this to a seperate function
+    Vector3 loc = Vector3Zero();
     bool hit =
         get_mouse_placement_loc(game, self->y * (float)(GLOBAL_SCALE), &loc);
 
-    // loc = Vector3Transform(loc, MatrixRotateY(180.0f));
+    game->assets->lights[self->light_grabbed].position = loc;
+    UpdateLightValues(game->assets->shaders[SHADER_PHONG_LIGHTING],
+                      game->assets->lights[self->light_grabbed]);
 
-    // DrawCube(loc, 0.2f, 0.2f, 0.2f, GREEN);
-
-    const int cs = CUBE_SIZE;
-    Vector3 clamped =
-        (Vector3){ceil(loc.x) - 0.5f, ceil(loc.y), ceil(loc.z) - 0.5f};
-    clamped.y = self->y;
-    // clamped.x -= 1;
-    // clamped.z -= 1;
-
-    if (IsKeyDown(KEY_LEFT_ALT)) clamped = loc;
-
-    DrawCylinder((Vector3){map->player_x, -3.0f, map->player_z}, 0.2f, 0.2f,
-                 4.0f, 20, (Color){0, 100, 255, 100});
-
-    if (self->selected_node != NULL) {
-        Node* node = self->selected_node;
-
-        if (node->type == NODE_TYPE_MODEL) {
-            Transform trans = node->transform;
-
-            DrawModelWiresEx(node->model, Vector3Zero(), (Vector3){0, 0, 0},
-                             0.0f, trans.scale, (Color){255, 0, 255, 200});
-        }
+    if (IsMouseButtonPressed(MOUSE_LEFT_BUTTON)) {
+      self->light_grabbed = -1;
     }
-
-    draw_node_tree_bounding_boxes(map->scene_root);
-
-    // Draw debug shapes
-    for (int i = 0; i < map->num_spawns; i++) {
-        Texture2D tex = game->assets->textures[TEX_GIRL_1 + self->model];
-
-        ActorSpawn s = map->spawns[i];
-
-        DrawCylinder((Vector3){s.position.x, -0.5f, s.position.z}, 0.0001f,
-                     0.3f, 0.3f, 20, (Color){130, 50, 100, 120});
-
-        DrawBillboardRec(*game->camera, tex,
-                         (Rectangle){0, 0, tex.width, tex.height}, s.position,
-                         1.0, (Color){255, 255, 255, 130});
-
-        // draw_billboard(gfx, s.position, tex,
-        //                (Rectangle){0, 0, tex.width, tex.height}, 1.0f);
-    }
-
-    for (int light_i = 0; light_i < game->assets->num_lights; light_i++) {
-        Light light = game->assets->lights[light_i];
-
-        if (!light.enabled) continue;
-
-        Color c = light.color;
-
-        // Draw debug sphere where light is
-        DrawSphere(light.position, 0.2f, (Color){c.r, c.g, c.b, 100});
-    }
-
-    // Draw debug exits
-
-    for (int exit_i = 0; exit_i < map->num_exits; exit_i++) {
-        Exit theExit = map->exits[exit_i];
-
-        DrawCylinder((Vector3){theExit.position.x, -3.0f, theExit.position.z},
-                     0.2f, 0.2f, 4.0f, 20, (Color){255, 100, 0, 100});
-    }
-
-    float scale = 0.3f;
-    float occ = (1.0f - scale) +
-                ((1.0f + cosf((float)GetTime() * 10.0f)) * 0.5f) * scale;
-
-    if (self->object_placement_type == PLACE_BLOCKS &&
-        self->light_grabbed < 0 && self->state == EDITOR_STATE_NONE) {
-        Transform transform;
-        transform.translation = clamped;
-        transform.rotation = QuaternionIdentity();
-        transform.scale = Vector3One();
-
-        draw_model(gfx, &map->models[self->model], transform,
-                   (Color){(unsigned char)(occ * 255), 255,
-                           (unsigned char)(occ * 255), 150});
-
-        if (IsMouseButtonPressed(MOUSE_LEFT_BUTTON) && !game->lock_camera) {
-            // Try to intersect
-
-            int index =
-                (int)(clamped.x / cs) + (int)(clamped.z / cs) * map->width;
-
-            if (index < MAX_MAP_WIDTH * MAX_MAP_HEIGHT && index >= 0) {
-                map->walls[self->y][index].active =
-                    !map->walls[self->y][index].active;
-
-                if (!map->walls[self->y][index].active)
-                    map->walls[self->y][index].model = 0;
-                else
-                    map->walls[self->y][index].model = self->model;
-            }
-        }
-    } else if (self->object_placement_type == PLACE_ACTORS) {
-        Texture2D tex = game->assets->textures[TEX_GIRL_1 + self->model];
-        // DrawBillboard(*game->camera, tex, loc, CUBE_SIZE, WHITE);
-        if (IsKeyDown(KEY_LEFT_SHIFT)) {
-            DrawSphere((Vector3){loc.x, 0.0f, loc.z}, 0.01f, RED);
-            DrawSphere((Vector3){loc.x, 0.0f, loc.z}, 0.02f,
-                       (Color){255, 40, 0, 100});
-
-            if (IsMouseButtonPressed(MOUSE_LEFT_BUTTON) &&
-                !IsMouseOnUiElement()) {
-                float closest_dist = FLOAT_MAX;
-                int index = -1;
-                for (int i = 0; i < map->num_spawns; i++) {
-                    float dist = Vector3Distance(map->spawns[i].position, loc);
-                    if (dist < closest_dist) {
-                        closest_dist = dist;
-                        index = i;
-                    }
-                }
-
-                if (closest_dist < INT_MAX) {
-                    if (closest_dist < 1.0f) {
-                        for (int i = index; i < map->num_spawns - 1; i++) {
-                            map->spawns[i] = map->spawns[i + 1];
-                        }
-                        map->num_spawns--;
-                    }
-                }
-            }
-        } else {
-            draw_billboard(gfx, loc, tex,
-                           (Rectangle){0, 0, tex.width, tex.height}, 1.0f);
-
-            DrawCylinder((Vector3){loc.x, -0.5f, loc.z}, 0.0001f, 0.3f, 0.3f,
-                         20, (Color){130, 50, 100, 120});
-            if (IsMouseButtonPressed(MOUSE_LEFT_BUTTON) && !game->lock_camera) {
-                // assemble(ACTOR_GIRL_1 + self->model, game, loc.x, loc.y,
-                // loc.z, 0,
-                //  0);
-
-                if (!add_actor_spawn(map, ACTOR_GIRL_1 + self->model, loc)) {
-                    push_message(self, "Max entity spawns placed for chunk");
-                }
-            }
-        }
-
-    } else if (self->object_placement_type == PLACE_PROPS) {
-        Texture2D tex = game->assets->textures[TEX_PROPS];
-
-        if (IsKeyDown(KEY_LEFT_SHIFT)) {
-            DrawSphere((Vector3){loc.x, 0.0f, loc.z}, 0.01f, RED);
-            DrawSphere((Vector3){loc.x, 0.0f, loc.z}, 0.02f,
-                       (Color){255, 40, 0, 100});
-
-            if (IsMouseButtonPressed(MOUSE_LEFT_BUTTON) &&
-                !IsMouseOnUiElement()) {
-                float closest_dist = FLOAT_MAX;
-                int index = -1;
-                for (int i = 0; i < map->num_props; i++) {
-                    float dist = Vector3Distance(map->props[i].position, loc);
-                    if (dist < closest_dist) {
-                        closest_dist = dist;
-                        index = i;
-                    }
-                }
-
-                if (closest_dist < INT_MAX) {
-                    if (closest_dist < 1.0f) {
-                        for (int i = index; i < map->num_props - 1; i++) {
-                            map->props[i] = map->props[i + 1];
-                        }
-                        map->num_props--;
-                    }
-                }
-            }
-
-        } else {
-            Prop prop = prop_types[self->model];
-            prop.position = loc;
-            draw_prop(gfx, game, prop);
-
-            if (IsMouseButtonPressed(MOUSE_LEFT_BUTTON) &&
-                !IsMouseOnUiElement()) {
-                map->props[map->num_props++] = prop;
-                printf("Added prop [%d]\n", map->num_props);
-            }
-        }
-
-    } else if (self->object_placement_type == PLACE_MARKERS) {
-        Color color = (Color){0, 100, 255, 100};
-
-        if (self->which_marker == MARKER_EXIT)
-            color = (Color){255, 100, 0, 100};
-
-        DrawCylinder((Vector3){loc.x, -3.0f, loc.z}, 0.2f, 0.2f, 4.0f, 20,
-                     color);
-
-        if (IsMouseButtonPressed(MOUSE_LEFT_BUTTON) && !IsMouseOnUiElement()) {
-            if (self->which_marker == MARKER_PLAYER_START) {
-                map->player_x = loc.x;
-                map->player_z = loc.z;
-            } else if (self->which_marker == MARKER_EXIT) {
-                self->state = EDITOR_STATE_EXIT_PLACEMENT_MODAL;
-            }
-        }
-    }
+  }
 }
 
-#define MIN3(a, b, c) \
-    ((a) < (b) ? ((a) < (c) ? (a) : (c)) : ((b) < (c) ? (b) : (c)))
+bool get_mouse_placement_loc(Game *game, float y, Vector3 *loc) {
+  Ray ray =
+      GetMouseRay((Vector2){GetScreenWidth() / 2, GetScreenHeight() / 2 - 50},
+                  *game->camera);
 
-int levenshtein(char* s1, char* s2) {
-    unsigned int s1len, s2len, x, y, lastdiag, olddiag;
-    s1len = strlen(s1);
-    s2len = strlen(s2);
-    unsigned int* column = talloc(sizeof(unsigned int) * s1len + 1);
-    for (y = 1; y <= s1len; y++) column[y] = y;
-    for (x = 1; x <= s2len; x++) {
-        column[0] = x;
-        for (y = 1, lastdiag = x - 1; y <= s1len; y++) {
-            olddiag = column[y];
-            column[y] = MIN3(column[y] + 1, column[y - 1] + 1,
-                             lastdiag + (s1[y - 1] == s2[x - 1] ? 0 : 1));
-            lastdiag = olddiag;
-        }
+  RayHitInfo nearestHit = {0};
+  nearestHit.distance = FLOAT_MAX;
+  nearestHit.hit = false;
+
+  // Check ray collision aginst ground plane
+  RayHitInfo groundHitInfo = GetCollisionRayGround(ray, 0.0f);
+
+  if ((groundHitInfo.hit) && (groundHitInfo.distance < nearestHit.distance)) {
+    nearestHit = groundHitInfo;
+  }
+
+  if (nearestHit.hit) {
+    *loc = nearestHit.position;
+    return true;
+  }
+
+  return false;
+}
+
+void draw_node_tree_bounding_boxes(Node *node) {
+  if (node == NULL)
+    return;
+
+  if (node->type == NODE_TYPE_MODEL) {
+    Transform trans = get_transform_from_node(node);
+    Vector3 scale = trans.scale;
+    Quaternion rot = trans.rotation;
+    Vector3 pos = trans.translation;
+
+    Matrix m = MatrixIdentity();
+    m = MatrixMultiply(m, MatrixScale(scale.x, scale.y, scale.z));
+    m = MatrixMultiply(m, QuaternionToMatrix(rot));
+    m = MatrixMultiply(m, MatrixTranslate(pos.x, pos.y, pos.z));
+    node->model.transform = m;
+
+    BoundingBox box = MeshBoundingBox(node->model.meshes[0]);
+    box.min = Vector3Add(box.min, pos);
+    box.max = Vector3Add(box.max, pos);
+
+    DrawBoundingBox(box, (Color){255, 0, 255, 200});
+  }
+
+  if (node->child)
+    draw_node_tree_bounding_boxes(node->child);
+  if (node->next)
+    draw_node_tree_bounding_boxes(node->next);
+}
+
+void render_editor(Ed *self, GfxState *gfx, Region *map, Game *game) {
+  if (!self->open)
+    return;
+
+  Vector3 loc;
+
+  bool hit =
+      get_mouse_placement_loc(game, self->y * (float)(GLOBAL_SCALE), &loc);
+
+  // loc = Vector3Transform(loc, MatrixRotateY(180.0f));
+
+  // DrawCube(loc, 0.2f, 0.2f, 0.2f, GREEN);
+
+  const int cs = CUBE_SIZE;
+  Vector3 clamped =
+      (Vector3){ceil(loc.x) - 0.5f, ceil(loc.y), ceil(loc.z) - 0.5f};
+  clamped.y = self->y;
+  // clamped.x -= 1;
+  // clamped.z -= 1;
+
+  if (IsKeyDown(KEY_LEFT_ALT))
+    clamped = loc;
+
+  DrawCylinder((Vector3){map->player_x, -3.0f, map->player_z}, 0.2f, 0.2f, 4.0f,
+               20, (Color){0, 100, 255, 100});
+
+  if (self->selected_node != NULL) {
+    Node *node = self->selected_node;
+
+    if (node->type == NODE_TYPE_MODEL) {
+      Transform trans = node->transform;
+
+      DrawModelWiresEx(node->model, Vector3Zero(), (Vector3){0, 0, 0}, 0.0f,
+                       trans.scale, (Color){255, 0, 255, 200});
     }
-    return (column[s1len]);
+  }
+
+  draw_node_tree_bounding_boxes(map->scene_root);
+
+  // Draw debug shapes
+  for (int i = 0; i < map->num_spawns; i++) {
+    Texture2D tex = game->assets->textures[TEX_GIRL_1 + self->model];
+
+    ActorSpawn s = map->spawns[i];
+
+    DrawCylinder((Vector3){s.position.x, -0.5f, s.position.z}, 0.0001f, 0.3f,
+                 0.3f, 20, (Color){130, 50, 100, 120});
+
+    DrawBillboardRec(*game->camera, tex,
+                     (Rectangle){0, 0, tex.width, tex.height}, s.position, 1.0,
+                     (Color){255, 255, 255, 130});
+
+    // draw_billboard(gfx, s.position, tex,
+    //                (Rectangle){0, 0, tex.width, tex.height}, 1.0f);
+  }
+
+  for (int light_i = 0; light_i < game->assets->num_lights; light_i++) {
+    Light light = game->assets->lights[light_i];
+
+    if (!light.enabled)
+      continue;
+
+    Color c = light.color;
+
+    // Draw debug sphere where light is
+    DrawSphere(light.position, 0.2f, (Color){c.r, c.g, c.b, 100});
+  }
+
+  // Draw debug exits
+
+  for (int exit_i = 0; exit_i < map->num_exits; exit_i++) {
+    Exit theExit = map->exits[exit_i];
+
+    DrawCylinder((Vector3){theExit.position.x, -3.0f, theExit.position.z}, 0.2f,
+                 0.2f, 4.0f, 20, (Color){255, 100, 0, 100});
+  }
+
+  float scale = 0.3f;
+  float occ =
+      (1.0f - scale) + ((1.0f + cosf((float)GetTime() * 10.0f)) * 0.5f) * scale;
+
+  if (self->object_placement_type == PLACE_BLOCKS && self->light_grabbed < 0 &&
+      self->state == EDITOR_STATE_NONE) {
+    Transform transform;
+    transform.translation = clamped;
+    transform.rotation = QuaternionIdentity();
+    transform.scale = Vector3One();
+
+    draw_model(gfx, &map->models[self->model], transform,
+               (Color){(unsigned char)(occ * 255), 255,
+                       (unsigned char)(occ * 255), 150});
+
+    if (IsMouseButtonPressed(MOUSE_LEFT_BUTTON) && !game->lock_camera) {
+      // Try to intersect
+
+      int index = (int)(clamped.x / cs) + (int)(clamped.z / cs) * map->width;
+
+      if (index < MAX_MAP_WIDTH * MAX_MAP_HEIGHT && index >= 0) {
+        map->walls[self->y][index].active = !map->walls[self->y][index].active;
+
+        if (!map->walls[self->y][index].active)
+          map->walls[self->y][index].model = 0;
+        else
+          map->walls[self->y][index].model = self->model;
+      }
+    }
+  } else if (self->object_placement_type == PLACE_ACTORS) {
+    Texture2D tex = game->assets->textures[TEX_GIRL_1 + self->model];
+    // DrawBillboard(*game->camera, tex, loc, CUBE_SIZE, WHITE);
+    if (IsKeyDown(KEY_LEFT_SHIFT)) {
+      DrawSphere((Vector3){loc.x, 0.0f, loc.z}, 0.01f, RED);
+      DrawSphere((Vector3){loc.x, 0.0f, loc.z}, 0.02f,
+                 (Color){255, 40, 0, 100});
+
+      if (IsMouseButtonPressed(MOUSE_LEFT_BUTTON) && !IsMouseOnUiElement()) {
+        float closest_dist = FLOAT_MAX;
+        int index = -1;
+        for (int i = 0; i < map->num_spawns; i++) {
+          float dist = Vector3Distance(map->spawns[i].position, loc);
+          if (dist < closest_dist) {
+            closest_dist = dist;
+            index = i;
+          }
+        }
+
+        if (closest_dist < INT_MAX) {
+          if (closest_dist < 1.0f) {
+            for (int i = index; i < map->num_spawns - 1; i++) {
+              map->spawns[i] = map->spawns[i + 1];
+            }
+            map->num_spawns--;
+          }
+        }
+      }
+    } else {
+      draw_billboard(gfx, loc, tex, (Rectangle){0, 0, tex.width, tex.height},
+                     1.0f);
+
+      DrawCylinder((Vector3){loc.x, -0.5f, loc.z}, 0.0001f, 0.3f, 0.3f, 20,
+                   (Color){130, 50, 100, 120});
+      if (IsMouseButtonPressed(MOUSE_LEFT_BUTTON) && !game->lock_camera) {
+        // assemble(ACTOR_GIRL_1 + self->model, game, loc.x, loc.y,
+        // loc.z, 0,
+        //  0);
+
+        if (!add_actor_spawn(map, ACTOR_GIRL_1 + self->model, loc)) {
+          push_message(self, "Max entity spawns placed for chunk");
+        }
+      }
+    }
+
+  } else if (self->object_placement_type == PLACE_PROPS) {
+    Texture2D tex = game->assets->textures[TEX_PROPS];
+
+    if (IsKeyDown(KEY_LEFT_SHIFT)) {
+      DrawSphere((Vector3){loc.x, 0.0f, loc.z}, 0.01f, RED);
+      DrawSphere((Vector3){loc.x, 0.0f, loc.z}, 0.02f,
+                 (Color){255, 40, 0, 100});
+
+      if (IsMouseButtonPressed(MOUSE_LEFT_BUTTON) && !IsMouseOnUiElement()) {
+        float closest_dist = FLOAT_MAX;
+        int index = -1;
+        for (int i = 0; i < map->num_props; i++) {
+          float dist = Vector3Distance(map->props[i].position, loc);
+          if (dist < closest_dist) {
+            closest_dist = dist;
+            index = i;
+          }
+        }
+
+        if (closest_dist < INT_MAX) {
+          if (closest_dist < 1.0f) {
+            for (int i = index; i < map->num_props - 1; i++) {
+              map->props[i] = map->props[i + 1];
+            }
+            map->num_props--;
+          }
+        }
+      }
+
+    } else {
+      Prop prop = prop_types[self->model];
+      prop.position = loc;
+      draw_prop(gfx, game, prop);
+
+      if (IsMouseButtonPressed(MOUSE_LEFT_BUTTON) && !IsMouseOnUiElement()) {
+        map->props[map->num_props++] = prop;
+        printf("Added prop [%d]\n", map->num_props);
+      }
+    }
+
+  } else if (self->object_placement_type == PLACE_MARKERS) {
+    Color color = (Color){0, 100, 255, 100};
+
+    if (self->which_marker == MARKER_EXIT)
+      color = (Color){255, 100, 0, 100};
+
+    DrawCylinder((Vector3){loc.x, -3.0f, loc.z}, 0.2f, 0.2f, 4.0f, 20, color);
+
+    if (IsMouseButtonPressed(MOUSE_LEFT_BUTTON) && !IsMouseOnUiElement()) {
+      if (self->which_marker == MARKER_PLAYER_START) {
+        map->player_x = loc.x;
+        map->player_z = loc.z;
+      } else if (self->which_marker == MARKER_EXIT) {
+        self->state = EDITOR_STATE_EXIT_PLACEMENT_MODAL;
+      }
+    }
+  }
+}
+
+#define MIN3(a, b, c)                                                          \
+  ((a) < (b) ? ((a) < (c) ? (a) : (c)) : ((b) < (c) ? (b) : (c)))
+
+int levenshtein(char *s1, char *s2) {
+  unsigned int s1len, s2len, x, y, lastdiag, olddiag;
+  s1len = strlen(s1);
+  s2len = strlen(s2);
+  unsigned int *column = talloc(sizeof(unsigned int) * s1len + 1);
+  for (y = 1; y <= s1len; y++)
+    column[y] = y;
+  for (x = 1; x <= s2len; x++) {
+    column[0] = x;
+    for (y = 1, lastdiag = x - 1; y <= s1len; y++) {
+      olddiag = column[y];
+      column[y] = MIN3(column[y] + 1, column[y - 1] + 1,
+                       lastdiag + (s1[y - 1] == s2[x - 1] ? 0 : 1));
+      lastdiag = olddiag;
+    }
+  }
+  return (column[s1len]);
 }
 
 static char load_buff[1024] = {'\0'};
 
-int sort_levenshtein(const void* a, const void* b) {
-    char* aa = (char*)a;
-    char* bb = (char*)b;
-    int l1 = levenshtein(load_buff, aa);
-    int l2 = levenshtein(load_buff, bb);
-    if (l1 > l2) return 1;
-    if (l1 < l2) return -1;
-    if (l1 == l2) return 0;
+int sort_levenshtein(const void *a, const void *b) {
+  char *aa = (char *)a;
+  char *bb = (char *)b;
+  int l1 = levenshtein(load_buff, aa);
+  int l2 = levenshtein(load_buff, bb);
+  if (l1 > l2)
+    return 1;
+  if (l1 < l2)
+    return -1;
+  if (l1 == l2)
     return 0;
+  return 0;
 }
 
-void render_editor_ui(Ed* self, GfxState* gfx, Region* map, Game* game) {
-    Shader* shader = &game->assets->shaders[SHADER_PHONG_LIGHTING];
+void render_editor_ui(Ed *self, GfxState *gfx, Region *map, Game *game) {
+  Shader *shader = &game->assets->shaders[SHADER_PHONG_LIGHTING];
 
-    int id = 200;
+  int id = 200;
 
-    render_console(self, map, game, id);
+  render_console(self, map, game, id);
 
-    id += 400;
+  id += 400;
 
-    if (!self->open) {
-        if (DoBtn(id++, GetScreenWidth() / 2 - 50.0f, 0, 100, 25, "Editor")) {
-            push_message(self, "Editor mode!");
-            self->open = true;
-        }
-        return;
+  if (!self->open) {
+    if (do_btn(GetScreenWidth() / 2 - 50.0f, 0, 100, 25, "Editor")) {
+      push_message(self, "Editor mode!");
+      self->open = true;
+    }
+    return;
+  }
+
+  {
+    const int x = GetScreenWidth() / 2 + 50.0f + 8.0f;
+    const int y = 0;
+    const int w = 50;
+    const int h = 25;
+
+    if (do_btn(x, y, w, h, "")) {
+      self->open = false;
+    }
+
+    DrawTriangle((Vector2){x + 12, y + 4}, (Vector2){x + 12, y + h - 4},
+                 (Vector2){x + w - 12, y + ((h / 2))}, GREEN);
+  }
+
+  if (do_btn(GetScreenWidth() / 2 - 50.0f, 0, 100, 25, "Play")) {
+    self->open = false;
+  }
+
+  // Notifications
+  int last = self->object_placement_type;
+  self->object_placement_type = do_toggle_group_v(
+      id++, "NONE|BLOCKS|ACTORS|PROPS|MARKERS|", 0,
+      GetScreenHeight() - (self->placement_toggle_height + 50),
+      &self->placement_toggle_height);
+
+  // Draws a label for the type of marker
+  // TODO(Dustin): Add new markers for exit and other stuff
+  if (self->object_placement_type == PLACE_MARKERS) {
+    if (self->which_marker == MARKER_PLAYER_START) {
+      do_center_x_label((float)GetScreenWidth(),
+                        (float)GetScreenHeight() / 2 + 50.0f, 30,
+                        "Player start");
+    } else if (self->which_marker == MARKER_EXIT) {
+      do_center_x_label((float)GetScreenWidth(),
+                        (float)GetScreenHeight() / 2 + 50.0f, 30, "Place exit");
+    }
+  }
+
+  // Region loading and unloading
+  if (do_btn(100, GetScreenHeight() - 50.0f, 100, 50, "Export")) {
+    // self->do_export_modal = true;
+    self->state = EDITOR_STATE_EXPORT_MODAL;
+  }
+
+  if (do_btn(0, GetScreenHeight() - 50.0f, 100, 50, "Load")) {
+    self->state = EDITOR_STATE_LOAD_MODAL;
+  }
+
+  if (self->state == EDITOR_STATE_LOAD_MODAL) {
+    id += 100;
+    do_modal();
+    Unlock();
+
+    // TODO(Dustin): Get this to work
+    // qsort(self->maps, self->num_maps, sizeof(char*),
+    // sort_levenshtein);
+
+    if (do_text_input(id++, load_buff, 1024, GetScreenWidth() / 2 - 150.f,
+                      GetScreenHeight() / 2 - 25.f, 300, 50)) {
+      tstr path = talloc(512);
+      sprintf(path, "resources/maps/%s.janet", load_buff);
+
+      if (FileExists(path) == false) {
+        tstr msg = talloc(512);
+        sprintf(msg, "File [%s] does not exist", path);
+
+        push_message(self, msg);
+      } else {
+        reset_region_to_zero(game->map, game);
+        load_region_from_script(game->map, path, game);
+      }
+
+      self->state = EDITOR_STATE_NONE;
     }
 
     {
-        const int x = GetScreenWidth() / 2 + 50.0f + 8.0f;
-        const int y = 0;
-        const int w = 50;
-        const int h = 25;
+      static float scroll_y = 0;
+      static float max_height = 0;
+      begin_scroll_panel_v(id++, GetScreenWidth() / 2 - 150.0f,
+                           GetScreenHeight() / 2 + 28, 300 + 12, 300, &scroll_y,
+                           max_height);
 
-        if (DoBtn(id++, x, y, w, h, "")) {
-            self->open = false;
-        }
-
-        DrawTriangle((Vector2){x + 12, y + 4}, (Vector2){x + 12, y + h - 4},
-                     (Vector2){x + w - 12, y + ((h / 2))}, GREEN);
-    }
-
-    if (DoBtn(id++, GetScreenWidth() / 2 - 50.0f, 0, 100, 25, "Play")) {
-        self->open = false;
-    }
-
-    // Notifications
-    int last = self->object_placement_type;
-    self->object_placement_type =
-        DoToggleGroupV(id++, "NONE|BLOCKS|ACTORS|PROPS|MARKERS|", 0,
-                       GetScreenHeight() - (self->placement_toggle_height + 50),
-                       &self->placement_toggle_height);
-
-    // Draws a label for the type of marker
-    // TODO(Dustin): Add new markers for exit and other stuff
-    if (self->object_placement_type == PLACE_MARKERS) {
-        if (self->which_marker == MARKER_PLAYER_START) {
-            DoCenterXLabel(id++, (float)GetScreenWidth(),
-                           (float)GetScreenHeight() / 2 + 50.0f, 30,
-                           "Player start");
-        } else if (self->which_marker == MARKER_EXIT) {
-            DoCenterXLabel(id++, (float)GetScreenWidth(),
-                           (float)GetScreenHeight() / 2 + 50.0f, 30,
-                           "Place exit");
-        }
-    }
-
-    // Region loading and unloading
-    if (DoBtn(id++, 100, GetScreenHeight() - 50.0f, 100, 50, "Export")) {
-        // self->do_export_modal = true;
-        self->state = EDITOR_STATE_EXPORT_MODAL;
-    }
-
-    if (DoBtn(id++, 0, GetScreenHeight() - 50.0f, 100, 50, "Load")) {
-        self->state = EDITOR_STATE_LOAD_MODAL;
-    }
-
-    if (self->state == EDITOR_STATE_LOAD_MODAL) {
-        id += 100;
-        DoModal();
-        Unlock();
-
-        // TODO(Dustin): Get this to work
-        // qsort(self->maps, self->num_maps, sizeof(char*),
-        // sort_levenshtein);
-
-        if (DoTextInput(id++, load_buff, 1024, GetScreenWidth() / 2 - 150.f,
-                        GetScreenHeight() / 2 - 25.f, 300, 50)) {
-            tstr path = talloc(512);
-            sprintf(path, "resources/maps/%s.janet", load_buff);
-
-            if (FileExists(path) == false) {
-                tstr msg = talloc(512);
-                sprintf(msg, "File [%s] does not exist", path);
-
-                push_message(self, msg);
-            } else {
-                reset_region_to_zero(game->map, game);
-                load_region_from_script(game->map, path, game);
-            }
-
+      max_height = 0;
+      for (int i = 2; i < self->num_maps; i++) {
+        if (do_btn(GetScreenWidth() / 2 - 150.0f,
+                   GetScreenHeight() / 2 + 20 + 30 * (i - 1.0f) - scroll_y, 300,
+                   30, self->maps[i])) {
+          const char *path = TextFormat("resources/maps/%s", self->maps[i]);
+          if (FileExists(path)) {
+            reset_region_to_zero(game->map, game);
+            load_region_from_script(game->map, path, game);
             self->state = EDITOR_STATE_NONE;
+          }
         }
+        max_height += 30;
+      }
 
-        {
-            static float scroll_y = 0;
-            static float max_height = 0;
-            BeginScrollPanelV(id++, GetScreenWidth() / 2 - 150.0f,
-                              GetScreenHeight() / 2 + 28, 300 + 12, 300,
-                              &scroll_y, max_height);
+      end_scroll_panel_v();
+    }
 
-            max_height = 0;
-            for (int i = 2; i < self->num_maps; i++) {
-                if (DoBtn(
-                        id++, GetScreenWidth() / 2 - 150.0f,
-                        GetScreenHeight() / 2 + 20 + 30 * (i - 1.0f) - scroll_y,
-                        300, 30, self->maps[i])) {
-                    const char* path =
-                        TextFormat("resources/maps/%s", self->maps[i]);
-                    if (FileExists(path)) {
-                        reset_region_to_zero(game->map, game);
-                        load_region_from_script(game->map, path, game);
-                        self->state = EDITOR_STATE_NONE;
-                    }
-                }
-                max_height += 30;
-            }
+    if (do_btn(GetScreenWidth() / 2 + 200.0f, GetScreenHeight() / 2.0f, 30, 30,
+               "X")) {
+      self->state = EDITOR_STATE_NONE;
+    }
 
-            EndScrollPanelV();
-        }
+    Lock();
+  } else if (self->state == EDITOR_STATE_EXPORT_MODAL) {
+    id += 100;
 
-        if (DoBtn(id++, GetScreenWidth() / 2 + 200.0f, GetScreenHeight() / 2.0f,
-                  30, 30, "X")) {
-            self->state = EDITOR_STATE_NONE;
-        }
+    do_modal();
+    Unlock();
 
-        Lock();
-    } else if (self->state == EDITOR_STATE_EXPORT_MODAL) {
-        id += 100;
+    do_center_x_label((float)GetScreenWidth(),
+                      (float)GetScreenHeight() / 2 - 100, 30, "Region Name");
 
-        DoModal();
-        Unlock();
+    static char buffer[100] = {'\0'};
+    if (do_text_input(id++, buffer, 100, GetScreenWidth() / 2 - 150.0f,
+                      GetScreenHeight() / 2, 300, 50)) {
+      tstr path = talloc(512);
+      sprintf(path, "resources/maps/%s.janet", buffer);
+      serialize_map(self, map, game, path);
+      push_message(self, FormatText("Exported [%s]", path));
+      self->state = EDITOR_STATE_NONE;
+    }
 
-        DoCenterXLabel(id++, (float)GetScreenWidth(),
-                       (float)GetScreenHeight() / 2 - 100, 30, "Region Name");
+    {
+      static float scroll_y = 0;
+      static float max_height = 0;
+      begin_scroll_panel_v(id++, GetScreenWidth() / 2 - 150.0f,
+                           GetScreenHeight() / 2 + 20 + 30 * 2, 300 + 12, 300,
+                           &scroll_y, max_height);
 
-        static char buffer[100] = {'\0'};
-        if (DoTextInput(id++, buffer, 100, GetScreenWidth() / 2 - 150.0f,
-                        GetScreenHeight() / 2, 300, 50)) {
-            tstr path = talloc(512);
-            sprintf(path, "resources/maps/%s.janet", buffer);
+      max_height = 0;
+      for (int i = 2; i < self->num_maps; i++) {
+        if (do_btn(GetScreenWidth() / 2 - 150.0f,
+                   GetScreenHeight() / 2 + 20 + 30 * (i - 1.0f) - scroll_y, 300,
+                   30, self->maps[i])) {
+          const char *path = TextFormat("resources/maps/%s", self->maps[i]);
+          if (FileExists(path)) {
+            // reset_region_to_zero(game->map, game);
+            // load_region_from_script(game->map, path, game);
             serialize_map(self, map, game, path);
-            push_message(self, FormatText("Exported [%s]", path));
             self->state = EDITOR_STATE_NONE;
+          }
+        }
+        max_height += 30;
+      }
+
+      end_scroll_panel_v();
+    }
+
+    if (do_btn(GetScreenWidth() / 2.f + 200, GetScreenHeight() / 2.0f, 30, 30,
+               "X")) {
+      self->state = EDITOR_STATE_NONE;
+    }
+
+    Lock();
+
+  } else if (self->state == EDITOR_STATE_EXIT_PLACEMENT_MODAL) {
+    id += 100;
+    do_modal();
+    Unlock();
+
+    game->lock_camera = true;
+
+    const char *title = "Dest map name";
+    Vector2 size = MeasureTextEx(GetFont(), title, 30, 1);
+
+    static char dest_buffer[512] = {'\0'};
+
+    float cursor_y = GetScreenHeight() / 2 - 200;
+    do_label(title, GetScreenWidth() / 2 - size.x - 6, cursor_y, size.x + 20,
+             size.y + 4, 30);
+
+    do_text_input(id++, dest_buffer, 512, GetScreenWidth() / 2 + 6, cursor_y,
+                  200, size.y + 4);
+
+    cursor_y += size.y + 4 + 8;
+
+    const char *title_2 = "This door id";
+    size = MeasureTextEx(GetFont(), title_2, 30, 1);
+    do_label(title_2, GetScreenWidth() / 2 - size.x - 6, cursor_y, size.x + 20,
+             size.y + 4, 30);
+
+    static int door_id = 0;
+    do_incrementer(id++, GetScreenWidth() / 2 + 6, cursor_y, size.y + 4,
+                   size.y + 4, &door_id, 20);
+
+    cursor_y += size.y + 4 + 8;
+
+    const char *title_3 = "Dest door id";
+    size = MeasureTextEx(GetFont(), title_3, 30, 1);
+    do_label(title_3, GetScreenWidth() / 2 - size.x - 6, cursor_y, size.x + 20,
+             size.y + 4, 30);
+
+    static int dest_door_id = 0;
+    do_incrementer(id++, GetScreenWidth() / 2 + 6, cursor_y, size.y + 4,
+                   size.y + 4, &dest_door_id, 20);
+
+    cursor_y += size.y + 4 + 8;
+
+    if (do_btn(GetScreenWidth() / 2 + 200, GetScreenHeight() / 2, 30, 30,
+               "X")) {
+      self->state = EDITOR_STATE_NONE;
+    }
+
+    if (do_btn(GetScreenWidth() / 2 - 100, cursor_y, 200, 30, "Place")) {
+      Vector3 loc = {0};
+      bool hit =
+          get_mouse_placement_loc(game, self->y * (int)(GLOBAL_SCALE), &loc);
+      add_exit(map, loc, door_id, dest_door_id, dest_buffer);
+
+      self->state = EDITOR_STATE_NONE;
+    }
+
+    Lock();
+  } else {
+    Unlock();
+  }
+
+  if (last != self->object_placement_type) {
+    self->model = 0;
+  }
+
+  const float panel_w = 400;
+
+  // # Models
+  {
+    do_frame(400.0f, self->models_panel_y + 30, 400, GetScreenHeight(), 0.8f);
+
+    const float lx = 400.0f;
+
+    float cursor_y = self->models_panel_y;
+
+    if (do_btn(lx, cursor_y, 200, 30,
+               TextFormat("%s Models",
+                          ((self->state == EDITOR_STATE_MODEL_SELECTOR_MODAL)
+                               ? "+"
+                               : "-")))) {
+      toggle_model_selector_modal(self);
+    }
+
+    if (self->state == EDITOR_STATE_MODEL_SELECTOR_MODAL) {
+      self->models_panel_y =
+          lerp(GetFrameTime() * 10.0f, self->models_panel_y, 30);
+
+      cursor_y += 30;
+
+      const float models_panel_w = 200;
+
+      static float scroll_y = 0;
+      static float max_height = 300;
+      begin_scroll_panel_v(id++, lx + 1, cursor_y + 1, models_panel_w + 18 - 1,
+                           GetScreenHeight() - 1, &scroll_y, max_height);
+
+      cursor_y += 30;
+
+      max_height = 0;
+      for (int i = TEX_WALL_1; i < map->num_models; i++) {
+        const float size = models_panel_w - 10;
+        Model model = map->models[i];
+        Texture2D texture = model.materials[0].maps[MAP_DIFFUSE].texture;
+
+        Vector3 cpos = game->camera->position;
+
+        Transform transform = transform_translation((Vector3){0, 0, 0});
+
+        draw_model(gfx, &model, transform, WHITE);
+
+        // DrawTexturePro(
+        //     texture, (Rectangle){0, 0, texture.width,
+        //     texture.height}, (Rectangle){lx + 30, cursor_y -
+        //     scroll_y, size, size}, Vector2Zero(), 0.0f, WHITE);
+
+        if (do_tex_btn(lx + 10, cursor_y - scroll_y, size, size, "", texture)) {
+          self->model = i;
+          self->state = EDITOR_STATE_NONE;
         }
 
-        {
-            static float scroll_y = 0;
-            static float max_height = 0;
-            BeginScrollPanelV(id++, GetScreenWidth() / 2 - 150.0f,
-                              GetScreenHeight() / 2 + 20 + 30 * 2, 300 + 12,
-                              300, &scroll_y, max_height);
-
-            max_height = 0;
-            for (int i = 2; i < self->num_maps; i++) {
-                if (DoBtn(
-                        id++, GetScreenWidth() / 2 - 150.0f,
-                        GetScreenHeight() / 2 + 20 + 30 * (i - 1.0f) - scroll_y,
-                        300, 30, self->maps[i])) {
-                    const char* path =
-                        TextFormat("resources/maps/%s", self->maps[i]);
-                    if (FileExists(path)) {
-                        // reset_region_to_zero(game->map, game);
-                        // load_region_from_script(game->map, path, game);
-                        serialize_map(self, map, game, path);
-                        self->state = EDITOR_STATE_NONE;
-                    }
-                }
-                max_height += 30;
-            }
-
-            EndScrollPanelV();
+        if (self->model == i) {
+          DrawRectangleLinesEx(
+              (Rectangle){lx + 10, cursor_y - scroll_y, size, size}, 2, RED);
         }
 
-        if (DoBtn(id++, GetScreenWidth() / 2.f + 200, GetScreenHeight() / 2.0f,
-                  30, 30, "X")) {
-            self->state = EDITOR_STATE_NONE;
-        }
+        cursor_y += size + 8;
+        max_height += size + 8;
+      }
 
-        Lock();
+      id += map->num_models + 10;
 
-    } else if (self->state == EDITOR_STATE_EXIT_PLACEMENT_MODAL) {
-        id += 100;
-        DoModal();
-        Unlock();
-
-        game->lock_camera = true;
-
-        const char* title = "Dest map name";
-        Vector2 size = MeasureTextEx(GetFont(), title, 30, 1);
-
-        static char dest_buffer[512] = {'\0'};
-
-        float cursor_y = GetScreenHeight() / 2 - 200;
-        DoLabel(id++, title, GetScreenWidth() / 2 - size.x - 6, cursor_y,
-                size.x + 20, size.y + 4, 30);
-
-        DoTextInput(id++, dest_buffer, 512, GetScreenWidth() / 2 + 6, cursor_y,
-                    200, size.y + 4);
-
-        cursor_y += size.y + 4 + 8;
-
-        const char* title_2 = "This door id";
-        size = MeasureTextEx(GetFont(), title_2, 30, 1);
-        DoLabel(id++, title_2, GetScreenWidth() / 2 - size.x - 6, cursor_y,
-                size.x + 20, size.y + 4, 30);
-
-        static int door_id = 0;
-        DoIncrementer(id++, GetScreenWidth() / 2 + 6, cursor_y, size.y + 4,
-                      size.y + 4, &door_id, 20);
-
-        cursor_y += size.y + 4 + 8;
-
-        const char* title_3 = "Dest door id";
-        size = MeasureTextEx(GetFont(), title_3, 30, 1);
-        DoLabel(id++, title_3, GetScreenWidth() / 2 - size.x - 6, cursor_y,
-                size.x + 20, size.y + 4, 30);
-
-        static int dest_door_id = 0;
-        DoIncrementer(id++, GetScreenWidth() / 2 + 6, cursor_y, size.y + 4,
-                      size.y + 4, &dest_door_id, 20);
-
-        cursor_y += size.y + 4 + 8;
-
-        if (DoBtn(id++, GetScreenWidth() / 2 + 200, GetScreenHeight() / 2, 30,
-                  30, "X")) {
-            self->state = EDITOR_STATE_NONE;
-        }
-
-        if (DoBtn(id++, GetScreenWidth() / 2 - 100, cursor_y, 200, 30,
-                  "Place")) {
-            Vector3 loc = {0};
-            bool hit = get_mouse_placement_loc(
-                game, self->y * (int)(GLOBAL_SCALE), &loc);
-            add_exit(map, loc, door_id, dest_door_id, dest_buffer);
-
-            self->state = EDITOR_STATE_NONE;
-        }
-
-        Lock();
+      end_scroll_panel_v();
     } else {
-        Unlock();
+      self->models_panel_y = lerp(GetFrameTime() * 10.0f, self->models_panel_y,
+                                  GetScreenHeight() - 30);
+    }
+  }
+
+  // Lights
+  {
+    do_frame(GetScreenWidth() - 400.0f, self->lights_panel_y + 30, 400,
+             GetScreenHeight(), 0.8f);
+
+    const float lx = GetScreenWidth() - panel_w;
+
+    float cursor_y = self->lights_panel_y;
+
+    if (do_btn(lx, cursor_y, 200, 30,
+               TextFormat(
+                   "%s Lights",
+                   ((self->state == EDITOR_STATE_LIGHTS_MODAL) ? "+" : "-")))) {
+      if (self->state != EDITOR_STATE_LIGHTS_MODAL) {
+        self->state = EDITOR_STATE_LIGHTS_MODAL;
+      } else {
+        self->state = EDITOR_STATE_NONE;
+      }
     }
 
-    if (last != self->object_placement_type) {
-        self->model = 0;
-    }
+    if (self->state == EDITOR_STATE_LIGHTS_MODAL) {
+      self->lights_panel_y =
+          lerp(GetFrameTime() * 10.0f, self->lights_panel_y, 30);
+      // Do lights panel
+      cursor_y += 30;
 
-    const float panel_w = 400;
+      if (do_btn(lx + 2, cursor_y + 2, 30, 30, "+")) {
+        Light *light = &game->assets->lights[game->assets->num_lights++];
+        light->enabled = true;
+        light->color = WHITE;
+        UpdateLightValues(game->assets->shaders[SHADER_PHONG_LIGHTING], *light);
+      }
 
-    // # Models
-    {
-        DoFrame(id++, 400.0f, self->models_panel_y + 30, 400, GetScreenHeight(),
-                0.8f);
+      cursor_y += 32 + 2;
 
-        const float lx = 400.0f;
+      if (do_collapsing_header(id++, "Sun", lx + 10, cursor_y, panel_w - 20,
+                               40)) {
+        cursor_y += 40 + 2;
 
-        float cursor_y = self->models_panel_y;
+        do_label("Direction", lx + 30, cursor_y, 200, 30, 20);
 
-        if (DoBtn(id++, lx, cursor_y, 200, 30,
-                  TextFormat("%s Models",
-                             ((self->state == EDITOR_STATE_MODEL_SELECTOR_MODAL)
-                                  ? "+"
-                                  : "-")))) {
-            toggle_model_selector_modal(self);
-        }
+        Vector3 test = {0};
+        do_drag_float_3(&id, lx + 130, cursor_y, 300 - 64, 24,
+                        &game->assets->sun.direction, 0.1f);
+        id++;
 
-        if (self->state == EDITOR_STATE_MODEL_SELECTOR_MODAL) {
-            self->models_panel_y =
-                lerp(GetFrameTime() * 10.0f, self->models_panel_y, 30);
+        cursor_y += 32;
 
-            cursor_y += 30;
+        do_label("Diffuse", lx + 30, cursor_y, 100, 30, 20);
 
-            const float models_panel_w = 200;
+        Color color = {255};
+        do_color_drag_float_4(&id, lx + 30 + 100, cursor_y, 300 - 64, 24,
+                              &game->assets->sun.diffuse);
+        id++;
 
-            static float scroll_y = 0;
-            static float max_height = 300;
-            BeginScrollPanelV(id++, lx + 1, cursor_y + 1,
-                              models_panel_w + 18 - 1, GetScreenHeight() - 1,
-                              &scroll_y, max_height);
+        cursor_y += 26;
 
-            cursor_y += 30;
+        do_label("Ambient", lx + 30, cursor_y, 100, 30, 20);
+        do_color_drag_float_4(&id, lx + 30 + 100, cursor_y, 300 - 64, 24,
+                              &game->assets->sun.ambient);
+        id++;
 
-            max_height = 0;
-            for (int i = TEX_WALL_1; i < map->num_models; i++) {
-                const float size = models_panel_w - 10;
-                Model model = map->models[i];
-                Texture2D texture =
-                    model.materials[0].maps[MAP_DIFFUSE].texture;
+        UpdateSunValue(*shader, game->assets->sun);
+      }
 
-                Vector3 cpos = game->camera->position;
+      cursor_y += 32 + 2;
 
-                Transform transform = transform_translation((Vector3){0, 0, 0});
-
-                draw_model(gfx, &model, transform, WHITE);
-
-                // DrawTexturePro(
-                //     texture, (Rectangle){0, 0, texture.width,
-                //     texture.height}, (Rectangle){lx + 30, cursor_y -
-                //     scroll_y, size, size}, Vector2Zero(), 0.0f, WHITE);
-
-                if (DoTexBtn(id++, lx + 10, cursor_y - scroll_y, size, size, "",
-                             texture)) {
-                    self->model = i;
-                    self->state = EDITOR_STATE_NONE;
-                }
-
-                if (self->model == i) {
-                    DrawRectangleLinesEx(
-                        (Rectangle){lx + 10, cursor_y - scroll_y, size, size},
-                        2, RED);
-                }
-
-                cursor_y += size + 8;
-                max_height += size + 8;
-            }
-
-            id += map->num_models + 10;
-
-            EndScrollPanelV();
-        } else {
-            self->models_panel_y =
-                lerp(GetFrameTime() * 10.0f, self->models_panel_y,
-                     GetScreenHeight() - 30);
-        }
-    }
-
-    // Lights
-    {
-        DoFrame(id++, GetScreenWidth() - 400.0f, self->lights_panel_y + 30, 400,
-                GetScreenHeight(), 0.8f);
-
-        const float lx = GetScreenWidth() - panel_w;
-
-        float cursor_y = self->lights_panel_y;
-
-        if (DoBtn(id++, lx, cursor_y, 200, 30,
-                  TextFormat(
-                      "%s Lights",
-                      ((self->state == EDITOR_STATE_LIGHTS_MODAL) ? "+"
-                                                                  : "-")))) {
-            if (self->state != EDITOR_STATE_LIGHTS_MODAL) {
-                self->state = EDITOR_STATE_LIGHTS_MODAL;
-            } else {
-                self->state = EDITOR_STATE_NONE;
-            }
-        }
-
-        if (self->state == EDITOR_STATE_LIGHTS_MODAL) {
-            self->lights_panel_y =
-                lerp(GetFrameTime() * 10.0f, self->lights_panel_y, 30);
-            // Do lights panel
-            cursor_y += 30;
-
-            if (DoBtn(id++, lx + 2, cursor_y + 2, 30, 30, "+")) {
-                Light* light =
-                    &game->assets->lights[game->assets->num_lights++];
-                light->enabled = true;
-                light->color = WHITE;
-                UpdateLightValues(game->assets->shaders[SHADER_PHONG_LIGHTING],
-                                  *light);
-            }
-
-            cursor_y += 32 + 2;
-
-            if (DoCollapsingHeader(id++, "Sun", lx + 10, cursor_y, panel_w - 20,
-                                   40)) {
-                cursor_y += 40 + 2;
-
-                DoLabel(id++, "Direction", lx + 30, cursor_y, 200, 30, 20);
-
-                Vector3 test = {0};
-                DoDragFloat3(&id, lx + 130, cursor_y, 300 - 64, 24,
-                             &game->assets->sun.direction, 0.1f);
-                id++;
-
-                cursor_y += 32;
-
-                DoLabel(id++, "Diffuse", lx + 30, cursor_y, 100, 30, 20);
-
-                Color color = {255};
-                DoColorDragFloat4(&id, lx + 30 + 100, cursor_y, 300 - 64, 24,
-                                  &game->assets->sun.diffuse);
-                id++;
-
-                cursor_y += 26;
-
-                DoLabel(id++, "Ambient", lx + 30, cursor_y, 100, 30, 20);
-                DoColorDragFloat4(&id, lx + 30 + 100, cursor_y, 300 - 64, 24,
-                                  &game->assets->sun.ambient);
-                id++;
-
-                UpdateSunValue(*shader, game->assets->sun);
-            }
-
-            cursor_y += 32 + 2;
-
-            for (int i = 0; i < game->assets->num_lights; i++) {
-                Light light = game->assets->lights[i];
-
-                if (DoCollapsingHeader(id++, TextFormat("%s[%d]", "Light", i),
-                                       lx + 10, cursor_y, panel_w - 20, 40)) {
-                    cursor_y += 40 + 2;
-
-                    DoLabel(id++, "Disabled", lx + 30, cursor_y, 100, 30, 20);
-                    game->assets->lights[i].enabled =
-                        !DoCheckBox(id++, lx + 30 + 100, cursor_y, 30, 30);
-
-                    if (DoBtn(id++, lx + 30 + 130 + 10, cursor_y, 100, 30,
-                              "Grab")) {
-                        self->light_grabbed = i;
-                    }
-
-                    cursor_y += 32;
-                    DoLabel(id++, "Position", lx + 30, cursor_y, 200, 30, 20);
-
-                    DoDragFloat3(&id, lx + 130, cursor_y, 300 - 64, 24,
-                                 &game->assets->lights[i].position, 0.1f);
-
-                    cursor_y += 26;
-
-                    DoLabel(id++, "Color", lx + 30, cursor_y, 100, 30, 20);
-
-                    DoColorDragFloat4(&id, lx + 30 + 100, cursor_y, 300 - 64,
-                                      24, &game->assets->lights[i].color);
-
-                    cursor_y += 28;
-
-                    UpdateLightValues(*shader, game->assets->lights[i]);
-
-                } else {
-                    cursor_y += 40 + 2;
-                }
-            }
-
-        } else {
-            self->lights_panel_y =
-                lerp(GetFrameTime() * 10.0f, self->lights_panel_y,
-                     GetScreenHeight() - 30);
-        }
-
-        id += 500;
-
-        int y = 0;
-        for (int i = self->num_notes - 1; i >= 0; i--) {
-            Note note = self->notes[i];
-
-            if (!note.active) continue;
-
-            Rectangle r = {
-                (float)GetScreenWidth() - 200.0f,
-                (float)GetScreenHeight() - (NOTE_HEIGHT * (y + 1.0f)), 200,
-                NOTE_HEIGHT};
-            DoFrame(id++, r.x - 4.0f, r.y - 4.0f - ((y + 1.0f) * 4.0f),
-                    r.width + 8.0f, r.height + 8.0f, 1.0f);
-            DoLabel(id - 1, note.mesg, r.x, r.y - ((y + 1.0f) * 4.0f), r.width,
-                    r.height, 20);
-            y++;
-        }
-    }
-}
-
-void serialize_map(Ed* editor, Region* map, Game* game, const char* path) {
-    StringBuilder *sb = sb_create();
-    char* result;
-
-    sb_appendf(sb, "@{ :size @[%d %d]\n   :start @[%f %f]\n   :sun-direction @[%f %f %f]\n",
-               map->width, map->height, map->player_x, map->player_z,
-               game->assets->sun.direction.x, game->assets->sun.direction.y,
-               game->assets->sun.direction.z);
-
-    sb_append(sb, "    :layers @[");
-
-    for (int layer = 0; layer < MAX_NUM_LAYERS; layer++) {
-        sb_append(sb, "\n      @{ :data ``");
-
-        for (int y = 0; y < map->height; y++) {
-            for (int x = 0; x < map->width; x++) {
-                Wall wall = map->walls[layer][x + y * map->width];
-                if (wall.active) {
-                    sb_appendf(sb, "%d", wall.model + 1);
-                } else {
-                    sb_append(sb, ".");
-                }
-            }
-        }
-        sb_append(sb, "`` }");
-    }
-
-    sb_append(sb, "]\n   :props @[");
-
-    for (int prop = 0; prop < map->num_props; prop++) {
-        Prop p = map->props[prop];
-        sb_appendf(sb, "@[%f %f %f %f %f %f %f %f]\n", p.region.x,
-                       p.region.y, p.region.width, p.region.height, p.position.x,
-                       p.position.y, p.position.z, p.scale);
-    }
-
-    sb_append(sb, "]\n   :lights @[");
-
-    for (int i = 0; i < game->assets->num_lights; i++) {
+      for (int i = 0; i < game->assets->num_lights; i++) {
         Light light = game->assets->lights[i];
 
-        sb_appendf(sb, "\n      @[%s  %f %f %f  %d %d %d]",
-                      (light.enabled ? "true" : "false"), light.position.x,
-                      light.position.y, light.position.z, light.color.r,
-                      light.color.g, light.color.b);
+        if (do_collapsing_header(id++, TextFormat("%s[%d]", "Light", i),
+                                 lx + 10, cursor_y, panel_w - 20, 40)) {
+          cursor_y += 40 + 2;
+
+          do_label("Disabled", lx + 30, cursor_y, 100, 30, 20);
+          game->assets->lights[i].enabled =
+              !do_check_box(id++, lx + 30 + 100, cursor_y, 30, 30);
+
+          if (do_btn(lx + 30 + 130 + 10, cursor_y, 100, 30, "Grab")) {
+            self->light_grabbed = i;
+          }
+
+          cursor_y += 32;
+          do_label("Position", lx + 30, cursor_y, 200, 30, 20);
+
+          do_drag_float_3(&id, lx + 130, cursor_y, 300 - 64, 24,
+                          &game->assets->lights[i].position, 0.1f);
+
+          cursor_y += 26;
+
+          do_label("Color", lx + 30, cursor_y, 100, 30, 20);
+
+          do_color_drag_float_4(&id, lx + 30 + 100, cursor_y, 300 - 64, 24,
+                                &game->assets->lights[i].color);
+
+          cursor_y += 28;
+
+          UpdateLightValues(*shader, game->assets->lights[i]);
+
+        } else {
+          cursor_y += 40 + 2;
+        }
+      }
+
+    } else {
+      self->lights_panel_y = lerp(GetFrameTime() * 10.0f, self->lights_panel_y,
+                                  GetScreenHeight() - 30);
     }
 
-    sb_append(sb, "]\n   :actors @[");
+    id += 500;
 
-    for (int i = 0; i < map->num_spawns; i++) {
-        ActorSpawn s = map->spawns[i];
-        sb_appendf(sb, "\n      @[%d  %f %f %f]", s.type - ACTOR_GIRL_1,
-                      s.position.x, s.position.y, s.position.z);
+    int y = 0;
+    for (int i = self->num_notes - 1; i >= 0; i--) {
+      Note note = self->notes[i];
+
+      if (!note.active)
+        continue;
+
+      Rectangle r = {(float)GetScreenWidth() - 200.0f,
+                     (float)GetScreenHeight() - (NOTE_HEIGHT * (y + 1.0f)), 200,
+                     NOTE_HEIGHT};
+      do_frame(r.x - 4.0f, r.y - 4.0f - ((y + 1.0f) * 4.0f), r.width + 8.0f,
+               r.height + 8.0f, 1.0f);
+      do_label(note.mesg, r.x, r.y - ((y + 1.0f) * 4.0f), r.width, r.height,
+               20);
+      y++;
     }
-
-    sb_append(sb, "]\n   :exits @[");
-
-    for (int i = 0; i < map->num_exits; i++) {
-        Exit e = map->exits[i];
-        //                           id   x  y  z  destId destPath
-        sb_appendf(sb, "\n      @[%d  %f %f %f  %d \"%s\"]", e.id,
-                      e.position.x, e.position.y, e.position.z, e.dest_id,
-                      e.dest_path);
-    }
-
-    sb_append(sb, "]}");
-
-    result = sb_concat(sb);
-
-    FILE* f = fopen(path, "w");
-    fwrite(result, sizeof(char), strlen(result), f);
-    fclose(f);
-
-    free(result);
-    sb_free(sb);
-
-    return;
+  }
 }
 
-void unserialize_map(Ed* editor, Region* map, Game* game, const char* path) {}
+void serialize_map(Ed *editor, Region *map, Game *game, const char *path) {
+  StringBuilder *sb = sb_create();
+  char *result;
+
+  sb_appendf(
+      sb,
+      "@{ :size @[%d %d]\n   :start @[%f %f]\n   :sun-direction @[%f %f %f]\n",
+      map->width, map->height, map->player_x, map->player_z,
+      game->assets->sun.direction.x, game->assets->sun.direction.y,
+      game->assets->sun.direction.z);
+
+  sb_append(sb, "    :layers @[");
+
+  for (int layer = 0; layer < MAX_NUM_LAYERS; layer++) {
+    sb_append(sb, "\n      @{ :data ``");
+
+    for (int y = 0; y < map->height; y++) {
+      for (int x = 0; x < map->width; x++) {
+        Wall wall = map->walls[layer][x + y * map->width];
+        if (wall.active) {
+          sb_appendf(sb, "%d", wall.model + 1);
+        } else {
+          sb_append(sb, ".");
+        }
+      }
+    }
+    sb_append(sb, "`` }");
+  }
+
+  sb_append(sb, "]\n   :props @[");
+
+  for (int prop = 0; prop < map->num_props; prop++) {
+    Prop p = map->props[prop];
+    sb_appendf(sb, "@[%f %f %f %f %f %f %f %f]\n", p.region.x, p.region.y,
+               p.region.width, p.region.height, p.position.x, p.position.y,
+               p.position.z, p.scale);
+  }
+
+  sb_append(sb, "]\n   :lights @[");
+
+  for (int i = 0; i < game->assets->num_lights; i++) {
+    Light light = game->assets->lights[i];
+
+    sb_appendf(sb, "\n      @[%s  %f %f %f  %d %d %d]",
+               (light.enabled ? "true" : "false"), light.position.x,
+               light.position.y, light.position.z, light.color.r, light.color.g,
+               light.color.b);
+  }
+
+  sb_append(sb, "]\n   :actors @[");
+
+  for (int i = 0; i < map->num_spawns; i++) {
+    ActorSpawn s = map->spawns[i];
+    sb_appendf(sb, "\n      @[%d  %f %f %f]", s.type - ACTOR_GIRL_1,
+               s.position.x, s.position.y, s.position.z);
+  }
+
+  sb_append(sb, "]\n   :exits @[");
+
+  for (int i = 0; i < map->num_exits; i++) {
+    Exit e = map->exits[i];
+    //                           id   x  y  z  destId destPath
+    sb_appendf(sb, "\n      @[%d  %f %f %f  %d \"%s\"]", e.id, e.position.x,
+               e.position.y, e.position.z, e.dest_id, e.dest_path);
+  }
+
+  sb_append(sb, "]}");
+
+  result = sb_concat(sb);
+
+  FILE *f = fopen(path, "w");
+  fwrite(result, sizeof(char), strlen(result), f);
+  fclose(f);
+
+  free(result);
+  sb_free(sb);
+
+  return;
+}
+
+void unserialize_map(Ed *editor, Region *map, Game *game, const char *path) {}
 
 // #endif

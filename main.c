@@ -163,10 +163,10 @@ void update_and_render_menu_scene(MainMenuState *state, Game *game,
   const float shw = GetScreenWidth() / 2;
   const float shh = GetScreenHeight() / 2;
 
-  DoCenterXLabel(100, GetScreenWidth(), 30, 100, "Benis Shooter 3D");
+  do_center_x_label(GetScreenWidth(), 30, 100, "Benis Shooter 3D");
 
-  DoCenterXLabel(100, GetScreenWidth() + cosf(GetTime() * 2) * 50.0f, 120, 30,
-                 TextFormat("Edit Version: %s", BENIS_VERSION));
+  do_center_x_label(GetScreenWidth() + cosf(GetTime() * 2) * 50.0f, 120, 30,
+                    TextFormat("Edit Version: %s", BENIS_VERSION));
 
   // Buttons
   int id = 0;
@@ -193,9 +193,9 @@ void update_and_render_menu_scene(MainMenuState *state, Game *game,
   const float xx = -btn_w + (float)ease(EASING, t) * btn_w
 
 #define DO_BTN(txt)                                                            \
-  DoBtn(id, shw + xx - btn_w / 2 - mo / 2,                                     \
-        (shh - (tot_h / 2)) + (btn_h + margin) * id - mo / 2, btn_w + mo,      \
-        btn_h + mo, txt)
+  do_btn(shw + xx - btn_w / 2 - mo / 2,                                        \
+         (shh - (tot_h / 2)) + (btn_h + margin) * id - mo / 2, btn_w + mo,     \
+         btn_h + mo, txt)
 
 #define DO_SCALING()                                                           \
   if (Hot(id))                                                                 \
@@ -208,7 +208,7 @@ void update_and_render_menu_scene(MainMenuState *state, Game *game,
     GEASE(1.0f);
     if (DO_BTN("Start New Game :)")) {
       game->scene = SCENE_GAME;
-      ResetGui();
+      reset_gui();
     }
     if (Hot(id))
       shrink = false;
@@ -259,7 +259,7 @@ void update_and_render_menu_scene(MainMenuState *state, Game *game,
   }
 #endif
 
-  if (DoBtn(id++, shw + 300, (shh - (tot_h / 2)), 200, btn_h, "Edit")) {
+  if (do_btn(shw + 300, (shh - (tot_h / 2)), 200, btn_h, "Edit")) {
     game->scene = SCENE_EDIT;
   }
 
@@ -271,15 +271,14 @@ void update_and_render_menu_scene(MainMenuState *state, Game *game,
     scaler_t = 0.0f;
 
   if (do_controls_modal) {
-    DoModal();
+    do_modal();
     Unlock();
 
-    DoCenterXLabel(++id, GetScreenWidth(), 130, 30, "W|A|S|D / move");
-    DoCenterXLabel(++id, GetScreenWidth(), 160, 30,
-                   "Left click / throw orange");
-    DoCenterXLabel(++id, GetScreenWidth(), 190, 30,
-                   "Right click / throw pineapple bomb");
-    DoCenterXLabel(++id, GetScreenWidth(), 220, 30, "Escape / release mouse");
+    do_center_x_label(GetScreenWidth(), 130, 30, "W|A|S|D / move");
+    do_center_x_label(GetScreenWidth(), 160, 30, "Left click / throw orange");
+    do_center_x_label(GetScreenWidth(), 190, 30,
+                      "Right click / throw pineapple bomb");
+    do_center_x_label(GetScreenWidth(), 220, 30, "Escape / release mouse");
 
     if (IsMouseButtonPressed(MOUSE_LEFT_BUTTON) && !first) {
       do_controls_modal = false;
@@ -290,17 +289,17 @@ void update_and_render_menu_scene(MainMenuState *state, Game *game,
 
     Lock();
   } else if (do_exit_modal) {
-    DoModal();
+    do_modal();
 
     Unlock();
     const float x = shw - 50;
     const float y = shh - 100;
-    DoCenterXLabel(++id, (float)GetScreenWidth(), 200, 60, "Are you sure?");
-    if (DoBtn(++id, x - 55, y, 100, 100, "YES")) {
+    do_center_x_label((float)GetScreenWidth(), 200, 60, "Are you sure?");
+    if (do_btn(x - 55, y, 100, 100, "YES")) {
       do_exit_modal = false;
       game->state = STATE_QUITTING;
     }
-    if (DoBtn(id + 1, x + 55, y, 100, 100, "NO"))
+    if (do_btn(x + 55, y, 100, 100, "NO"))
       do_exit_modal = false;
     Lock();
   } else {
@@ -400,7 +399,7 @@ void update_and_render_game_scene_with_editor(Game *game, EcsWorld *ecs,
   draw_final_texture_to_screen(gfx);
 
   // DrawTexture(gfx->render_texture.texture, 0, 0, WHITE);
-  UpdateGui();
+  update_gui();
   draw_player_gui(game, map);
 
   // #if defined _DEBUG
@@ -427,8 +426,7 @@ int main() {
 
   InitWindow(SCREEN_WIDTH, SCREEN_HEIGHT, "DevWindow");
 
-  const int refresh_rate = GetMonitorRefreshRate(0);
-  SetTargetFPS(refresh_rate);
+  SetTargetFPS(60);
   SetExitKey(0);
 
 #if 1
@@ -481,7 +479,7 @@ int main() {
 
   ParticleSystem *particle_sys = create_particle_system();
 
-  InitGui();
+  init_gui();
 
   game->map = create_region_from_script("resources/maps/edit.janet", game);
   Region *map = game->map;
