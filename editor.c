@@ -14,6 +14,8 @@ static Game *game_s = NULL;
 static Ed *editor_s = NULL;
 static Region *map_s = NULL;
 
+const float panel_w = 400;
+
 // TODO(Dustin):
 //  Create a on exit save modal
 // That way we can remove the statics above and just have the editor
@@ -156,6 +158,13 @@ void render_console(Ed *self, Region *map, Game *game, int id) {
 void toggle_model_selector_modal(Ed *self) {
   if (self->state != EDITOR_STATE_MODEL_SELECTOR_MODAL)
     self->state = EDITOR_STATE_MODEL_SELECTOR_MODAL;
+  else
+    self->state = EDITOR_STATE_NONE;
+}
+
+void toggle_model_node_tree_modal(Ed *self) {
+  if (self->state != EDITOR_STATE_NODE_TREE_MODAL)
+    self->state = EDITOR_STATE_NODE_TREE_MODAL;
   else
     self->state = EDITOR_STATE_NONE;
 }
@@ -570,6 +579,207 @@ int sort_levenshtein(const void *a, const void *b) {
   return 0;
 }
 
+void do_lights_modal(Ed *self, GfxState *gfx, Game *game, Region *map) {
+  int id = 600;
+  Shader *shader = &game->assets->shaders[SHADER_PHONG_LIGHTING];
+
+  do_frame(GetScreenWidth() - 400.0f, self->lights_panel_y + 30, 400,
+           GetScreenHeight(), 0.8f);
+
+  const float lx = GetScreenWidth() - panel_w;
+
+  float cursor_y = self->lights_panel_y;
+
+  if (do_btn(lx, cursor_y, 200, 30,
+             TextFormat(
+                 "%s Lights",
+                 ((self->state == EDITOR_STATE_LIGHTS_MODAL) ? "+" : "-")))) {
+    if (self->state != EDITOR_STATE_LIGHTS_MODAL) {
+      self->state = EDITOR_STATE_LIGHTS_MODAL;
+    } else {
+      self->state = EDITOR_STATE_NONE;
+    }
+  }
+
+  if (self->state == EDITOR_STATE_LIGHTS_MODAL) {
+    self->lights_panel_y =
+        lerp(GetFrameTime() * 10.0f, self->lights_panel_y, 30);
+    // Do lights panel
+    cursor_y += 30;
+
+    if (do_btn(lx + 2, cursor_y + 2, 30, 30, "+")) {
+      Light *light = &game->assets->lights[game->assets->num_lights++];
+      light->enabled = true;
+      light->color = WHITE;
+      UpdateLightValues(game->assets->shaders[SHADER_PHONG_LIGHTING], *light);
+    }
+
+    cursor_y += 32 + 2;
+
+    if (do_collapsing_header(id++, "Sun", lx + 10, cursor_y, panel_w - 20,
+                             40)) {
+      cursor_y += 40 + 2;
+
+      do_label("Direction", lx + 30, cursor_y, 200, 30, 20);
+
+      Vector3 test = {0};
+      do_drag_float_3(&id, lx + 130, cursor_y, 300 - 64, 24,
+                      &game->assets->sun.direction, 0.1f);
+      id++;
+
+      cursor_y += 32;
+
+      do_label("Diffuse", lx + 30, cursor_y, 100, 30, 20);
+
+      Color color = {255};
+      do_color_drag_float_4(&id, lx + 30 + 100, cursor_y, 300 - 64, 24,
+                            &game->assets->sun.diffuse);
+      id++;
+
+      cursor_y += 26;
+
+      do_label("Ambient", lx + 30, cursor_y, 100, 30, 20);
+      do_color_drag_float_4(&id, lx + 30 + 100, cursor_y, 300 - 64, 24,
+                            &game->assets->sun.ambient);
+      id++;
+
+      UpdateSunValue(*shader, game->assets->sun);
+    }
+
+    cursor_y += 32 + 2;
+
+    for (int i = 0; i < game->assets->num_lights; i++) {
+      Light light = game->assets->lights[i];
+
+      if (do_collapsing_header(id++, TextFormat("%s[%d]", "Light", i), lx + 10,
+                               cursor_y, panel_w - 20, 40)) {
+        cursor_y += 40 + 2;
+
+        do_label("Disabled", lx + 30, cursor_y, 100, 30, 20);
+        game->assets->lights[i].enabled =
+            !do_check_box(id++, lx + 30 + 100, cursor_y, 30, 30);
+
+        if (do_btn(lx + 30 + 130 + 10, cursor_y, 100, 30, "Grab")) {
+          self->light_grabbed = i;
+        }
+
+        cursor_y += 32;
+        do_label("Position", lx + 30, cursor_y, 200, 30, 20);
+
+        do_drag_float_3(&id, lx + 130, cursor_y, 300 - 64, 24,
+                        &game->assets->lights[i].position, 0.1f);
+
+        cursor_y += 26;
+
+        do_label("Color", lx + 30, cursor_y, 100, 30, 20);
+
+        do_color_drag_float_4(&id, lx + 30 + 100, cursor_y, 300 - 64, 24,
+                              &game->assets->lights[i].color);
+
+        cursor_y += 28;
+
+        UpdateLightValues(*shader, game->assets->lights[i]);
+
+      } else {
+        cursor_y += 40 + 2;
+      }
+    }
+
+  } else {
+    self->lights_panel_y = lerp(GetFrameTime() * 10.0f, self->lights_panel_y,
+                                GetScreenHeight() - 30);
+  }
+
+  id += 500;
+
+  int y = 0;
+  for (int i = self->num_notes - 1; i >= 0; i--) {
+    Note note = self->notes[i];
+
+    if (!note.active)
+      continue;
+
+    Rectangle r = {(float)GetScreenWidth() - 200.0f,
+                   (float)GetScreenHeight() - (NOTE_HEIGHT * (y + 1.0f)), 200,
+                   NOTE_HEIGHT};
+    do_frame(r.x - 4.0f, r.y - 4.0f - ((y + 1.0f) * 4.0f), r.width + 8.0f,
+             r.height + 8.0f, 1.0f);
+    do_label(note.mesg, r.x, r.y - ((y + 1.0f) * 4.0f), r.width, r.height, 20);
+    y++;
+  }
+}
+
+void do_models_modal(Ed *self, GfxState *gfx, Game *game, Region *map) {
+  int id = 400;
+  do_frame(400.0f, self->models_panel_y + 30, 400, GetScreenHeight(), 0.8f);
+
+  const float lx = 400.0f;
+
+  float cursor_y = self->models_panel_y;
+
+  if (do_btn(lx, cursor_y, 200, 30,
+             TextFormat("%s Models",
+                        ((self->state == EDITOR_STATE_MODEL_SELECTOR_MODAL)
+                             ? "+"
+                             : "-")))) {
+    toggle_model_selector_modal(self);
+  }
+
+  if (self->state == EDITOR_STATE_MODEL_SELECTOR_MODAL) {
+    self->models_panel_y =
+        lerp(GetFrameTime() * 10.0f, self->models_panel_y, 30);
+
+    cursor_y += 30;
+
+    const float models_panel_w = 200;
+
+    static float scroll_y = 0;
+    static float max_height = 300;
+    begin_scroll_panel_v(id++, lx + 1, cursor_y + 1, models_panel_w + 18 - 1,
+                         GetScreenHeight() - 1, &scroll_y, max_height);
+
+    cursor_y += 30;
+
+    max_height = 0;
+    for (int i = TEX_WALL_1; i < map->num_models; i++) {
+      const float size = models_panel_w - 10;
+      Model model = map->models[i];
+      Texture2D texture = model.materials[0].maps[MAP_DIFFUSE].texture;
+
+      Vector3 cpos = game->camera->position;
+
+      Transform transform = transform_translation((Vector3){0, 0, 0});
+
+      draw_model(gfx, &model, transform, WHITE);
+
+      // DrawTexturePro(
+      //     texture, (Rectangle){0, 0, texture.width,
+      //     texture.height}, (Rectangle){lx + 30, cursor_y -
+      //     scroll_y, size, size}, Vector2Zero(), 0.0f, WHITE);
+
+      if (do_tex_btn(lx + 10, cursor_y - scroll_y, size, size, "", texture)) {
+        self->model = i;
+        self->state = EDITOR_STATE_NONE;
+      }
+
+      if (self->model == i) {
+        DrawRectangleLinesEx(
+            (Rectangle){lx + 10, cursor_y - scroll_y, size, size}, 2, RED);
+      }
+
+      cursor_y += size + 8;
+      max_height += size + 8;
+    }
+
+    id += map->num_models + 10;
+
+    end_scroll_panel_v();
+  } else {
+    self->models_panel_y = lerp(GetFrameTime() * 10.0f, self->models_panel_y,
+                                GetScreenHeight() - 30);
+  }
+}
+
 void render_editor_ui(Ed *self, GfxState *gfx, Region *map, Game *game) {
   Shader *shader = &game->assets->shaders[SHADER_PHONG_LIGHTING];
 
@@ -811,207 +1021,25 @@ void render_editor_ui(Ed *self, GfxState *gfx, Region *map, Game *game) {
     self->model = 0;
   }
 
-  const float panel_w = 400;
-
-  // # Models
+  // Node trees
   {
     do_frame(400.0f, self->models_panel_y + 30, 400, GetScreenHeight(), 0.8f);
 
-    const float lx = 400.0f;
+    const float lx = 620.0f;
 
     float cursor_y = self->models_panel_y;
 
-    if (do_btn(lx, cursor_y, 200, 30,
-               TextFormat("%s Models",
-                          ((self->state == EDITOR_STATE_MODEL_SELECTOR_MODAL)
-                               ? "+"
-                               : "-")))) {
-      toggle_model_selector_modal(self);
-    }
-
-    if (self->state == EDITOR_STATE_MODEL_SELECTOR_MODAL) {
-      self->models_panel_y =
-          lerp(GetFrameTime() * 10.0f, self->models_panel_y, 30);
-
-      cursor_y += 30;
-
-      const float models_panel_w = 200;
-
-      static float scroll_y = 0;
-      static float max_height = 300;
-      begin_scroll_panel_v(id++, lx + 1, cursor_y + 1, models_panel_w + 18 - 1,
-                           GetScreenHeight() - 1, &scroll_y, max_height);
-
-      cursor_y += 30;
-
-      max_height = 0;
-      for (int i = TEX_WALL_1; i < map->num_models; i++) {
-        const float size = models_panel_w - 10;
-        Model model = map->models[i];
-        Texture2D texture = model.materials[0].maps[MAP_DIFFUSE].texture;
-
-        Vector3 cpos = game->camera->position;
-
-        Transform transform = transform_translation((Vector3){0, 0, 0});
-
-        draw_model(gfx, &model, transform, WHITE);
-
-        // DrawTexturePro(
-        //     texture, (Rectangle){0, 0, texture.width,
-        //     texture.height}, (Rectangle){lx + 30, cursor_y -
-        //     scroll_y, size, size}, Vector2Zero(), 0.0f, WHITE);
-
-        if (do_tex_btn(lx + 10, cursor_y - scroll_y, size, size, "", texture)) {
-          self->model = i;
-          self->state = EDITOR_STATE_NONE;
-        }
-
-        if (self->model == i) {
-          DrawRectangleLinesEx(
-              (Rectangle){lx + 10, cursor_y - scroll_y, size, size}, 2, RED);
-        }
-
-        cursor_y += size + 8;
-        max_height += size + 8;
-      }
-
-      id += map->num_models + 10;
-
-      end_scroll_panel_v();
-    } else {
-      self->models_panel_y = lerp(GetFrameTime() * 10.0f, self->models_panel_y,
-                                  GetScreenHeight() - 30);
+    if (do_btn(
+            lx, cursor_y, 200, 30,
+            TextFormat(
+                "%s Scene",
+                ((self->state == EDITOR_STATE_NODE_TREE_MODAL) ? "+" : "-")))) {
+      toggle_model_node_tree_modal(self);
     }
   }
 
-  // Lights
-  {
-    do_frame(GetScreenWidth() - 400.0f, self->lights_panel_y + 30, 400,
-             GetScreenHeight(), 0.8f);
-
-    const float lx = GetScreenWidth() - panel_w;
-
-    float cursor_y = self->lights_panel_y;
-
-    if (do_btn(lx, cursor_y, 200, 30,
-               TextFormat(
-                   "%s Lights",
-                   ((self->state == EDITOR_STATE_LIGHTS_MODAL) ? "+" : "-")))) {
-      if (self->state != EDITOR_STATE_LIGHTS_MODAL) {
-        self->state = EDITOR_STATE_LIGHTS_MODAL;
-      } else {
-        self->state = EDITOR_STATE_NONE;
-      }
-    }
-
-    if (self->state == EDITOR_STATE_LIGHTS_MODAL) {
-      self->lights_panel_y =
-          lerp(GetFrameTime() * 10.0f, self->lights_panel_y, 30);
-      // Do lights panel
-      cursor_y += 30;
-
-      if (do_btn(lx + 2, cursor_y + 2, 30, 30, "+")) {
-        Light *light = &game->assets->lights[game->assets->num_lights++];
-        light->enabled = true;
-        light->color = WHITE;
-        UpdateLightValues(game->assets->shaders[SHADER_PHONG_LIGHTING], *light);
-      }
-
-      cursor_y += 32 + 2;
-
-      if (do_collapsing_header(id++, "Sun", lx + 10, cursor_y, panel_w - 20,
-                               40)) {
-        cursor_y += 40 + 2;
-
-        do_label("Direction", lx + 30, cursor_y, 200, 30, 20);
-
-        Vector3 test = {0};
-        do_drag_float_3(&id, lx + 130, cursor_y, 300 - 64, 24,
-                        &game->assets->sun.direction, 0.1f);
-        id++;
-
-        cursor_y += 32;
-
-        do_label("Diffuse", lx + 30, cursor_y, 100, 30, 20);
-
-        Color color = {255};
-        do_color_drag_float_4(&id, lx + 30 + 100, cursor_y, 300 - 64, 24,
-                              &game->assets->sun.diffuse);
-        id++;
-
-        cursor_y += 26;
-
-        do_label("Ambient", lx + 30, cursor_y, 100, 30, 20);
-        do_color_drag_float_4(&id, lx + 30 + 100, cursor_y, 300 - 64, 24,
-                              &game->assets->sun.ambient);
-        id++;
-
-        UpdateSunValue(*shader, game->assets->sun);
-      }
-
-      cursor_y += 32 + 2;
-
-      for (int i = 0; i < game->assets->num_lights; i++) {
-        Light light = game->assets->lights[i];
-
-        if (do_collapsing_header(id++, TextFormat("%s[%d]", "Light", i),
-                                 lx + 10, cursor_y, panel_w - 20, 40)) {
-          cursor_y += 40 + 2;
-
-          do_label("Disabled", lx + 30, cursor_y, 100, 30, 20);
-          game->assets->lights[i].enabled =
-              !do_check_box(id++, lx + 30 + 100, cursor_y, 30, 30);
-
-          if (do_btn(lx + 30 + 130 + 10, cursor_y, 100, 30, "Grab")) {
-            self->light_grabbed = i;
-          }
-
-          cursor_y += 32;
-          do_label("Position", lx + 30, cursor_y, 200, 30, 20);
-
-          do_drag_float_3(&id, lx + 130, cursor_y, 300 - 64, 24,
-                          &game->assets->lights[i].position, 0.1f);
-
-          cursor_y += 26;
-
-          do_label("Color", lx + 30, cursor_y, 100, 30, 20);
-
-          do_color_drag_float_4(&id, lx + 30 + 100, cursor_y, 300 - 64, 24,
-                                &game->assets->lights[i].color);
-
-          cursor_y += 28;
-
-          UpdateLightValues(*shader, game->assets->lights[i]);
-
-        } else {
-          cursor_y += 40 + 2;
-        }
-      }
-
-    } else {
-      self->lights_panel_y = lerp(GetFrameTime() * 10.0f, self->lights_panel_y,
-                                  GetScreenHeight() - 30);
-    }
-
-    id += 500;
-
-    int y = 0;
-    for (int i = self->num_notes - 1; i >= 0; i--) {
-      Note note = self->notes[i];
-
-      if (!note.active)
-        continue;
-
-      Rectangle r = {(float)GetScreenWidth() - 200.0f,
-                     (float)GetScreenHeight() - (NOTE_HEIGHT * (y + 1.0f)), 200,
-                     NOTE_HEIGHT};
-      do_frame(r.x - 4.0f, r.y - 4.0f - ((y + 1.0f) * 4.0f), r.width + 8.0f,
-               r.height + 8.0f, 1.0f);
-      do_label(note.mesg, r.x, r.y - ((y + 1.0f) * 4.0f), r.width, r.height,
-               20);
-      y++;
-    }
-  }
+  do_models_modal(self, gfx, game, map);
+  do_lights_modal(self, gfx, game, map);
 }
 
 void serialize_map(Ed *editor, Region *map, Game *game, const char *path) {
