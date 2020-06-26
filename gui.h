@@ -28,7 +28,7 @@ struct NState {
   Vector4 v;
 };
 
-#define MAX_NUM_STATES (4096)
+#define MAX_NUM_STATES (1000)
 
 static struct {
   struct NState states[MAX_NUM_STATES];
@@ -58,23 +58,18 @@ void do_label(const char *str, float x, float y, float width, float height,
               int font_size);
 
 void do_modal();
-bool do_text_input(NodeId id, char *buffer, size_t buffer_size, float x,
+bool do_text_input(char *buffer, int *cursor, size_t buffer_size, float x,
                    float y, float width, float height);
 
-int do_toggle_group_v(NodeId id, const char *names, float x, float y,
-                      float *out_width);
+void do_toggle_group_v(int *which, const char *names, float x, float y,
+                       float *out_width);
 
-bool do_check_box(NodeId id, float x, float y, float width, float height);
-bool do_collapsing_header(NodeId id, const char *label, float x, float y,
+bool do_check_box(bool *active, float x, float y, float width, float height);
+bool do_collapsing_header(bool *active, const char *label, float x, float y,
                           float width, float height);
 
 Vector4 CTV4(Color c);
 Color V4TC(Vector4 v);
-
-Color do_color_picker(NodeId *id, float x, float y, float width, float height);
-
-float do_slider(NodeId id, float x, float y, float width, float height,
-                float min, float max);
 
 bool do_drag_float(NodeId id, float x, float y, float width, float height,
                    float *value, float step);
@@ -85,8 +80,8 @@ bool do_drag_float_3(NodeId *id, float x, float y, float width, float height,
 bool do_color_drag_float_4(NodeId *id, float x, float y, float width,
                            float height, Color *color);
 
-int do_incrementer(NodeId id, float x, float y, float width, float height,
-                   int *v, float font_size);
+int do_incrementer(float x, float y, float width, float height, int *v,
+                   float font_size);
 
 void begin_scroll_panel_v(NodeId id, float x, float y, float width,
                           float height, float *scroll, float max_height);

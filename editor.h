@@ -77,6 +77,7 @@ typedef struct {
 
   float lights_panel_y;
   float models_panel_y;
+  float node_tree_panel_y;
 
   float console_y;
   float placement_toggle_height;

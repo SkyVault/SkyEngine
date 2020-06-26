@@ -201,7 +201,6 @@ DS	janet.c	/^#define DS /;"	d	file:
 DeviceName	include/GL/wglew.h	/^  CHAR DeviceName[32]; $/;"	m	struct:_GPU_DEVICE	typeref:typename:CHAR[32]
 DeviceString	include/GL/wglew.h	/^  CHAR DeviceString[128]; $/;"	m	struct:_GPU_DEVICE	typeref:typename:CHAR[128]
 Dict	dict.h	/^} Dict;$/;"	t	typeref:struct:__anonf8c72ddf0108
-DoDragRegionFloat	gui.c	/^bool DoDragRegionFloat(NodeId id, float x, float y, float width, float height,$/;"	f	typeref:typename:bool
 Door	components.h	/^} Door;$/;"	t	typeref:struct:__anon409636a10408
 DoorState	components.h	/^enum DoorState {$/;"	g
 Door_Closed	components.h	/^    Door_Closed,$/;"	e	enum:DoorState
@@ -8476,6 +8475,7 @@ How to contrubute	documentation/how_to_contribute.html	/^<h1 id="how-to-contrubu
 How to contrubute	documentation/how_to_contribute.md	/^# How to contrubute$/;"	c
 How to use the entity component system	documentation/how_to_contribute.html	/^<h2 id="how-to-use-the-entity-component-system">How to use the entity component system<\/h2>$/;"	i
 How to use the entity component system	documentation/how_to_contribute.md	/^## How to use the entity component system$/;"	s
+IS_HOT	gui.c	/^#define IS_HOT(/;"	d	file:
 Improvements	PATCHNOTES.md	/^## Improvements$/;"	s
 InitVrSimulator	rlgl.h	/^void InitVrSimulator(void)$/;"	f	typeref:typename:void
 IsMouseOnUiElement	gui.c	/^bool IsMouseOnUiElement() { return GuiState.a_el_is_hot; }$/;"	f	typeref:typename:bool
@@ -9303,7 +9303,11 @@ OPMETHOD	janet.c	/^#define OPMETHOD(/;"	d	file:
 OPMETHODINVERT	janet.c	/^#define OPMETHODINVERT(/;"	d	file:
 OsStatGetter	janet.c	/^struct OsStatGetter {$/;"	s	file:
 Outskirts	documentation/rpg_game_ideas.md	/^### Outskirts$/;"	S
+PANEL_BTN_HEIGHT	editor.c	/^#define PANEL_BTN_HEIGHT /;"	d	file:
+PANEL_BTN_WIDTH	editor.c	/^#define PANEL_BTN_WIDTH /;"	d	file:
 PANEL_RATIO	editor.c	/^#define PANEL_RATIO /;"	d	file:
+PANEL_WIDTH	editor.c	/^#define PANEL_WIDTH /;"	d	file:
+PANEL_X	editor.c	/^#define PANEL_X /;"	d	file:
 PEG_MODE_ACCUMULATE	janet.c	/^        PEG_MODE_ACCUMULATE$/;"	e	enum:__anoncda107c81408::__anoncda107c81503	file:
 PEG_MODE_NORMAL	janet.c	/^        PEG_MODE_NORMAL,$/;"	e	enum:__anoncda107c81408::__anoncda107c81503	file:
 PFLAG_ATSYM	janet.c	/^#define PFLAG_ATSYM /;"	d	file:
@@ -17704,17 +17708,17 @@ do_bor	janet.c	/^static JanetSlot do_bor(JanetFopts opts, JanetSlot *args) {$/;"
 do_btn	gui.c	/^bool do_btn(float x, float y, float width, float height, const char *text) {$/;"	f	typeref:typename:bool
 do_bxor	janet.c	/^static JanetSlot do_bxor(JanetFopts opts, JanetSlot *args) {$/;"	f	typeref:typename:JanetSlot	file:
 do_center_x_label	gui.c	/^void do_center_x_label(float outer_width, float y, int font_size,$/;"	f	typeref:typename:void
-do_check_box	gui.c	/^bool do_check_box(NodeId id, float x, float y, float width, float height) {$/;"	f	typeref:typename:bool
+do_check_box	gui.c	/^bool do_check_box(bool *active, float x, float y, float width, float height) {$/;"	f	typeref:typename:bool
 do_click_region	gui.c	/^bool do_click_region(float x, float y, float width, float height) {$/;"	f	typeref:typename:bool
-do_collapsing_header	gui.c	/^bool do_collapsing_header(NodeId id, const char *label, float x, float y,$/;"	f	typeref:typename:bool
+do_collapsing_header	gui.c	/^bool do_collapsing_header(bool *active, const char *label, float x, float y,$/;"	f	typeref:typename:bool
 do_color_drag_float_4	gui.c	/^bool do_color_drag_float_4(NodeId *id, float x, float y, float width,$/;"	f	typeref:typename:bool
-do_color_picker	gui.c	/^Color do_color_picker(NodeId *id, float x, float y, float width, float height) {$/;"	f	typeref:typename:Color
 do_console	editor.h	/^  bool do_console;$/;"	m	struct:__anonc0cb90020608	typeref:typename:bool
 do_controls_modal	main.c	/^bool do_controls_modal = false;$/;"	v	typeref:typename:bool
 do_debug	janet.c	/^static JanetSlot do_debug(JanetFopts opts, JanetSlot *args) {$/;"	f	typeref:typename:JanetSlot	file:
 do_div	janet.c	/^static JanetSlot do_div(JanetFopts opts, JanetSlot *args) {$/;"	f	typeref:typename:JanetSlot	file:
 do_drag_float	gui.c	/^bool do_drag_float(NodeId id, float x, float y, float width, float height,$/;"	f	typeref:typename:bool
 do_drag_float_3	gui.c	/^bool do_drag_float_3(NodeId *id, float x, float y, float width, float height,$/;"	f	typeref:typename:bool
+do_drag_region_float	gui.c	/^bool do_drag_region_float(NodeId id, float x, float y, float width,$/;"	f	typeref:typename:bool
 do_eq	janet.c	/^static JanetSlot do_eq(JanetFopts opts, JanetSlot *args) {$/;"	f	typeref:typename:JanetSlot	file:
 do_error	janet.c	/^static JanetSlot do_error(JanetFopts opts, JanetSlot *args) {$/;"	f	typeref:typename:JanetSlot	file:
 do_exit_modal	main.c	/^bool do_exit_modal = false;$/;"	v	typeref:typename:bool
@@ -17724,7 +17728,7 @@ do_get	janet.c	/^static JanetSlot do_get(JanetFopts opts, JanetSlot *args) {$/;"
 do_gt	janet.c	/^static JanetSlot do_gt(JanetFopts opts, JanetSlot *args) {$/;"	f	typeref:typename:JanetSlot	file:
 do_gte	janet.c	/^static JanetSlot do_gte(JanetFopts opts, JanetSlot *args) {$/;"	f	typeref:typename:JanetSlot	file:
 do_in	janet.c	/^static JanetSlot do_in(JanetFopts opts, JanetSlot *args) {$/;"	f	typeref:typename:JanetSlot	file:
-do_incrementer	gui.c	/^int do_incrementer(NodeId id, float x, float y, float width, float height,$/;"	f	typeref:typename:int
+do_incrementer	gui.c	/^int do_incrementer(float x, float y, float width, float height, int *v,$/;"	f	typeref:typename:int
 do_label	gui.c	/^void do_label(const char *str, float x, float y, float width, float height,$/;"	f	typeref:typename:void
 do_length	janet.c	/^static JanetSlot do_length(JanetFopts opts, JanetSlot *args) {$/;"	f	typeref:typename:JanetSlot	file:
 do_lights_modal	editor.c	/^void do_lights_modal(Ed *self, GfxState *gfx, Game *game, Region *map) {$/;"	f	typeref:typename:void
@@ -17738,6 +17742,7 @@ do_mouse_picking	editor.c	/^void do_mouse_picking(Ed *self, Region *map, Game *g
 do_mul	janet.c	/^static JanetSlot do_mul(JanetFopts opts, JanetSlot *args) {$/;"	f	typeref:typename:JanetSlot	file:
 do_neq	janet.c	/^static JanetSlot do_neq(JanetFopts opts, JanetSlot *args) {$/;"	f	typeref:typename:JanetSlot	file:
 do_next	janet.c	/^static JanetSlot do_next(JanetFopts opts, JanetSlot *args) {$/;"	f	typeref:typename:JanetSlot	file:
+do_node_tree_modal	editor.c	/^void do_node_tree_modal(Ed *self, GfxState *gfx, Game *game, Region *map) {$/;"	f	typeref:typename:void
 do_panel	gui.c	/^void do_panel(float x, float y, float width, float height) {$/;"	f	typeref:typename:void
 do_propagate	janet.c	/^static JanetSlot do_propagate(JanetFopts opts, JanetSlot *args) {$/;"	f	typeref:typename:JanetSlot	file:
 do_put	janet.c	/^static JanetSlot do_put(JanetFopts opts, JanetSlot *args) {$/;"	f	typeref:typename:JanetSlot	file:
@@ -17745,11 +17750,10 @@ do_remainder	janet.c	/^static JanetSlot do_remainder(JanetFopts opts, JanetSlot 
 do_resume	janet.c	/^static JanetSlot do_resume(JanetFopts opts, JanetSlot *args) {$/;"	f	typeref:typename:JanetSlot	file:
 do_rshift	janet.c	/^static JanetSlot do_rshift(JanetFopts opts, JanetSlot *args) {$/;"	f	typeref:typename:JanetSlot	file:
 do_rshiftu	janet.c	/^static JanetSlot do_rshiftu(JanetFopts opts, JanetSlot *args) {$/;"	f	typeref:typename:JanetSlot	file:
-do_slider	gui.c	/^float do_slider(NodeId id, float x, float y, float width, float height,$/;"	f	typeref:typename:float
 do_sub	janet.c	/^static JanetSlot do_sub(JanetFopts opts, JanetSlot *args) {$/;"	f	typeref:typename:JanetSlot	file:
 do_tex_btn	gui.c	/^bool do_tex_btn(float x, float y, float width, float height, const char *text,$/;"	f	typeref:typename:bool
-do_text_input	gui.c	/^bool do_text_input(NodeId id, char *buffer, size_t buffer_size, float x,$/;"	f	typeref:typename:bool
-do_toggle_group_v	gui.c	/^int do_toggle_group_v(NodeId id, const char *names, float x, float y,$/;"	f	typeref:typename:int
+do_text_input	gui.c	/^bool do_text_input(char *buffer, int *cursor, size_t buffer_size, float x,$/;"	f	typeref:typename:bool
+do_toggle_group_v	gui.c	/^void do_toggle_group_v(int *which_, const char *names, float x, float y,$/;"	f	typeref:typename:void
 do_yield	janet.c	/^static JanetSlot do_yield(JanetFopts opts, JanetSlot *args) {$/;"	f	typeref:typename:JanetSlot	file:
 doarg	janet.c	/^static uint32_t doarg($/;"	f	typeref:typename:uint32_t	file:
 doarg_1	janet.c	/^static int32_t doarg_1($/;"	f	typeref:typename:int32_t	file:
@@ -21779,6 +21783,7 @@ nexttag	janet.c	/^    uint32_t nexttag;$/;"	m	struct:__anoncda107c81708	typeref:
 nnodes	map.h	/^  unsigned nbuckets, nnodes;$/;"	m	struct:__anon0fea82990108	typeref:typename:unsigned
 noclip	game.h	/^    bool noclip;$/;"	m	struct:__anonff3b1fb50108	typeref:typename:bool
 node	map.h	/^  map_node_t *node;$/;"	m	struct:__anon0fea82990208	typeref:typename:map_node_t *
+node_tree_panel_y	editor.h	/^  float node_tree_panel_y;$/;"	m	struct:__anonc0cb90020608	typeref:typename:float
 noise	maths.c	/^double noise(double x, double y, double z) {$/;"	f	typeref:typename:double
 normals	rlgl.h	/^        float *normals;         \/\/ vertex normals (XYZ - 3 components per vertex) (shader-loca/;"	m	struct:Mesh	typeref:typename:float *
 notes	editor.h	/^  Note notes[100];$/;"	m	struct:__anonc0cb90020608	typeref:typename:Note[100]
@@ -21879,7 +21884,6 @@ p	maths.c	/^static int p[512];$/;"	v	typeref:typename:int[512]	file:
 pad	include/GL/glxew.h	/^  long pad[24]; $/;"	m	union:__GLXEvent	typeref:typename:long[24]
 pallet	main.c	/^  Color pallet[NUM_RGBS \/ 3];$/;"	m	struct:__anon0d38083b0108	typeref:typename:Color[]	file:
 panControl	player.h	/^    int panControl;         \/\/ raylib: MOUSE_MIDDLE_BUTTON$/;"	m	struct:__anon3d1d55680308	typeref:typename:int
-panel_w	editor.c	/^const float panel_w = 400;$/;"	v	typeref:typename:const float
 params	rlgl.h	/^        float *params;          \/\/ Material generic parameters (if required)$/;"	m	struct:Material	typeref:typename:float *
 parent	janet.c	/^    JanetAssembler *parent;$/;"	m	struct:JanetAssembler	typeref:typename:JanetAssembler *	file:
 parent	janet.c	/^    JanetScope *parent;$/;"	m	struct:JanetScope	typeref:typename:JanetScope *	file:

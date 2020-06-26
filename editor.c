@@ -14,7 +14,10 @@ static Game *game_s = NULL;
 static Ed *editor_s = NULL;
 static Region *map_s = NULL;
 
-const float panel_w = 400;
+#define PANEL_WIDTH (400)
+#define PANEL_BTN_WIDTH (100)
+#define PANEL_BTN_HEIGHT (20)
+#define PANEL_X (GetScreenWidth() - PANEL_WIDTH)
 
 // TODO(Dustin):
 //  Create a on exit save modal
@@ -40,6 +43,7 @@ Ed *create_editor() {
 
   editor->lights_panel_y = (float)GetScreenHeight();
   editor->models_panel_y = (float)GetScreenHeight();
+  editor->node_tree_panel_y = (float)GetScreenHeight();
 
   editor->object_placement_type = PLACE_BLOCKS;
 
@@ -134,8 +138,9 @@ void render_console(Ed *self, Region *map, Game *game, int id) {
   do_frame(0, cursor_y, GetScreenWidth(), GetScreenHeight() / 4, 0.8f);
 
   static char input[512] = {'\0'};
-  do_text_input(id++, input, 512, 0, cursor_y + height - 32, GetScreenWidth(),
-                32);
+  static int input_cursor = 0;
+  do_text_input(input, &input_cursor, 512, 0, cursor_y + height - 32,
+                GetScreenWidth(), 32);
 
   if (IsKeyPressed(KEY_ENTER)) {
     push_command_output(self, input);
@@ -580,17 +585,16 @@ int sort_levenshtein(const void *a, const void *b) {
 }
 
 void do_lights_modal(Ed *self, GfxState *gfx, Game *game, Region *map) {
-  int id = 600;
+  int id = 100;
   Shader *shader = &game->assets->shaders[SHADER_PHONG_LIGHTING];
 
-  do_frame(GetScreenWidth() - 400.0f, self->lights_panel_y + 30, 400,
+  const float lx = PANEL_X;
+  do_frame(lx, self->lights_panel_y + PANEL_BTN_HEIGHT, PANEL_WIDTH,
            GetScreenHeight(), 0.8f);
-
-  const float lx = GetScreenWidth() - panel_w;
 
   float cursor_y = self->lights_panel_y;
 
-  if (do_btn(lx, cursor_y, 200, 30,
+  if (do_btn(lx + PANEL_WIDTH - PANEL_BTN_WIDTH, cursor_y, PANEL_BTN_WIDTH, 20,
              TextFormat(
                  "%s Lights",
                  ((self->state == EDITOR_STATE_LIGHTS_MODAL) ? "+" : "-")))) {
@@ -603,9 +607,9 @@ void do_lights_modal(Ed *self, GfxState *gfx, Game *game, Region *map) {
 
   if (self->state == EDITOR_STATE_LIGHTS_MODAL) {
     self->lights_panel_y =
-        lerp(GetFrameTime() * 10.0f, self->lights_panel_y, 30);
+        lerp(GetFrameTime() * 10.0f, self->lights_panel_y, PANEL_BTN_HEIGHT);
     // Do lights panel
-    cursor_y += 30;
+    cursor_y += PANEL_BTN_HEIGHT;
 
     if (do_btn(lx + 2, cursor_y + 2, 30, 30, "+")) {
       Light *light = &game->assets->lights[game->assets->num_lights++];
@@ -616,8 +620,10 @@ void do_lights_modal(Ed *self, GfxState *gfx, Game *game, Region *map) {
 
     cursor_y += 32 + 2;
 
-    if (do_collapsing_header(id++, "Sun", lx + 10, cursor_y, panel_w - 20,
-                             40)) {
+    static bool sun_header = 0;
+    static bool lights_headers[MAX_LIGHTS] = {0};
+    if (do_collapsing_header(&sun_header, "Sun", lx + 10, cursor_y,
+                             PANEL_WIDTH - 20, 40)) {
       cursor_y += 40 + 2;
 
       do_label("Direction", lx + 30, cursor_y, 200, 30, 20);
@@ -651,13 +657,14 @@ void do_lights_modal(Ed *self, GfxState *gfx, Game *game, Region *map) {
     for (int i = 0; i < game->assets->num_lights; i++) {
       Light light = game->assets->lights[i];
 
-      if (do_collapsing_header(id++, TextFormat("%s[%d]", "Light", i), lx + 10,
-                               cursor_y, panel_w - 20, 40)) {
+      if (do_collapsing_header(&lights_headers[i],
+                               TextFormat("%s[%d]", "Light", i), lx + 10,
+                               cursor_y, PANEL_WIDTH - 20, 40)) {
         cursor_y += 40 + 2;
 
         do_label("Disabled", lx + 30, cursor_y, 100, 30, 20);
-        game->assets->lights[i].enabled =
-            !do_check_box(id++, lx + 30 + 100, cursor_y, 30, 30);
+        do_check_box(&game->assets->lights[i].enabled, lx + 30 + 100, cursor_y,
+                     30, 30);
 
         if (do_btn(lx + 30 + 130 + 10, cursor_y, 100, 30, "Grab")) {
           self->light_grabbed = i;
@@ -687,10 +694,8 @@ void do_lights_modal(Ed *self, GfxState *gfx, Game *game, Region *map) {
 
   } else {
     self->lights_panel_y = lerp(GetFrameTime() * 10.0f, self->lights_panel_y,
-                                GetScreenHeight() - 30);
+                                GetScreenHeight() - PANEL_BTN_HEIGHT);
   }
-
-  id += 500;
 
   int y = 0;
   for (int i = self->num_notes - 1; i >= 0; i--) {
@@ -709,15 +714,45 @@ void do_lights_modal(Ed *self, GfxState *gfx, Game *game, Region *map) {
   }
 }
 
-void do_models_modal(Ed *self, GfxState *gfx, Game *game, Region *map) {
-  int id = 400;
-  do_frame(400.0f, self->models_panel_y + 30, 400, GetScreenHeight(), 0.8f);
+void do_node_tree_modal(Ed *self, GfxState *gfx, Game *game, Region *map) {
+  const float lx = PANEL_X;
 
-  const float lx = 400.0f;
+  do_frame(lx, self->node_tree_panel_y + PANEL_BTN_HEIGHT, PANEL_WIDTH,
+           GetScreenHeight(), 0.8f);
+
+  float cursor_y = self->node_tree_panel_y;
+
+  if (do_btn(
+          lx + PANEL_WIDTH - PANEL_BTN_WIDTH * 3, cursor_y, PANEL_BTN_WIDTH, 20,
+          TextFormat(
+              "%s Scene",
+              ((self->state == EDITOR_STATE_NODE_TREE_MODAL) ? "+" : "-")))) {
+    toggle_model_node_tree_modal(self);
+  }
+
+  if (game->state == EDITOR_STATE_NODE_TREE_MODAL) {
+    self->node_tree_panel_y =
+        lerp(GetFrameTime() * 10.0f, self->node_tree_panel_y, PANEL_BTN_HEIGHT);
+
+    cursor_y += PANEL_BTN_HEIGHT;
+  } else {
+    self->node_tree_panel_y =
+        lerp(GetFrameTime() * 10.0f, self->node_tree_panel_y,
+             GetScreenHeight() - PANEL_BTN_HEIGHT);
+  }
+}
+
+void do_models_modal(Ed *self, GfxState *gfx, Game *game, Region *map) {
+  int id = 200;
+  const float lx = PANEL_X;
+
+  do_frame(lx, self->models_panel_y + PANEL_BTN_HEIGHT, PANEL_WIDTH,
+           GetScreenHeight(), 0.8f);
 
   float cursor_y = self->models_panel_y;
 
-  if (do_btn(lx, cursor_y, 200, 30,
+  if (do_btn(lx + PANEL_WIDTH - PANEL_BTN_WIDTH * 2, cursor_y, PANEL_BTN_WIDTH,
+             PANEL_BTN_HEIGHT,
              TextFormat("%s Models",
                         ((self->state == EDITOR_STATE_MODEL_SELECTOR_MODAL)
                              ? "+"
@@ -727,22 +762,20 @@ void do_models_modal(Ed *self, GfxState *gfx, Game *game, Region *map) {
 
   if (self->state == EDITOR_STATE_MODEL_SELECTOR_MODAL) {
     self->models_panel_y =
-        lerp(GetFrameTime() * 10.0f, self->models_panel_y, 30);
+        lerp(GetFrameTime() * 10.0f, self->models_panel_y, PANEL_BTN_HEIGHT);
 
-    cursor_y += 30;
-
-    const float models_panel_w = 200;
+    cursor_y += PANEL_BTN_HEIGHT;
 
     static float scroll_y = 0;
     static float max_height = 300;
-    begin_scroll_panel_v(id++, lx + 1, cursor_y + 1, models_panel_w + 18 - 1,
+    begin_scroll_panel_v(id++, lx + 1, cursor_y + 1, PANEL_WIDTH + 18 - 1,
                          GetScreenHeight() - 1, &scroll_y, max_height);
 
     cursor_y += 30;
 
     max_height = 0;
     for (int i = TEX_WALL_1; i < map->num_models; i++) {
-      const float size = models_panel_w - 10;
+      const float size = PANEL_WIDTH - 10;
       Model model = map->models[i];
       Texture2D texture = model.materials[0].maps[MAP_DIFFUSE].texture;
 
@@ -776,18 +809,18 @@ void do_models_modal(Ed *self, GfxState *gfx, Game *game, Region *map) {
     end_scroll_panel_v();
   } else {
     self->models_panel_y = lerp(GetFrameTime() * 10.0f, self->models_panel_y,
-                                GetScreenHeight() - 30);
+                                GetScreenHeight() - PANEL_BTN_HEIGHT);
   }
 }
 
 void render_editor_ui(Ed *self, GfxState *gfx, Region *map, Game *game) {
   Shader *shader = &game->assets->shaders[SHADER_PHONG_LIGHTING];
 
-  int id = 200;
+  int id = 10;
 
   render_console(self, map, game, id);
 
-  id += 400;
+  id += 50;
 
   if (!self->open) {
     if (do_btn(GetScreenWidth() / 2 - 50.0f, 0, 100, 25, "Editor")) {
@@ -817,10 +850,10 @@ void render_editor_ui(Ed *self, GfxState *gfx, Region *map, Game *game) {
 
   // Notifications
   int last = self->object_placement_type;
-  self->object_placement_type = do_toggle_group_v(
-      id++, "NONE|BLOCKS|ACTORS|PROPS|MARKERS|", 0,
-      GetScreenHeight() - (self->placement_toggle_height + 50),
-      &self->placement_toggle_height);
+  do_toggle_group_v(&self->object_placement_type,
+                    "NONE|BLOCKS|ACTORS|PROPS|MARKERS|", 0,
+                    GetScreenHeight() - (self->placement_toggle_height + 50),
+                    &self->placement_toggle_height);
 
   // Draws a label for the type of marker
   // TODO(Dustin): Add new markers for exit and other stuff
@@ -836,17 +869,16 @@ void render_editor_ui(Ed *self, GfxState *gfx, Region *map, Game *game) {
   }
 
   // Region loading and unloading
-  if (do_btn(100, GetScreenHeight() - 50.0f, 100, 50, "Export")) {
+  if (do_btn(100, GetScreenHeight() - 30.0f, 100, 30, "Export")) {
     // self->do_export_modal = true;
     self->state = EDITOR_STATE_EXPORT_MODAL;
   }
 
-  if (do_btn(0, GetScreenHeight() - 50.0f, 100, 50, "Load")) {
+  if (do_btn(0, GetScreenHeight() - 30.0f, 100, 30, "Load")) {
     self->state = EDITOR_STATE_LOAD_MODAL;
   }
 
   if (self->state == EDITOR_STATE_LOAD_MODAL) {
-    id += 100;
     do_modal();
     Unlock();
 
@@ -854,7 +886,9 @@ void render_editor_ui(Ed *self, GfxState *gfx, Region *map, Game *game) {
     // qsort(self->maps, self->num_maps, sizeof(char*),
     // sort_levenshtein);
 
-    if (do_text_input(id++, load_buff, 1024, GetScreenWidth() / 2 - 150.f,
+    static int load_input_cursor = 0;
+    if (do_text_input(load_buff, &load_input_cursor, 1024,
+                      GetScreenWidth() / 2 - 150.f,
                       GetScreenHeight() / 2 - 25.f, 300, 50)) {
       tstr path = talloc(512);
       sprintf(path, "resources/maps/%s.janet", load_buff);
@@ -904,8 +938,6 @@ void render_editor_ui(Ed *self, GfxState *gfx, Region *map, Game *game) {
 
     Lock();
   } else if (self->state == EDITOR_STATE_EXPORT_MODAL) {
-    id += 100;
-
     do_modal();
     Unlock();
 
@@ -913,8 +945,11 @@ void render_editor_ui(Ed *self, GfxState *gfx, Region *map, Game *game) {
                       (float)GetScreenHeight() / 2 - 100, 30, "Region Name");
 
     static char buffer[100] = {'\0'};
-    if (do_text_input(id++, buffer, 100, GetScreenWidth() / 2 - 150.0f,
-                      GetScreenHeight() / 2, 300, 50)) {
+
+    static int export_input_cursor = 0;
+    if (do_text_input(buffer, &export_input_cursor, 100,
+                      GetScreenWidth() / 2 - 150.0f, GetScreenHeight() / 2, 300,
+                      50)) {
       tstr path = talloc(512);
       sprintf(path, "resources/maps/%s.janet", buffer);
       serialize_map(self, map, game, path);
@@ -956,7 +991,6 @@ void render_editor_ui(Ed *self, GfxState *gfx, Region *map, Game *game) {
     Lock();
 
   } else if (self->state == EDITOR_STATE_EXIT_PLACEMENT_MODAL) {
-    id += 100;
     do_modal();
     Unlock();
 
@@ -971,8 +1005,9 @@ void render_editor_ui(Ed *self, GfxState *gfx, Region *map, Game *game) {
     do_label(title, GetScreenWidth() / 2 - size.x - 6, cursor_y, size.x + 20,
              size.y + 4, 30);
 
-    do_text_input(id++, dest_buffer, 512, GetScreenWidth() / 2 + 6, cursor_y,
-                  200, size.y + 4);
+    static dest_input_cursor = 0;
+    do_text_input(dest_buffer, &dest_input_cursor, 512,
+                  GetScreenWidth() / 2 + 6, cursor_y, 200, size.y + 4);
 
     cursor_y += size.y + 4 + 8;
 
@@ -982,8 +1017,8 @@ void render_editor_ui(Ed *self, GfxState *gfx, Region *map, Game *game) {
              size.y + 4, 30);
 
     static int door_id = 0;
-    do_incrementer(id++, GetScreenWidth() / 2 + 6, cursor_y, size.y + 4,
-                   size.y + 4, &door_id, 20);
+    do_incrementer(GetScreenWidth() / 2 + 6, cursor_y, size.y + 4, size.y + 4,
+                   &door_id, 20);
 
     cursor_y += size.y + 4 + 8;
 
@@ -993,8 +1028,8 @@ void render_editor_ui(Ed *self, GfxState *gfx, Region *map, Game *game) {
              size.y + 4, 30);
 
     static int dest_door_id = 0;
-    do_incrementer(id++, GetScreenWidth() / 2 + 6, cursor_y, size.y + 4,
-                   size.y + 4, &dest_door_id, 20);
+    do_incrementer(GetScreenWidth() / 2 + 6, cursor_y, size.y + 4, size.y + 4,
+                   &dest_door_id, 20);
 
     cursor_y += size.y + 4 + 8;
 
@@ -1021,25 +1056,9 @@ void render_editor_ui(Ed *self, GfxState *gfx, Region *map, Game *game) {
     self->model = 0;
   }
 
-  // Node trees
-  {
-    do_frame(400.0f, self->models_panel_y + 30, 400, GetScreenHeight(), 0.8f);
-
-    const float lx = 620.0f;
-
-    float cursor_y = self->models_panel_y;
-
-    if (do_btn(
-            lx, cursor_y, 200, 30,
-            TextFormat(
-                "%s Scene",
-                ((self->state == EDITOR_STATE_NODE_TREE_MODAL) ? "+" : "-")))) {
-      toggle_model_node_tree_modal(self);
-    }
-  }
-
-  do_models_modal(self, gfx, game, map);
   do_lights_modal(self, gfx, game, map);
+  do_models_modal(self, gfx, game, map);
+  do_node_tree_modal(self, gfx, game, map);
 }
 
 void serialize_map(Ed *editor, Region *map, Game *game, const char *path) {

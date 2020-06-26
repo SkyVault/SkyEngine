@@ -7,6 +7,10 @@
     GuiState.a_el_is_hot = true;
 
 #define GET_STATE() struct NState *state = &GuiState.states[id];
+#define IS_HOT()                                                               \
+  CheckCollisionPointRec(                                                      \
+      GetMousePosition(),                                                      \
+      (Rectangle){x + GuiState.px, y + GuiState.py, width, height});
 
 void reset_gui() {
   for (int i = 0; i < MAX_NUM_STATES; i++) {
@@ -21,9 +25,7 @@ void init_gui() {
 }
 
 void do_panel(float x, float y, float width, float height) {
-  bool hot = CheckCollisionPointRec(
-      GetMousePosition(),
-      (Rectangle){x + GuiState.px, y + GuiState.py, width, height});
+  bool hot = IS_HOT();
 
   Color color = (!hot) ? BASE_COLOR : (Color){200, 200, 200, 255};
 
@@ -46,20 +48,15 @@ void do_label(const char *str, float x, float y, float width, float height,
 }
 
 bool do_click_region(float x, float y, float width, float height) {
-  bool hot = CheckCollisionPointRec(
-      GetMousePosition(),
-      (Rectangle){x + GuiState.px, y + GuiState.py, width, height});
+  bool hot = IS_HOT();
   return hot && IsMouseButtonPressed(MOUSE_LEFT_BUTTON);
 }
 
 bool do_btn(float x, float y, float width, float height, const char *text) {
-  bool hot = CheckCollisionPointRec(
-      GetMousePosition(),
-      (Rectangle){x + GuiState.px, y + GuiState.py, width, height});
-
+  bool hot = IS_HOT();
   bool active = hot && IsMouseButtonPressed(MOUSE_LEFT_BUTTON);
 
-  const float size = 30.0f;
+  const float size = height - 2;
 
   Vector2 measure = MeasureTextEx(GuiState.font, text, size, 1);
 
@@ -77,11 +74,7 @@ bool do_btn(float x, float y, float width, float height, const char *text) {
 
 bool do_tex_btn(float x, float y, float width, float height, const char *text,
                 Texture2D texture) {
-
-  bool hot = CheckCollisionPointRec(
-      GetMousePosition(),
-      (Rectangle){x + GuiState.px, y + GuiState.py, width, height});
-
+  bool hot = IS_HOT();
   bool active = hot && IsMouseButtonPressed(MOUSE_LEFT_BUTTON);
 
   const float size = 30.0f;
@@ -126,54 +119,42 @@ void do_modal() {
                 (Color){0, 0, 0, 200});
 }
 
-bool do_text_input(NodeId id, char *buffer, size_t buffer_size, float x,
+bool do_text_input(char *buffer, int *cursor, size_t buffer_size, float x,
                    float y, float width, float height) {
-  GET_STATE()
   do_panel(x, y, width, height);
+
+  bool hot = IS_HOT();
+  bool active = hot && IsMouseButtonPressed(MOUSE_LEFT_BUTTON);
 
   const int fsize = 30;
   Vector2 size = MeasureTextEx(GuiState.font, buffer, fsize, 1);
   DrawTextEx(GuiState.font, buffer,
              (Vector2){x + 4, y + height / 2 - size.y / 2}, fsize, 1, BLACK);
 
-  CHECK_IF_HOT()
-
-  if (!state->active) {
-    state->active = IsMouseButtonPressed(MOUSE_LEFT_BUTTON) && state->hot;
-  } else {
-    if (IsMouseButtonPressed(MOUSE_LEFT_BUTTON) && !state->hot)
-      state->active = false;
-
+  if (hot) {
     if (IsKeyDown(KEY_BACKSPACE)) {
-      if (state->cursor > 0) {
-        buffer[state->cursor - 1] = '\0';
-        state->cursor--;
+      if (*cursor > 0) {
+        buffer[(*cursor) - 1] = '\0';
+        (*cursor) -= 1;
       }
     }
 
     int key = GetKeyPressed();
     if (key > 0) {
-      buffer[state->cursor++] = (char)key;
+      buffer[*cursor] = (char)key;
+      (*cursor) += 1;
     }
   }
 
-  if (state->active && (((int)(GetTime() * 3.0f) % 2) == 0)) {
+  if (hot && (((int)(GetTime() * 3.0f) % 2) == 0)) {
     DrawRectangle(x + 4 + size.x, y + 4, 4, height - 8, BLACK);
   }
 
-  return state->active && IsKeyPressed(KEY_ENTER);
+  return active && IsKeyPressed(KEY_ENTER);
 }
 
-int do_toggle_group_v(NodeId id, const char *names, float x, float y,
-                      float *out_width) {
-  GET_STATE()
-
-  if (state->init == 0) {
-    state->init = 1;
-
-    state->cursor = 1;
-  }
-
+void do_toggle_group_v(int *which_, const char *names, float x, float y,
+                       float *out_width) {
   char *it = names;
   char *end = it + strlen(names);
 
@@ -192,11 +173,11 @@ int do_toggle_group_v(NodeId id, const char *names, float x, float y,
 
         Vector2 size = MeasureTextEx(GuiState.font, name, 20, 1);
 
-        state->hot = CheckCollisionPointRec(
+        bool hot = CheckCollisionPointRec(
             GetMousePosition(),
             (Rectangle){x, y + cursor_y, size.x + r * 2 + 6, size.y + 4});
 
-        if (state->hot)
+        if (hot)
           GuiState.a_el_is_hot = true;
 
         do_panel(x, y + cursor_y, size.x + r * 2 + 6, size.y + 4);
@@ -207,19 +188,16 @@ int do_toggle_group_v(NodeId id, const char *names, float x, float y,
         DrawCircle(x + r + 2, y + 2 + cursor_y + size.y / 2, r, BASE_COLOR);
         DrawCircleLines(x + r + 2, y + 2 + cursor_y + size.y / 2, r, ALT_COLOR);
 
-        if (state->hot && IsMouseButtonPressed(MOUSE_LEFT_BUTTON)) {
-          state->cursor = which;
+        if (hot && IsMouseButtonPressed(MOUSE_LEFT_BUTTON)) {
+          (*which_) = which;
         }
 
-        if (which == state->cursor) {
+        if (which == (*which_)) {
           DrawCircle(x + r + 2.0f, y + 2 + cursor_y + size.y / 2.0f, r * 0.8f,
                      ALT_COLOR);
         }
 
-        state->hot = false;
-
         cursor_y += size.y + 4;
-
         which++;
 
         break;
@@ -232,112 +210,35 @@ int do_toggle_group_v(NodeId id, const char *names, float x, float y,
 
   if (out_width != NULL)
     *out_width = cursor_y;
-
-  return state->cursor;
 }
 
-float do_slider(NodeId id, float x, float y, float width, float height,
-                float min, float max) {
-  GET_STATE()
+bool do_check_box(bool *active, float x, float y, float width, float height) {
+  bool hot = IS_HOT();
 
-  float drag_x = x + width * (state->value / max);
-
-  if (state->init == 0) {
-    state->last_value = drag_x;
-    state->value = min;
-    state->init = 1;
-  }
-
-  CHECK_IF_HOT()
-
-  float mx = (GetMouseX() - x);
-  drag_x = x + mx;
-
-  state->active =
-      state->hot &&
-      CheckCollisionPointRec(GetMousePosition(),
-                             (Rectangle){drag_x, y, width, width}) &&
-      IsMouseButtonDown(MOUSE_LEFT_BUTTON);
-
-  if (state->active) {
-    state->last_value = drag_x;
-    float perc = mx / width;
-    state->value = min + (max - min) * perc;
-  }
-
-  Color color = BASE_COLOR;
-  if (state->active)
-    color.a = 255;
-
-  do_panel(x, y, width, height);
-
-  DrawRectangle(state->last_value, y, height, height, color);
-  DrawRectangleLines(state->last_value, y, height, height, ALT_COLOR);
-
-  return state->value;
-}
-
-Color do_color_picker(NodeId *id, float x, float y, float width, float height) {
-  struct NState *state = &GuiState.states[*id];
-
-  if (!state->init) {
-    state->v = (Vector4){1, 1, 1, 1};
-    state->init = 1;
-  }
-
-  do_drag_float((*id)++, x + height, y, (width - height), height / 4,
-                &state->v.x, 0.01f);
-
-  do_drag_float((*id)++, x + height, y + height / 4, (width - height),
-                height / 4, &state->v.y, 0.01f);
-
-  do_drag_float((*id)++, x + height, y + (height / 4) * 2, (width - height),
-                height / 4, &state->v.z, 0.01f);
-
-  do_drag_float((*id)++, x + height, y + (height / 4) * 3, (width - height),
-                height / 4, &state->v.w, 0.01f);
-
-  state->v.x = max(min(state->v.x, 1.0f), 0.0f);
-  state->v.y = max(min(state->v.y, 1.0f), 0.0f);
-  state->v.z = max(min(state->v.z, 1.0f), 0.0f);
-  state->v.w = max(min(state->v.w, 1.0f), 0.0f);
-
-  Color color = V4TC(state->v);
-  DrawRectangle((int)x, (int)y, (int)height, (int)height, color);
-  return color;
-}
-
-bool do_check_box(NodeId id, float x, float y, float width, float height) {
-  struct NState *state = &GuiState.states[id];
-
-  CHECK_IF_HOT()
-
-  if (state->hot && IsMouseButtonPressed(MOUSE_LEFT_BUTTON)) {
-    state->active = !state->active;
+  if (hot && IsMouseButtonPressed(MOUSE_LEFT_BUTTON)) {
+    (*active) = !(*active);
   }
 
   // Draw the button
   do_panel(x, y, width, height);
 
-  if (state->active)
+  if (*active)
     DrawRectangle((int)x + 1, (int)y + 1, (int)width - 2, (int)height - 2,
                   ALT_COLOR);
 
-  return Active(id);
+  return (*active);
 }
 
-bool do_collapsing_header(NodeId id, const char *label, float x, float y,
+bool do_collapsing_header(bool *active, const char *label, float x, float y,
                           float width, float height) {
-  struct NState *state = &GuiState.states[id];
+  bool hot = IS_HOT();
 
-  CHECK_IF_HOT()
-
-  if (state->hot && IsMouseButtonPressed(MOUSE_LEFT_BUTTON)) {
-    state->active = !state->active;
+  if (hot && IsMouseButtonPressed(MOUSE_LEFT_BUTTON)) {
+    (*active) = !(*active);
   }
 
   char buff[512];
-  sprintf(buff, "%s %s", (state->active ? "-" : "+"), label);
+  sprintf(buff, "%s %s", ((*active) ? "-" : "+"), label);
 
   const Vector2 size = MeasureTextEx(GuiState.font, buff, 30, 1.0f);
 
@@ -345,11 +246,11 @@ bool do_collapsing_header(NodeId id, const char *label, float x, float y,
   do_panel(x, y, width, height);
   do_label(buff, x + width / 2 - size.x / 2, y + 1, width, height, 30);
 
-  return Active(id);
+  return (*active);
 }
 
-bool DoDragRegionFloat(NodeId id, float x, float y, float width, float height,
-                       float *value, float step) {
+bool do_drag_region_float(NodeId id, float x, float y, float width,
+                          float height, float *value, float step) {
   struct NState *state = &GuiState.states[id];
 
   CHECK_IF_HOT()
@@ -371,7 +272,7 @@ bool do_drag_float(NodeId id, float x, float y, float width, float height,
                    float *value, float step) {
   struct NState *state = &GuiState.states[id];
 
-  DoDragRegionFloat(id, x, y, width, height, value, step);
+  do_drag_region_float(id, x, y, width, height, value, step);
 
   const char *str = TextFormat("%.2f", *value);
 
@@ -412,7 +313,7 @@ bool do_color_drag_float_4(NodeId *id, float x, float y, float width,
   DrawRectangle(x, y, height, height, *color);
 
   float delta = 0;
-  DoDragRegionFloat(*id, x, y, height, height, &delta, (1.0f / 255.0f));
+  do_drag_region_float(*id, x, y, height, height, &delta, (1.0f / 255.0f));
 
   if (delta > 0 || delta < 0) {
     state->v.x += delta;
@@ -443,13 +344,10 @@ bool do_color_drag_float_4(NodeId *id, float x, float y, float width,
   return true;
 }
 
-int do_incrementer(NodeId id, float x, float y, float width, float height,
-                   int *v, float font_size) {
-  struct NState *state = &GuiState.states[id];
-
-  CHECK_IF_HOT()
-
-  state->active = state->hot && IsMouseButtonPressed(MOUSE_LEFT_BUTTON);
+int do_incrementer(float x, float y, float width, float height, int *v,
+                   float font_size) {
+  bool hot = IS_HOT();
+  bool active = hot && IsMouseButtonPressed(MOUSE_LEFT_BUTTON);
 
   const float size = font_size;
 
@@ -464,10 +362,10 @@ int do_incrementer(NodeId id, float x, float y, float width, float height,
              },
              size, 1, HIGHLIGHT_COLOR);
 
-  if (state->hot && IsMouseButtonPressed(MOUSE_LEFT_BUTTON)) {
+  if (hot && IsMouseButtonPressed(MOUSE_LEFT_BUTTON)) {
     *v = (*v) + 1;
     return 1;
-  } else if (state->hot && IsMouseButtonPressed(MOUSE_RIGHT_BUTTON)) {
+  } else if (hot && IsMouseButtonPressed(MOUSE_RIGHT_BUTTON)) {
     *v = (*v) - 1;
     return -1;
   }
