@@ -730,11 +730,13 @@ void do_node_tree_modal(Ed *self, GfxState *gfx, Game *game, Region *map) {
     toggle_model_node_tree_modal(self);
   }
 
-  if (game->state == EDITOR_STATE_NODE_TREE_MODAL) {
+  if (self->state == EDITOR_STATE_NODE_TREE_MODAL) {
     self->node_tree_panel_y =
         lerp(GetFrameTime() * 10.0f, self->node_tree_panel_y, PANEL_BTN_HEIGHT);
-
     cursor_y += PANEL_BTN_HEIGHT;
+
+    // Start drawing the panel
+
   } else {
     self->node_tree_panel_y =
         lerp(GetFrameTime() * 10.0f, self->node_tree_panel_y,
