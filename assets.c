@@ -159,6 +159,13 @@ Assets *create_and_load_assets(void) {
   return ass;
 }
 
+Model *assets_get_model(Assets *self, const char *name) {
+  Model **model_ref = map_get(self->models_dict, name);
+  if (model_ref == NULL)
+    return &self->models[0];
+  return *model_ref;
+}
+
 void assets_load_scripts(Assets *self, JanetTable *env) {
   Janet result;
   janet_dostring(env, LoadText("resources/scripts/simple_zombie_ai.janet"),

@@ -106,8 +106,7 @@ Node *load_node_tree(Assets *assets, JanetTable *node_table) {
 
     if (janet_checktype(val, JANET_STRING)) {
       const char *str = janet_unwrap_string(val);
-
-      node->model = *((Model *)*map_get(assets->models_dict, str));
+      node->model = *assets_get_model(assets, str);
     } else {
       node->model = assets->models[0];
     }

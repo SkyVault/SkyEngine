@@ -1051,8 +1051,8 @@ FIRE_HEIGHT	main.c	/^#define FIRE_HEIGHT /;"	d	file:
 FIRE_WIDTH	main.c	/^#define FIRE_WIDTH /;"	d	file:
 FLOAT_MAX	constants.h	/^#define FLOAT_MAX /;"	d
 FMT_FLAGS	janet.c	/^#define FMT_FLAGS /;"	d	file:
-FONT_MAIN_FONT	assets.h	/^    FONT_MAIN_FONT,$/;"	e	enum:Fonts
-FONT_NUM_FONTS	assets.h	/^    FONT_NUM_FONTS,$/;"	e	enum:Fonts
+FONT_MAIN_FONT	assets.h	/^  FONT_MAIN_FONT,$/;"	e	enum:Fonts
+FONT_NUM_FONTS	assets.h	/^  FONT_NUM_FONTS,$/;"	e	enum:Fonts
 FOV	constants.h	/^#define FOV /;"	d
 Facing	components.h	/^enum Facing {$/;"	g
 Facing_X	components.h	/^    Facing_X,$/;"	e	enum:Facing
@@ -9230,11 +9230,11 @@ MAX_PROPS	gameworld_types.h	/^#define MAX_PROPS /;"	d
 MAX_SHADER_LOCATIONS	rlgl.h	/^    #define MAX_SHADER_LOCATIONS /;"	d
 MAX_SHADER_LOCATIONS	rlgl.h	/^#define MAX_SHADER_LOCATIONS /;"	d
 MAX_VERTEX_TEXTURE_IMAGE_UNITS_ARB	include/GL/glew.h	/^#define MAX_VERTEX_TEXTURE_IMAGE_UNITS_ARB /;"	d
-MESH_BARREL	assets.h	/^    MESH_BARREL,$/;"	e	enum:Meshes
-MESH_CUBE	assets.h	/^    MESH_CUBE,$/;"	e	enum:Meshes
-MESH_NUM_MESHES	assets.h	/^    MESH_NUM_MESHES$/;"	e	enum:Meshes
-MESH_PLANE	assets.h	/^    MESH_PLANE,$/;"	e	enum:Meshes
-MESH_SKYBOX	assets.h	/^    MESH_SKYBOX,$/;"	e	enum:Meshes
+MESH_BARREL	assets.h	/^  MESH_BARREL,$/;"	e	enum:Meshes
+MESH_CUBE	assets.h	/^  MESH_CUBE,$/;"	e	enum:Meshes
+MESH_NUM_MESHES	assets.h	/^  MESH_NUM_MESHES$/;"	e	enum:Meshes
+MESH_PLANE	assets.h	/^  MESH_PLANE,$/;"	e	enum:Meshes
+MESH_SKYBOX	assets.h	/^  MESH_SKYBOX,$/;"	e	enum:Meshes
 MIN	rlgl.h	/^        #define MIN(/;"	d
 MIN3	editor.c	/^#define MIN3(/;"	d	file:
 MOVE_BACK	player.h	/^    MOVE_BACK,$/;"	e	enum:__anon3d1d55680203
@@ -12420,12 +12420,12 @@ SCREEN_WIDTH	main.c	/^#define SCREEN_WIDTH /;"	d	file:
 SCRIPTS_BASIC_ZOMBIE_AI	assets.h	/^enum Scripts { SCRIPTS_BASIC_ZOMBIE_AI, SCRIPTS_NUM_SCRIPTS };$/;"	e	enum:Scripts
 SCRIPTS_NUM_SCRIPTS	assets.h	/^enum Scripts { SCRIPTS_BASIC_ZOMBIE_AI, SCRIPTS_NUM_SCRIPTS };$/;"	e	enum:Scripts
 SETENV	janet.c	/^#define SETENV(/;"	d	file:
-SHADER_CUBEMAP	assets.h	/^    SHADER_CUBEMAP,$/;"	e	enum:Shaders
+SHADER_CUBEMAP	assets.h	/^  SHADER_CUBEMAP,$/;"	e	enum:Shaders
 SHADER_FRAGMENT	assets.h	/^enum { SHADER_VERTEX, SHADER_FRAGMENT };$/;"	e	enum:__anona8b4b4ae0103
-SHADER_NUM_SHADERS	assets.h	/^    SHADER_NUM_SHADERS,$/;"	e	enum:Shaders
-SHADER_PHONG_2_0_LIGHTING	assets.h	/^    SHADER_PHONG_2_0_LIGHTING,$/;"	e	enum:Shaders
-SHADER_PHONG_LIGHTING	assets.h	/^    SHADER_PHONG_LIGHTING,$/;"	e	enum:Shaders
-SHADER_SKYBOX	assets.h	/^    SHADER_SKYBOX,$/;"	e	enum:Shaders
+SHADER_NUM_SHADERS	assets.h	/^  SHADER_NUM_SHADERS,$/;"	e	enum:Shaders
+SHADER_PHONG_2_0_LIGHTING	assets.h	/^  SHADER_PHONG_2_0_LIGHTING,$/;"	e	enum:Shaders
+SHADER_PHONG_LIGHTING	assets.h	/^  SHADER_PHONG_LIGHTING,$/;"	e	enum:Shaders
+SHADER_SKYBOX	assets.h	/^  SHADER_SKYBOX,$/;"	e	enum:Shaders
 SHADER_VERTEX	assets.h	/^enum { SHADER_VERTEX, SHADER_FRAGMENT };$/;"	e	enum:__anona8b4b4ae0103
 SHOWING_EXIT_PANEL	editor.h	/^  SHOWING_EXIT_PANEL,$/;"	e	enum:__anonc0cb90020303
 SHOWING_LIGHT_PANEL	editor.h	/^  SHOWING_LIGHT_PANEL,$/;"	e	enum:__anonc0cb90020303
@@ -12476,27 +12476,27 @@ TARGET	Makefile	/^TARGET=bin\/benis.exe$/;"	m
 TA_ATOM_MAXSIZE	janet.c	/^#define TA_ATOM_MAXSIZE /;"	d	file:
 TA_COUNT_TYPES	janet.c	/^#define TA_COUNT_TYPES /;"	d	file:
 TA_FLAG_BIG_ENDIAN	janet.c	/^#define TA_FLAG_BIG_ENDIAN /;"	d	file:
-TEX_BARREL	assets.h	/^    TEX_BARREL,$/;"	e	enum:Textures
-TEX_CHAINLINK_FENCE	assets.h	/^    TEX_CHAINLINK_FENCE,$/;"	e	enum:Textures
-TEX_CHAR_1	assets.h	/^    TEX_CHAR_1,$/;"	e	enum:Textures
-TEX_FLOOR_1	assets.h	/^    TEX_FLOOR_1,$/;"	e	enum:Textures
-TEX_GIRL_1	assets.h	/^    TEX_GIRL_1,$/;"	e	enum:Textures
-TEX_GIRL_2	assets.h	/^    TEX_GIRL_2,$/;"	e	enum:Textures
-TEX_GIRL_3	assets.h	/^    TEX_GIRL_3,$/;"	e	enum:Textures
-TEX_GIRL_4	assets.h	/^    TEX_GIRL_4,$/;"	e	enum:Textures
-TEX_GRASS_1	assets.h	/^    TEX_GRASS_1,$/;"	e	enum:Textures
-TEX_NUM_TEXTURES	assets.h	/^    TEX_NUM_TEXTURES,$/;"	e	enum:Textures
-TEX_ORANGE	assets.h	/^    TEX_ORANGE,$/;"	e	enum:Textures
-TEX_PINEAPPLE	assets.h	/^    TEX_PINEAPPLE,$/;"	e	enum:Textures
-TEX_PROPS	assets.h	/^    TEX_PROPS,$/;"	e	enum:Textures
-TEX_SALAMI	assets.h	/^    TEX_SALAMI,$/;"	e	enum:Textures
-TEX_WALL_1	assets.h	/^    TEX_WALL_1,$/;"	e	enum:Textures
-TEX_WALL_2	assets.h	/^    TEX_WALL_2,$/;"	e	enum:Textures
-TEX_WALL_3	assets.h	/^    TEX_WALL_3,$/;"	e	enum:Textures
-TEX_WALL_4	assets.h	/^    TEX_WALL_4,$/;"	e	enum:Textures
-TEX_WALL_5	assets.h	/^    TEX_WALL_5,$/;"	e	enum:Textures
-TEX_WALL_6	assets.h	/^    TEX_WALL_6,$/;"	e	enum:Textures
-TEX_WALL_ATLAS	assets.h	/^    TEX_WALL_ATLAS,$/;"	e	enum:Textures
+TEX_BARREL	assets.h	/^  TEX_BARREL,$/;"	e	enum:Textures
+TEX_CHAINLINK_FENCE	assets.h	/^  TEX_CHAINLINK_FENCE,$/;"	e	enum:Textures
+TEX_CHAR_1	assets.h	/^  TEX_CHAR_1,$/;"	e	enum:Textures
+TEX_FLOOR_1	assets.h	/^  TEX_FLOOR_1,$/;"	e	enum:Textures
+TEX_GIRL_1	assets.h	/^  TEX_GIRL_1,$/;"	e	enum:Textures
+TEX_GIRL_2	assets.h	/^  TEX_GIRL_2,$/;"	e	enum:Textures
+TEX_GIRL_3	assets.h	/^  TEX_GIRL_3,$/;"	e	enum:Textures
+TEX_GIRL_4	assets.h	/^  TEX_GIRL_4,$/;"	e	enum:Textures
+TEX_GRASS_1	assets.h	/^  TEX_GRASS_1,$/;"	e	enum:Textures
+TEX_NUM_TEXTURES	assets.h	/^  TEX_NUM_TEXTURES,$/;"	e	enum:Textures
+TEX_ORANGE	assets.h	/^  TEX_ORANGE,$/;"	e	enum:Textures
+TEX_PINEAPPLE	assets.h	/^  TEX_PINEAPPLE,$/;"	e	enum:Textures
+TEX_PROPS	assets.h	/^  TEX_PROPS,$/;"	e	enum:Textures
+TEX_SALAMI	assets.h	/^  TEX_SALAMI,$/;"	e	enum:Textures
+TEX_WALL_1	assets.h	/^  TEX_WALL_1,$/;"	e	enum:Textures
+TEX_WALL_2	assets.h	/^  TEX_WALL_2,$/;"	e	enum:Textures
+TEX_WALL_3	assets.h	/^  TEX_WALL_3,$/;"	e	enum:Textures
+TEX_WALL_4	assets.h	/^  TEX_WALL_4,$/;"	e	enum:Textures
+TEX_WALL_5	assets.h	/^  TEX_WALL_5,$/;"	e	enum:Textures
+TEX_WALL_6	assets.h	/^  TEX_WALL_6,$/;"	e	enum:Textures
+TEX_WALL_ATLAS	assets.h	/^  TEX_WALL_ATLAS,$/;"	e	enum:Textures
 TMEM_SIZE	utils.h	/^#define TMEM_SIZE /;"	d
 TODOs for the engine and game	documentation/todo.md	/^# TODOs for the engine and game$/;"	c
 TO_ASS	assembler.h	/^#define TO_ASS(/;"	d
@@ -17249,7 +17249,7 @@ add_opaque_drawable	renderer.c	/^void add_opaque_drawable(GfxState* gfx, Drawabl
 add_transforms	maths.h	/^static Transform add_transforms(Transform a, Transform b) {$/;"	f	typeref:typename:Transform
 add_transparent_drawable	renderer.c	/^void add_transparent_drawable(GfxState* gfx, Drawable drawable) {}$/;"	f	typeref:typename:void
 alive	particles.h	/^    int alive;$/;"	m	struct:__anon3aa623e20208	typeref:typename:int
-alloc_model_from	assets.h	/^static Model* alloc_model_from(Model model) {$/;"	f	typeref:typename:Model *
+alloc_model_from	assets.h	/^static Model *alloc_model_from(Model model) {$/;"	f	typeref:typename:Model *
 alloc_or_die	ecs.h	/^static void* alloc_or_die(size_t size) {$/;"	f	typeref:typename:void *
 altControl	player.h	/^    int altControl;         \/\/ raylib: KEY_LEFT_ALT$/;"	m	struct:__anon3d1d55680308	typeref:typename:int
 ambient	rlights.h	/^    Color ambient;$/;"	m	struct:__anon07ce6fd80108	typeref:typename:Color
@@ -17281,6 +17281,7 @@ asm_cfuns	janet.c	/^static const JanetReg asm_cfuns[] = {$/;"	v	typeref:typename
 assemble	assembler.c	/^EntId assemble(int which, Game* game, float x, float y, float z, float vx,$/;"	f	typeref:typename:EntId
 assemblers	assembler.h	/^static const Ass assemblers[ACTOR_NUM_ENTITY_TYPES + 1] = {$/;"	v	typeref:typename:const Ass[]
 assets	game.h	/^    Assets* assets;$/;"	m	struct:__anonff3b1fb50108	typeref:typename:Assets *
+assets_get_model	assets.c	/^Model *assets_get_model(Assets *self, const char *name) {$/;"	f	typeref:typename:Model *
 assets_load_scripts	assets.c	/^void assets_load_scripts(Assets *self, JanetTable *env) {$/;"	f	typeref:typename:void
 at	include/janet.h	/^    const JanetAbstractType *at;$/;"	m	struct:__anon0605a8400808	typeref:typename:const JanetAbstractType *
 atsign	janet.c	/^static int atsign(JanetParser *p, JanetParseState *state, uint8_t c) {$/;"	f	typeref:typename:int	file:
@@ -18024,7 +18025,7 @@ flush_graphics	renderer.c	/^void flush_graphics(GfxState* gfx, Camera* camera) {
 fn	janet.c	/^    Janet(*fn)(const JanetParser *p);$/;"	m	struct:ParserStateGetter	typeref:typename:Janet (*)(const JanetParser * p)	file:
 fn	janet.c	/^    Janet(*fn)(jstat_t *st);$/;"	m	struct:OsStatGetter	typeref:typename:Janet (*)(jstat_t * st)	file:
 font	gui.h	/^  Font font;$/;"	m	struct:__anon0f88c9600108	typeref:typename:Font
-fonts	assets.h	/^    Font fonts[FONT_NUM_FONTS];$/;"	m	struct:__anona8b4b4ae0208	typeref:typename:Font[]
+fonts	assets.h	/^  Font fonts[FONT_NUM_FONTS];$/;"	m	struct:__anona8b4b4ae0208	typeref:typename:Font[]
 form	janet.c	/^    Janet form;$/;"	m	struct:__anoncda107c81708	typeref:typename:Janet	file:
 format	rlgl.h	/^        int format;             \/\/ Data format (PixelFormat)$/;"	m	struct:Texture2D	typeref:typename:int
 fovy	rlgl.h	/^        float fovy;             \/\/ Camera field-of-view apperture in Y (degrees)$/;"	m	struct:Camera	typeref:typename:float
@@ -20847,7 +20848,7 @@ history	editor.h	/^  char *history[MAX_HISTORY];$/;"	m	struct:__anonc0cb90020608
 history_size	editor.h	/^  int history_size;$/;"	m	struct:__anonc0cb90020608	typeref:typename:int
 holding	player.h	/^    Texture2D holding;$/;"	m	struct:__anon3d1d55680108	typeref:typename:Texture2D
 hot	gui.h	/^  uint8_t hot;$/;"	m	struct:NState	typeref:typename:uint8_t
-hotload	assets.h	/^    bool hotload;$/;"	m	struct:Hotload	typeref:typename:bool
+hotload	assets.h	/^  bool hotload;$/;"	m	struct:Hotload	typeref:typename:bool
 hotload_shader	assets.c	/^Shader hotload_shader(Assets *self, const char *path_vs, const char *path_fs,$/;"	f	typeref:typename:Shader
 how-to-contrubute	documentation/how_to_contribute.html	/^<h1 id="how-to-contrubute">How to contrubute<\/h1>$/;"	I
 how-to-use-the-entity-component-system	documentation/how_to_contribute.html	/^<h2 id="how-to-use-the-entity-component-system">How to use the entity component system<\/h2>$/;"	I
@@ -21565,7 +21566,7 @@ jmode_t	janet.c	/^typedef mode_t jmode_t;$/;"	t	typeref:typename:mode_t	file:
 jmode_t	janet.c	/^typedef unsigned short jmode_t;$/;"	t	typeref:typename:unsigned short	file:
 jstat_t	janet.c	/^typedef struct _stat jstat_t;$/;"	t	typeref:struct:_stat	file:
 jstat_t	janet.c	/^typedef struct stat jstat_t;$/;"	t	typeref:struct:stat	file:
-just_hotloaded	assets.h	/^    bool just_hotloaded;$/;"	m	struct:Hotload	typeref:typename:bool
+just_hotloaded	assets.h	/^  bool just_hotloaded;$/;"	m	struct:Hotload	typeref:typename:bool
 keep	janet.c	/^    int keep;$/;"	m	struct:SymPair	typeref:typename:int	file:
 key	dict.h	/^    char* key;$/;"	m	struct:Entry	typeref:typename:char *
 key	include/janet.h	/^    Janet key;$/;"	m	struct:JanetKV	typeref:typename:Janet
@@ -21583,7 +21584,7 @@ label	.vscode/tasks.json	/^      "label": "MSBuild",$/;"	s	object:tasks.0
 label	.vscode/tasks.json	/^      "label": "Publish Update",$/;"	s	object:tasks.4
 label	.vscode/tasks.json	/^      "label": "Release",$/;"	s	object:tasks.3
 labels	janet.c	/^    JanetTable labels; \/* keyword -> bytecode index *\/$/;"	m	struct:JanetAssembler	typeref:typename:JanetTable	file:
-last_time_modified	assets.h	/^    long last_time_modified[2];$/;"	m	struct:Hotload	typeref:typename:long[2]
+last_time_modified	assets.h	/^  long last_time_modified[2];$/;"	m	struct:Hotload	typeref:typename:long[2]
 last_value	gui.h	/^  float last_value;$/;"	m	struct:NState	typeref:typename:float
 len	gameworld_types.h	/^        size_t len;$/;"	m	struct:__anon7a0be2910408::__anon7a0be2910508	typeref:typename:size_t
 len	include/janet.h	/^    int32_t len;$/;"	m	struct:JanetByteView	typeref:typename:int32_t
@@ -21603,7 +21604,7 @@ lerp_p	maths.c	/^float lerp_p(float a, float b, float p) {$/;"	f	typeref:typenam
 lerp_t	maths.c	/^float lerp_t(float a, float b, float t) {$/;"	f	typeref:typename:float
 levenshtein	editor.c	/^int levenshtein(char *s1, char *s2) {$/;"	f	typeref:typename:int
 light_grabbed	editor.h	/^  int light_grabbed;$/;"	m	struct:__anonc0cb90020608	typeref:typename:int
-lights	assets.h	/^    Light lights[MAX_LIGHTS];$/;"	m	struct:__anona8b4b4ae0208	typeref:typename:Light[]
+lights	assets.h	/^  Light lights[MAX_LIGHTS];$/;"	m	struct:__anona8b4b4ae0208	typeref:typename:Light[]
 lightsCount	rlights.h	/^static int lightsCount = 0;  \/\/ Current amount of created lights$/;"	v	typeref:typename:int
 lights_panel_y	editor.h	/^  float lights_panel_y;$/;"	m	struct:__anonc0cb90020608	typeref:typename:float
 line	include/janet.h	/^    int32_t line;$/;"	m	struct:JanetSourceMapping	typeref:typename:int32_t
@@ -21715,7 +21716,7 @@ maxstack	include/janet.h	/^    int32_t maxstack; \/* Arbitrary defined limit for
 maybe_collect	janet.c	/^#define maybe_collect(/;"	d	file:
 mem	janet.c	/^    long long mem[]; \/* for proper alignment *\/$/;"	m	struct:JanetScratch	typeref:typename:long long[]	file:
 mesg	editor.h	/^  const char *mesg;$/;"	m	struct:Note	typeref:typename:const char *
-meshes	assets.h	/^    Mesh meshes[MESH_NUM_MESHES];$/;"	m	struct:__anona8b4b4ae0208	typeref:typename:Mesh[]
+meshes	assets.h	/^  Mesh meshes[MESH_NUM_MESHES];$/;"	m	struct:__anona8b4b4ae0208	typeref:typename:Mesh[]
 messageCapacity	janet.c	/^    uint16_t messageCapacity;$/;"	m	struct:JanetMailbox	typeref:typename:uint16_t	file:
 messageCount	janet.c	/^    uint16_t messageCount;$/;"	m	struct:JanetMailbox	typeref:typename:uint16_t	file:
 messageFirst	janet.c	/^    uint16_t messageFirst;$/;"	m	struct:JanetMailbox	typeref:typename:uint16_t	file:
@@ -21733,10 +21734,10 @@ model	editor.h	/^  int model;$/;"	m	struct:__anonc0cb90020608	typeref:typename:i
 model	gameworld_types.h	/^    uint8_t model;$/;"	m	struct:__anon7a0be2910108	typeref:typename:uint8_t
 model	node.h	/^        struct { Model model; char name[256]; };$/;"	m	struct:Node::__anon1087a3c1020a::__anon1087a3c10308	typeref:typename:Model
 model	renderer.h	/^        Model model;$/;"	m	union:Drawable::__anon816587f2010a	typeref:typename:Model
-models	assets.h	/^    Model* models;$/;"	m	struct:__anona8b4b4ae0208	typeref:typename:Model *
+models	assets.h	/^  Model *models;$/;"	m	struct:__anona8b4b4ae0208	typeref:typename:Model *
 models	editor.h	/^  Model models[MESH_NUM_MESHES];$/;"	m	struct:__anonc0cb90020608	typeref:typename:Model[]
 models	gameworld_types.h	/^    Model models[MAX_MODELS];$/;"	m	struct:__anon7a0be2910408	typeref:typename:Model[]
-models_dict	assets.h	/^    map_void_t* models_dict;$/;"	m	struct:__anona8b4b4ae0208	typeref:typename:map_void_t *
+models_dict	assets.h	/^  map_void_t *models_dict;$/;"	m	struct:__anona8b4b4ae0208	typeref:typename:map_void_t *
 models_panel_y	editor.h	/^  float models_panel_y;$/;"	m	struct:__anonc0cb90020608	typeref:typename:float
 modelview	rlgl.h	/^        Matrix modelview;                   \/\/ Default modelview matrix$/;"	m	struct:rlglData::__anon19a7bfac0a08	typeref:typename:Matrix
 modulo_asm	janet.c	/^static const uint32_t modulo_asm[] = {$/;"	v	typeref:typename:const uint32_t[]	file:
@@ -21795,9 +21796,9 @@ num_constants	include/janet.h	/^    uint32_t num_constants;$/;"	m	struct:__anon0
 num_entities	ecs.h	/^    int num_entities;$/;"	m	struct:__anon0f5ae4160208	typeref:typename:int
 num_exits	gameworld_types.h	/^    int num_exits;$/;"	m	struct:__anon7a0be2910408	typeref:typename:int
 num_layers	gameworld_types.h	/^    int num_layers;$/;"	m	struct:__anon7a0be2910408	typeref:typename:int
-num_lights	assets.h	/^    int num_lights;$/;"	m	struct:__anona8b4b4ae0208	typeref:typename:int
+num_lights	assets.h	/^  int num_lights;$/;"	m	struct:__anona8b4b4ae0208	typeref:typename:int
 num_maps	editor.h	/^  int num_maps;$/;"	m	struct:__anonc0cb90020608	typeref:typename:int
-num_models	assets.h	/^    int num_models;$/;"	m	struct:__anona8b4b4ae0208	typeref:typename:int
+num_models	assets.h	/^  int num_models;$/;"	m	struct:__anona8b4b4ae0208	typeref:typename:int
 num_models	gameworld_types.h	/^    int num_models;$/;"	m	struct:__anon7a0be2910408	typeref:typename:int
 num_notes	editor.h	/^  int num_notes;$/;"	m	struct:__anonc0cb90020608	typeref:typename:int
 num_opaque_drawables	renderer.h	/^    int num_opaque_drawables;$/;"	m	struct:__anon816587f20308	typeref:typename:int
@@ -21904,7 +21905,7 @@ particles	particles.h	/^    Particle particles[MAX_NUM_OF_PARTICLES];$/;"	m	stru
 pat	janet.c	/^    const uint8_t *pat;$/;"	m	struct:kmp_state	typeref:typename:const uint8_t *	file:
 patch	include/janet.h	/^    unsigned patch;$/;"	m	struct:__anon0605a8400108	typeref:typename:unsigned
 path	gameworld_types.h	/^    } path;$/;"	m	struct:__anon7a0be2910408	typeref:struct:__anon7a0be2910408::__anon7a0be2910508
-paths	assets.h	/^    const char* paths[2];$/;"	m	struct:Hotload	typeref:typename:const char * [2]
+paths	assets.h	/^  const char *paths[2];$/;"	m	struct:Hotload	typeref:typename:const char * [2]
 patlen	janet.c	/^    int32_t patlen;$/;"	m	struct:kmp_state	typeref:typename:int32_t	file:
 payload	include/janet.h	/^        } payload;$/;"	m	struct:Janet::__anon0605a8400408	typeref:union:Janet::__anon0605a8400408::__anon0605a840050a
 pc	include/janet.h	/^    uint32_t *pc;$/;"	m	struct:JanetStackFrame	typeref:typename:uint32_t *
@@ -22149,7 +22150,7 @@ scene_root	gameworld_types.h	/^    Node* scene_root;$/;"	m	struct:__anon7a0be291
 scope	janet.c	/^    JanetScope *scope;$/;"	m	struct:JanetCompiler	typeref:typename:JanetScope *	file:
 scratch	janet.c	/^    JanetBuffer *scratch;$/;"	m	struct:__anoncda107c81408	typeref:typename:JanetBuffer *	file:
 scratch	janet.c	/^    int32_t scratch;$/;"	m	struct:__anoncda107c81608	typeref:typename:int32_t	file:
-scripts	assets.h	/^    JanetFunction* scripts[SCRIPTS_NUM_SCRIPTS];$/;"	m	struct:__anona8b4b4ae0208	typeref:typename:JanetFunction * []
+scripts	assets.h	/^  JanetFunction *scripts[SCRIPTS_NUM_SCRIPTS];$/;"	m	struct:__anona8b4b4ae0208	typeref:typename:JanetFunction * []
 seen	janet.c	/^    JanetTable seen;$/;"	m	struct:__anoncda107c80408	typeref:typename:JanetTable	file:
 seen	janet.c	/^    JanetTable seen;$/;"	m	struct:pretty	typeref:typename:JanetTable	file:
 seen_defs	janet.c	/^    JanetFuncDef **seen_defs;$/;"	m	struct:__anoncda107c80408	typeref:typename:JanetFuncDef **	file:
@@ -22163,8 +22164,8 @@ serial	include/GL/glxew.h	/^typedef struct { int type; unsigned long serial; Boo
 serialize_map	editor.c	/^void serialize_map(Ed *editor, Region *map, Game *game, const char *path) {$/;"	f	typeref:typename:void
 set_camera_mode	player.c	/^void set_camera_mode(Camera camera, int mode) {$/;"	f	typeref:typename:void
 shader	rlgl.h	/^        Shader shader;          \/\/ Material shader$/;"	m	struct:Material	typeref:typename:Shader
-shaders	assets.h	/^    Shader shaders[SHADER_NUM_SHADERS];$/;"	m	struct:__anona8b4b4ae0208	typeref:typename:Shader[]
-shaders_hotload	assets.h	/^    struct Hotload shaders_hotload[SHADER_NUM_SHADERS];$/;"	m	struct:__anona8b4b4ae0208	typeref:struct:Hotload[]
+shaders	assets.h	/^  Shader shaders[SHADER_NUM_SHADERS];$/;"	m	struct:__anona8b4b4ae0208	typeref:typename:Shader[]
+shaders_hotload	assets.h	/^  struct Hotload shaders_hotload[SHADER_NUM_SHADERS];$/;"	m	struct:__anona8b4b4ae0208	typeref:struct:Hotload[]
 shapesTexture	rlgl.h	/^        Texture2D shapesTexture;            \/\/ Texture used on shapes drawing (usually a white/;"	m	struct:rlglData::__anon19a7bfac0a08	typeref:typename:Texture2D
 shapesTextureRec	rlgl.h	/^        Rectangle shapesTextureRec;         \/\/ Texture source rectangle used on shapes drawing$/;"	m	struct:rlglData::__anon19a7bfac0a08	typeref:typename:Rectangle
 simulatorReady	rlgl.h	/^        bool simulatorReady;                \/\/ VR simulator ready flag$/;"	m	struct:rlglData::__anon19a7bfac0c08	typeref:typename:bool
@@ -22263,7 +22264,7 @@ stringchar	janet.c	/^static int stringchar(JanetParser *p, JanetParseState *stat
 stringend	janet.c	/^static int stringend(JanetParser *p, JanetParseState *state) {$/;"	f	typeref:typename:int	file:
 subst	janet.c	/^    const uint8_t *subst;$/;"	m	struct:replace_state	typeref:typename:const uint8_t *	file:
 substlen	janet.c	/^    int32_t substlen;$/;"	m	struct:replace_state	typeref:typename:int32_t	file:
-sun	assets.h	/^    Sun sun;$/;"	m	struct:__anona8b4b4ae0208	typeref:typename:Sun
+sun	assets.h	/^  Sun sun;$/;"	m	struct:__anona8b4b4ae0208	typeref:typename:Sun
 sym	janet.c	/^    const uint8_t *sym;$/;"	m	struct:SymPair	typeref:typename:const uint8_t *	file:
 symbol_clib	janet.c	/^#define symbol_clib(/;"	d	file:
 symchars	janet.c	/^static const uint32_t symchars[8] = {$/;"	v	typeref:typename:const uint32_t[8]	file:
@@ -22321,7 +22322,7 @@ texture	particles.h	/^    Texture2D texture;$/;"	m	struct:__anon3aa623e20308	typ
 texture	rlgl.h	/^        Texture2D texture;      \/\/ Color buffer attachment texture$/;"	m	struct:RenderTexture2D	typeref:typename:Texture2D
 texture	rlgl.h	/^        Texture2D texture;      \/\/ Material map texture$/;"	m	struct:MaterialMap	typeref:typename:Texture2D
 textureId	rlgl.h	/^    unsigned int textureId;     \/\/ Texture id to be used on the draw$/;"	m	struct:DrawCall	typeref:typename:unsigned int
-textures	assets.h	/^    Texture2D textures[TEX_NUM_TEXTURES];$/;"	m	struct:__anona8b4b4ae0208	typeref:typename:Texture2D[]
+textures	assets.h	/^  Texture2D textures[TEX_NUM_TEXTURES];$/;"	m	struct:__anona8b4b4ae0208	typeref:typename:Texture2D[]
 thoughts-about-the-project-and-the-engine	documentation/thoughts.html	/^<h1 id="thoughts-about-the-project-and-the-engine">Thoughts about the project and the engine<\/h/;"	I
 thread_gc	janet.c	/^static int thread_gc(void *p, size_t size) {$/;"	f	typeref:typename:int	file:
 thread_mark	janet.c	/^static int thread_mark(void *p, size_t size) {$/;"	f	typeref:typename:int	file:
