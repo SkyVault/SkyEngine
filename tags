@@ -17777,6 +17777,8 @@ drawable	include/GL/glxew.h	/^  GLXDrawable drawable; $/;"	m	struct:__anonacd3e5
 drawable	include/GL/glxew.h	/^typedef struct { int type; unsigned long serial; Bool send_event; Display *display; GLXDrawable /;"	m	struct:__anonacd3e5770608	typeref:typename:GLXDrawable
 draws	rlgl.h	/^        DrawCall *draws;                    \/\/ Draw calls array$/;"	m	struct:rlglData::__anon19a7bfac0a08	typeref:typename:DrawCall *
 drawsCounter	rlgl.h	/^        int drawsCounter;                   \/\/ Draw calls counter$/;"	m	struct:rlglData::__anon19a7bfac0a08	typeref:typename:int
+dump_node	editor.c	/^void dump_node(StringBuilder *sb, Node *node) {$/;"	f	typeref:typename:void
+dump_transform	editor.c	/^void dump_transform(StringBuilder *sb, Transform transform) {$/;"	f	typeref:typename:void
 ease	tween.c	/^double ease(int type, double t) {$/;"	f	typeref:typename:double
 ecs	game.h	/^    EcsWorld* ecs;$/;"	m	struct:__anonff3b1fb50108	typeref:typename:EcsWorld *
 editing_exit	editor.h	/^  int editing_exit;$/;"	m	struct:__anonc0cb90020608	typeref:typename:int
@@ -21610,6 +21612,7 @@ line	janet.c	/^    size_t line;$/;"	m	struct:JanetParseState	typeref:typename:si
 list	ecs.h	/^    void** list;$/;"	m	struct:CompList	typeref:typename:void **
 load_buff	editor.c	/^static char load_buff[1024] = {'\\0'};$/;"	v	typeref:typename:char[1024]	file:
 load_clib	janet.c	/^#define load_clib(/;"	d	file:
+load_node_tree	gameworld.c	/^Node *load_node_tree(Assets *assets, JanetTable *node_table) {$/;"	f	typeref:typename:Node *
 load_permutation	maths.c	/^void load_permutation(){$/;"	f	typeref:typename:void
 load_region_from_script	gameworld.c	/^void load_region_from_script(Region *result, const char *path, Game *game) {$/;"	f	typeref:typename:void
 lock	janet.c	/^    CRITICAL_SECTION lock;$/;"	m	struct:JanetMailbox	typeref:typename:CRITICAL_SECTION	file:

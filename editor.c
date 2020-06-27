@@ -1063,6 +1063,41 @@ void render_editor_ui(Ed *self, GfxState *gfx, Region *map, Game *game) {
   do_node_tree_modal(self, gfx, game, map);
 }
 
+void dump_transform(StringBuilder *sb, Transform transform) {
+  sb_appendf(sb, ":transform @[%f %f %f  %f %f %f  %f %f %f %f]",
+             transform.translation.x, transform.translation.y,
+             transform.translation.z, transform.scale.x, transform.scale.y,
+             transform.scale.z, transform.rotation.x, transform.rotation.y,
+             transform.rotation.z, transform.rotation.w);
+}
+
+void dump_node(StringBuilder *sb, Node *node) {
+  sb_append(sb, "@{");
+
+  if (node->type == NODE_TYPE_EMPTY) {
+  } else if (node->type == NODE_TYPE_MODEL) {
+    sb_appendf(sb, " :model \"%s\"", node->name);
+  } else if (node->type == NODE_TYPE_BILLBOARD) {
+    assert(0);
+  }
+
+  // Transform
+  sb_append(sb, "\n");
+  dump_transform(sb, node->transform);
+
+  if (node->next) {
+    sb_append(sb, "\n:next ");
+    dump_node(sb, node->next);
+  }
+
+  if (node->child) {
+    sb_append(sb, "\n:child ");
+    dump_node(sb, node->child);
+  }
+
+  sb_append(sb, "}");
+}
+
 void serialize_map(Ed *editor, Region *map, Game *game, const char *path) {
   StringBuilder *sb = sb_create();
   char *result;
@@ -1129,7 +1164,14 @@ void serialize_map(Ed *editor, Region *map, Game *game, const char *path) {
                e.position.y, e.position.z, e.dest_id, e.dest_path);
   }
 
-  sb_append(sb, "]}");
+  sb_append(sb, "]\n   :root-node ");
+
+  if (map->scene_root != NULL)
+    dump_node(sb, map->scene_root);
+  else
+    sb_append(sb, "@{}");
+
+  sb_append(sb, "}");
 
   result = sb_concat(sb);
 

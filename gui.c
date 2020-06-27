@@ -26,6 +26,8 @@ void init_gui() {
 
 void do_panel(float x, float y, float width, float height) {
   bool hot = IS_HOT();
+  if (hot)
+    GuiState.a_el_is_hot = true;
 
   Color color = (!hot) ? BASE_COLOR : (Color){200, 200, 200, 255};
 
@@ -49,11 +51,15 @@ void do_label(const char *str, float x, float y, float width, float height,
 
 bool do_click_region(float x, float y, float width, float height) {
   bool hot = IS_HOT();
+  if (hot)
+    GuiState.a_el_is_hot = true;
   return hot && IsMouseButtonPressed(MOUSE_LEFT_BUTTON);
 }
 
 bool do_btn(float x, float y, float width, float height, const char *text) {
   bool hot = IS_HOT();
+  if (hot)
+    GuiState.a_el_is_hot = true;
   bool active = hot && IsMouseButtonPressed(MOUSE_LEFT_BUTTON);
 
   const float size = height - 2;
@@ -75,6 +81,8 @@ bool do_btn(float x, float y, float width, float height, const char *text) {
 bool do_tex_btn(float x, float y, float width, float height, const char *text,
                 Texture2D texture) {
   bool hot = IS_HOT();
+  if (hot)
+    GuiState.a_el_is_hot = true;
   bool active = hot && IsMouseButtonPressed(MOUSE_LEFT_BUTTON);
 
   const float size = 30.0f;
@@ -124,6 +132,8 @@ bool do_text_input(char *buffer, int *cursor, size_t buffer_size, float x,
   do_panel(x, y, width, height);
 
   bool hot = IS_HOT();
+  if (hot)
+    GuiState.a_el_is_hot = true;
   bool active = hot && IsMouseButtonPressed(MOUSE_LEFT_BUTTON);
 
   const int fsize = 30;
@@ -150,7 +160,7 @@ bool do_text_input(char *buffer, int *cursor, size_t buffer_size, float x,
     DrawRectangle(x + 4 + size.x, y + 4, 4, height - 8, BLACK);
   }
 
-  return active && IsKeyPressed(KEY_ENTER);
+  return hot && IsKeyPressed(KEY_ENTER);
 }
 
 void do_toggle_group_v(int *which_, const char *names, float x, float y,
@@ -214,6 +224,8 @@ void do_toggle_group_v(int *which_, const char *names, float x, float y,
 
 bool do_check_box(bool *active, float x, float y, float width, float height) {
   bool hot = IS_HOT();
+  if (hot)
+    GuiState.a_el_is_hot = true;
 
   if (hot && IsMouseButtonPressed(MOUSE_LEFT_BUTTON)) {
     (*active) = !(*active);
@@ -232,6 +244,8 @@ bool do_check_box(bool *active, float x, float y, float width, float height) {
 bool do_collapsing_header(bool *active, const char *label, float x, float y,
                           float width, float height) {
   bool hot = IS_HOT();
+  if (hot)
+    GuiState.a_el_is_hot = true;
 
   if (hot && IsMouseButtonPressed(MOUSE_LEFT_BUTTON)) {
     (*active) = !(*active);
@@ -347,6 +361,8 @@ bool do_color_drag_float_4(NodeId *id, float x, float y, float width,
 int do_incrementer(float x, float y, float width, float height, int *v,
                    float font_size) {
   bool hot = IS_HOT();
+  if (hot)
+    GuiState.a_el_is_hot = true;
   bool active = hot && IsMouseButtonPressed(MOUSE_LEFT_BUTTON);
 
   const float size = font_size;

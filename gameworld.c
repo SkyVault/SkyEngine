@@ -82,6 +82,61 @@ void zero_out_region(Region *self) {
   }
 }
 
+Node *load_node_tree(Assets *assets, JanetTable *node_table) {
+  if (!node_table)
+    return;
+
+  Janet next_j = janet_table_get(node_table, janet_ckeywordv("next"));
+  Janet child_j = janet_table_get(node_table, janet_ckeywordv("child"));
+  Janet transform_j = janet_table_get(node_table, janet_ckeywordv("transform"));
+
+  JanetTable *next = janet_unwrap_table(next_j);
+  JanetTable *child = janet_unwrap_table(child_j);
+  JanetArray *trans = janet_unwrap_array(transform_j);
+
+  Node *node = create_node();
+  if (!next && !child) {
+    node->type = NODE_TYPE_EMPTY;
+  } else {
+    node->type = NODE_TYPE_MODEL;
+  }
+
+  if (node->type == NODE_TYPE_MODEL) {
+    Janet val = janet_table_get(node_table, janet_ckeywordv("model"));
+
+    if (janet_checktype(val, JANET_STRING)) {
+      const char *str = janet_unwrap_string(val);
+
+      node->model = *((Model *)*map_get(assets->models_dict, str));
+    } else {
+      node->model = assets->models[0];
+    }
+
+    if (janet_checktype(transform_j, JANET_ARRAY)) {
+      Transform transform;
+      transform.translation = (Vector3){janet_unwrap_number(trans->data[0]),
+                                        janet_unwrap_number(trans->data[1]),
+                                        janet_unwrap_number(trans->data[2])};
+      transform.scale = (Vector3){janet_unwrap_number(trans->data[3]),
+                                  janet_unwrap_number(trans->data[4]),
+                                  janet_unwrap_number(trans->data[5])};
+      transform.rotation = (Quaternion){janet_unwrap_number(trans->data[6]),
+                                        janet_unwrap_number(trans->data[7]),
+                                        janet_unwrap_number(trans->data[8]),
+                                        janet_unwrap_number(trans->data[9])};
+      node->transform = transform;
+    }
+
+    if (janet_checktype(child_j, JANET_TABLE))
+      node->child = load_node_tree(assets, child);
+
+    if (janet_checktype(next_j, JANET_TABLE))
+      node->next = load_node_tree(assets, next);
+  }
+
+  return node;
+}
+
 Region *create_region_from_script(const char *path, Game *game) {
   Region *result = malloc(sizeof(Region));
   result->current_map = -1;
@@ -359,33 +414,11 @@ void load_region_from_script(Region *result, const char *path, Game *game) {
   transform.scale = Vector3One();
   transform.rotation = QuaternionIdentity();
 
-  result->scene_root = create_node();
-  result->scene_root->child = create_node_from_model_with_transform(
-      *((Model *)*map_get(game->assets->models_dict, "monkey")), "monkey",
-      transform);
+  // Load node tree
+  JanetTable *nodes_table = janet_unwrap_table(
+      janet_table_get(result_table, janet_ckeywordv("root-node")));
 
-  transform.translation.x += 2;
-  transform.translation.y += 2;
-  result->scene_root->child->next = create_node_from_model_with_transform(
-      *((Model *)*map_get(game->assets->models_dict, "monkey")), "monkey",
-      transform);
-
-  {
-    Model terrain_m = LoadModel("resources/models/terrain.obj");
-    terrain_m.materials[0].maps[MAP_DIFFUSE].texture =
-        game->assets->textures[TEX_GRASS_1];
-    terrain_m.materials[0].shader =
-        game->assets->shaders[SHADER_PHONG_LIGHTING];
-
-    Transform trans;
-    trans.translation =
-        (Vector3){(32 * CUBE_SIZE) / 2, 1.49, (32 * CUBE_SIZE / 2)};
-    trans.rotation = QuaternionIdentity();
-    trans.scale = Vector3One();
-
-    result->scene_root->child->next->next =
-        create_node_from_model_with_transform(terrain_m, "terrain", trans);
-  }
+  result->scene_root = load_node_tree(game->assets, nodes_table);
 
   fclose(o);
 }

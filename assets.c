@@ -145,12 +145,15 @@ Assets *create_and_load_assets(void) {
   {
     Model monkey = LoadModel("resources/models/monkey.obj");
     monkey.materials[0].shader = ass->shaders[SHADER_PHONG_LIGHTING];
-    Model *monkey_ptr = alloc_model_from(monkey);
-    map_set(ass->models_dict, "monkey", monkey_ptr);
+    map_set(ass->models_dict, "monkey", alloc_model_from(monkey));
+  }
 
-    Model *test = *map_get(ass->models_dict, "monkey");
-
-    printf("here\n");
+  {
+    Model terrain_m = LoadModel("resources/models/terrain.obj");
+    terrain_m.materials[0].maps[MAP_DIFFUSE].texture =
+        ass->textures[TEX_GRASS_1];
+    terrain_m.materials[0].shader = ass->shaders[SHADER_PHONG_LIGHTING];
+    map_set(ass->models_dict, "terrain", alloc_model_from(terrain_m));
   }
 
   return ass;
