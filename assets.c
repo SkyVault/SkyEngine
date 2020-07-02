@@ -149,6 +149,12 @@ Assets *create_and_load_assets(void) {
   }
 
   {
+    Model m = LoadModel("resources/models/rocks1.obj");
+    m.materials[0].shader = ass->shaders[SHADER_PHONG_LIGHTING];
+    map_set(ass->models_dict, "rocks1", alloc_model_from(m));
+  }
+
+  {
     Model terrain_m = LoadModel("resources/models/terrain.obj");
     terrain_m.materials[0].maps[MAP_DIFFUSE].texture =
         ass->textures[TEX_GRASS_1];

@@ -45,7 +45,7 @@ Ed *create_editor() {
   editor->models_panel_y = (float)GetScreenHeight();
   editor->node_tree_panel_y = (float)GetScreenHeight();
 
-  editor->object_placement_type = PLACE_BLOCKS;
+  editor->object_placement_type = PLACE_NODES;
 
   editor->state = EDITOR_STATE_NONE;
 
@@ -60,6 +60,8 @@ Ed *create_editor() {
   editor->light_grabbed = -1;
 
   editor->selected_node = NULL;
+
+  editor->do_selected_node_panel = false;
 
   // Exit handler, portable?
   atexit(on_exit);
@@ -194,7 +196,13 @@ void update_editor(Ed *self, Region *map, Game *game) {
 
   if (IsKeyPressed(KEY_E)) {
     toggle_model_selector_modal(self);
+    self->object_placement_type =
+        (self->state == EDITOR_STATE_MODEL_SELECTOR_MODAL ? PLACE_NODES
+                                                          : PLACE_NONE);
     game->lock_camera = true;
+
+    if (self->state != EDITOR_STATE_MODEL_SELECTOR_MODAL)
+      game->lock_camera = false;
   }
 
   if (IsKeyPressed(KEY_T) && !game->lock_camera) {
@@ -257,6 +265,32 @@ void update_editor(Ed *self, Region *map, Game *game) {
 
   if (self->object_placement_type == PLACE_PROPS) {
     ms = sizeof(prop_types) / sizeof(prop_types[0]);
+  }
+
+  // ROTATION WITH MIDDLE MOUSE
+  if (self->selected_node != NULL) {
+    if (IsMouseButtonPressed(MOUSE_MIDDLE_BUTTON)) {
+      self->rot_mouse_start = GetMousePosition();
+    } else if (IsMouseButtonDown(MOUSE_MIDDLE_BUTTON)) {
+      Vector2 delta =
+          Vector2Subtract(self->rot_mouse_start, GetMousePosition());
+
+      self->selected_node->transform.rotation.y += delta.x;
+    }
+  }
+
+  {
+    // Deleting nodes
+    if (IsKeyPressed(KEY_DELETE)) {
+      if (self->selected_node != NULL) {
+      }
+    }
+  }
+
+  if (self->selected_node != NULL) {
+    self->do_selected_node_panel = true;
+  } else {
+    self->do_selected_node_panel = false;
   }
 
   if (self->model >= ms) {
@@ -417,31 +451,40 @@ void render_editor(Ed *self, GfxState *gfx, Region *map, Game *game) {
   float occ =
       (1.0f - scale) + ((1.0f + cosf((float)GetTime() * 10.0f)) * 0.5f) * scale;
 
-  if (self->object_placement_type == PLACE_BLOCKS && self->light_grabbed < 0 &&
+  Model model = game->assets->models[0];
+  int i = 0;
+  const char *key;
+  map_iter_t iter = map_iter(game->assets->models_dict);
+  while ((key = map_next(game->assets->models_dict, &iter))) {
+    model = *(*(Model **)map_get(game->assets->models_dict, key));
+    if (i == self->model)
+      break;
+
+    i++;
+  }
+
+  if (self->object_placement_type == PLACE_NODES && self->light_grabbed < 0 &&
       self->state == EDITOR_STATE_NONE) {
     Transform transform;
-    transform.translation = clamped;
+    transform.translation = loc;
     transform.rotation = QuaternionIdentity();
     transform.scale = Vector3One();
 
-    draw_model(gfx, &map->models[self->model], transform,
+    draw_model(gfx, &model, transform,
                (Color){(unsigned char)(occ * 255), 255,
                        (unsigned char)(occ * 255), 150});
 
     if (IsMouseButtonPressed(MOUSE_LEFT_BUTTON) && !game->lock_camera) {
       // Try to intersect
+      Node *node = create_node_from_model(model, key);
+      node->transform = transform;
 
-      int index = (int)(clamped.x / cs) + (int)(clamped.z / cs) * map->width;
+      node_prepend(game->map->scene_root, node);
 
-      if (index < MAX_MAP_WIDTH * MAX_MAP_HEIGHT && index >= 0) {
-        map->walls[self->y][index].active = !map->walls[self->y][index].active;
-
-        if (!map->walls[self->y][index].active)
-          map->walls[self->y][index].model = 0;
-        else
-          map->walls[self->y][index].model = self->model;
-      }
+      self->object_placement_type = PLACE_NONE;
+      self->selected_node = node;
     }
+
   } else if (self->object_placement_type == PLACE_ACTORS) {
     Texture2D tex = game->assets->textures[TEX_GIRL_1 + self->model];
     // DrawBillboard(*game->camera, tex, loc, CUBE_SIZE, WHITE);
@@ -736,11 +779,71 @@ void do_node_tree_modal(Ed *self, GfxState *gfx, Game *game, Region *map) {
     cursor_y += PANEL_BTN_HEIGHT;
 
     // Start drawing the panel
+    {
+      Node *child = map->scene_root;
+      Node *next = NULL;
 
+      float cx = lx + MARGIN;
+      float cy = cursor_y + MARGIN;
+
+      int id = 500;
+
+      while (child) {
+        id++;
+        do_node_dropdown(self, child, &id, &cx, &cy);
+
+        cx += 8;
+        cy += 20;
+
+        if (child->next) {
+          next = child->next;
+          while (next) {
+            id++;
+            do_node_dropdown(self, next, &id, &cx, &cy);
+            cy += 20;
+            next = next->next;
+          }
+        }
+
+        child = child->child;
+      }
+    }
   } else {
     self->node_tree_panel_y =
         lerp(GetFrameTime() * 10.0f, self->node_tree_panel_y,
              GetScreenHeight() - PANEL_BTN_HEIGHT);
+  }
+}
+
+void do_node_dropdown(Ed *self, Node *node, int *id, float *cx, float *cy) {
+  static bool active = true;
+
+  const char *label = (node->type == NODE_TYPE_MODEL ? node->name : "Empty");
+
+  const float w = PANEL_WIDTH - (MARGIN * 8);
+  const float x = *cx;
+  const float y = *cy;
+
+  const float label_w = 60;
+
+  if (do_collapsing_header(&active, label, (*cx), (*cy), w, 20)) {
+    (*cy) += 20;
+    do_label("pos: ", (*cx), (*cy), label_w, 20, 20);
+    do_drag_float_3(id, (*cx) + label_w, (*cy), w, 20,
+                    &node->transform.translation, 0.1f);
+    (*id) += 1;
+    (*cy) += 20;
+    do_label("scale: ", (*cx), (*cy), label_w, 20, 20);
+    do_drag_float_3(id, (*cx) + label_w, (*cy), w, 20, &node->transform.scale,
+                    0.1f);
+
+    (*id) += 1;
+    (*cy) += 20;
+
+    Vector3 rot = QuaternionToEuler(node->transform.rotation);
+    do_label("rot: ", (*cx), (*cy), label_w, 20, 20);
+    do_drag_float_3(id, (*cx) + label_w, (*cy), w, 20, &rot, 0.01f);
+    node->transform.rotation = QuaternionFromEuler(rot.x, rot.y, rot.z);
   }
 }
 
@@ -760,6 +863,10 @@ void do_models_modal(Ed *self, GfxState *gfx, Game *game, Region *map) {
                              ? "+"
                              : "-")))) {
     toggle_model_selector_modal(self);
+
+    if (self->state == EDITOR_STATE_MODEL_SELECTOR_MODAL) {
+      self->object_placement_type = PLACE_NODES;
+    }
   }
 
   if (self->state == EDITOR_STATE_MODEL_SELECTOR_MODAL) {
@@ -775,17 +882,21 @@ void do_models_modal(Ed *self, GfxState *gfx, Game *game, Region *map) {
 
     cursor_y += 30;
 
+    Rectangle where = {lx + MARGIN, cursor_y, 100, 100};
+
     max_height = 0;
-    for (int i = TEX_WALL_1; i < map->num_models; i++) {
-      const float size = PANEL_WIDTH - 10;
-      Model model = map->models[i];
+
+    const char *key;
+    map_iter_t iter = map_iter(game->assets->models_dict);
+
+    int i = 0;
+    while ((key = map_next(game->assets->models_dict, &iter))) {
+      const float size = PANEL_WIDTH / 2;
+      Model model = *(*(Model **)map_get(game->assets->models_dict, key));
+
       Texture2D texture = model.materials[0].maps[MAP_DIFFUSE].texture;
 
       Vector3 cpos = game->camera->position;
-
-      Transform transform = transform_translation((Vector3){0, 0, 0});
-
-      draw_model(gfx, &model, transform, WHITE);
 
       // DrawTexturePro(
       //     texture, (Rectangle){0, 0, texture.width,
@@ -795,15 +906,27 @@ void do_models_modal(Ed *self, GfxState *gfx, Game *game, Region *map) {
       if (do_tex_btn(lx + 10, cursor_y - scroll_y, size, size, "", texture)) {
         self->model = i;
         self->state = EDITOR_STATE_NONE;
+        game->lock_camera = false;
       }
 
-      if (self->model == i) {
-        DrawRectangleLinesEx(
-            (Rectangle){lx + 10, cursor_y - scroll_y, size, size}, 2, RED);
+      Rectangle where = {lx + 80, cursor_y - scroll_y + 70, size - 140,
+                         size - 140};
+
+      {
+        // Model model = game->assets->models[0];
+        Model model = *(*(Model **)map_get(game->assets->models_dict, key));
+
+        draw_gui_model(gfx, &model, where, (Vector3){0, GetTime(), 0}, RED);
+
+        if (self->model == i) {
+          DrawRectangleLinesEx(
+              (Rectangle){lx + 10, cursor_y - scroll_y, size, size}, 2, RED);
+        }
       }
 
       cursor_y += size + 8;
       max_height += size + 8;
+      i++;
     }
 
     id += map->num_models + 10;
@@ -813,6 +936,25 @@ void do_models_modal(Ed *self, GfxState *gfx, Game *game, Region *map) {
     self->models_panel_y = lerp(GetFrameTime() * 10.0f, self->models_panel_y,
                                 GetScreenHeight() - PANEL_BTN_HEIGHT);
   }
+}
+
+void do_selected_node_panel(Ed *self, GfxState *gfx, Game *game, Region *map) {
+  int x = GetScreenWidth() / 2 - 600;
+  int y = 32;
+  int w = 300;
+  int h = GetScreenHeight() - 60;
+  do_panel(x, y, w, h);
+
+  int cursor_y = y + 20;
+
+  const float label_w = 60;
+
+  do_label("rot: ", x + 20, cursor_y, label_w, 20, 20);
+
+  Vector3 rot = QuaternionToEuler(self->selected_node->transform.rotation);
+  int id = 700;
+  do_drag_float_3(&id, x + 20 + label_w, cursor_y, 300 - (label_w - 20), 20,
+                  &rot, 0.1f);
 }
 
 void render_editor_ui(Ed *self, GfxState *gfx, Region *map, Game *game) {
@@ -853,7 +995,7 @@ void render_editor_ui(Ed *self, GfxState *gfx, Region *map, Game *game) {
   // Notifications
   int last = self->object_placement_type;
   do_toggle_group_v(&self->object_placement_type,
-                    "NONE|BLOCKS|ACTORS|PROPS|MARKERS|", 0,
+                    "NONE|NODES|ACTORS|PROPS|MARKERS|", 0,
                     GetScreenHeight() - (self->placement_toggle_height + 50),
                     &self->placement_toggle_height);
 
@@ -1061,6 +1203,10 @@ void render_editor_ui(Ed *self, GfxState *gfx, Region *map, Game *game) {
   do_lights_modal(self, gfx, game, map);
   do_models_modal(self, gfx, game, map);
   do_node_tree_modal(self, gfx, game, map);
+
+  if (self->do_selected_node_panel) {
+    do_selected_node_panel(self, gfx, game, map);
+  }
 }
 
 void dump_transform(StringBuilder *sb, Transform transform) {
@@ -1181,10 +1327,6 @@ void serialize_map(Ed *editor, Region *map, Game *game, const char *path) {
 
   free(result);
   sb_free(sb);
-
-  return;
 }
 
 void unserialize_map(Ed *editor, Region *map, Game *game, const char *path) {}
-
-// #endif

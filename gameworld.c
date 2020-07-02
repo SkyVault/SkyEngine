@@ -107,6 +107,8 @@ Node *load_node_tree(Assets *assets, JanetTable *node_table) {
     if (janet_checktype(val, JANET_STRING)) {
       const char *str = janet_unwrap_string(val);
       node->model = *assets_get_model(assets, str);
+      for (size_t i = 0; i < strlen(str); i++)
+        node->name[i] = str[i];
     } else {
       node->model = assets->models[0];
     }
@@ -499,5 +501,6 @@ bool add_exit(Region *self, Vector3 position, int id, int dest_id,
 
     return true;
   }
+
   return false;
 }

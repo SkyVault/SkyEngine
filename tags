@@ -208,12 +208,12 @@ Door_Open	components.h	/^    Door_Open,$/;"	e	enum:DoorState
 DrawBuffersDefault	rlgl.h	/^static void DrawBuffersDefault(void)$/;"	f	typeref:typename:void
 DrawCall	rlgl.h	/^typedef struct DrawCall {$/;"	s
 DrawCall	rlgl.h	/^} DrawCall;$/;"	t	typeref:struct:DrawCall
-DrawFlag_Active	renderer.h	/^    DrawFlag_Active = 1 << 0,$/;"	e	enum:DrawFlags
-DrawFlag_NumDrawFlags	renderer.h	/^    DrawFlag_NumDrawFlags = 1 << 1,$/;"	e	enum:DrawFlags
+DrawFlag_Active	renderer.h	/^  DrawFlag_Active = 1 << 0,$/;"	e	enum:DrawFlags
+DrawFlag_NumDrawFlags	renderer.h	/^  DrawFlag_NumDrawFlags = 1 << 1,$/;"	e	enum:DrawFlags
 DrawFlags	renderer.h	/^enum DrawFlags {$/;"	g
-DrawType_Billboard	renderer.h	/^    DrawType_Billboard,$/;"	e	enum:DrawTypes
-DrawType_Model	renderer.h	/^    DrawType_Model,$/;"	e	enum:DrawTypes
-DrawType_NumDrawTypes	renderer.h	/^    DrawType_NumDrawTypes,$/;"	e	enum:DrawTypes
+DrawType_Billboard	renderer.h	/^  DrawType_Billboard,$/;"	e	enum:DrawTypes
+DrawType_Model	renderer.h	/^  DrawType_Model,$/;"	e	enum:DrawTypes
+DrawType_NumDrawTypes	renderer.h	/^  DrawType_NumDrawTypes,$/;"	e	enum:DrawTypes
 DrawTypes	renderer.h	/^enum DrawTypes {$/;"	g
 Drawable	renderer.h	/^typedef struct Drawable {$/;"	s
 Drawable	renderer.h	/^} Drawable;$/;"	t	typeref:struct:Drawable
@@ -9222,6 +9222,7 @@ MAX_MATERIAL_MAPS	rlgl.h	/^#define MAX_MATERIAL_MAPS /;"	d
 MAX_MATRIX_STACK_SIZE	rlgl.h	/^#define MAX_MATRIX_STACK_SIZE /;"	d
 MAX_MIPMAP_LEVELS	rlgl.h	/^    #define MAX_MIPMAP_LEVELS /;"	d
 MAX_MODELS	gameworld_types.h	/^#define MAX_MODELS /;"	d
+MAX_NUMBER_OF_3D_GUI_DRAWABLES	renderer.h	/^#define MAX_NUMBER_OF_3D_GUI_DRAWABLES /;"	d
 MAX_NUMBER_OF_DRAWABLES	renderer.h	/^#define MAX_NUMBER_OF_DRAWABLES /;"	d
 MAX_NUM_LAYERS	gameworld_types.h	/^#define MAX_NUM_LAYERS /;"	d
 MAX_NUM_OF_PARTICLES	particles.h	/^#define MAX_NUM_OF_PARTICLES /;"	d
@@ -9282,9 +9283,9 @@ Mesh	rlgl.h	/^    } Mesh;$/;"	t	typeref:struct:Mesh
 Meshes	assets.h	/^enum Meshes {$/;"	g
 Monsters	documentation/rpg_game_ideas.md	/^### Monsters$/;"	S
 NEW_COMP	ecs.h	/^#define NEW_COMP(/;"	d
-NODE_TYPE_BILLBOARD	node.h	/^    NODE_TYPE_BILLBOARD,$/;"	e	enum:__anon1087a3c10103
-NODE_TYPE_EMPTY	node.h	/^    NODE_TYPE_EMPTY,$/;"	e	enum:__anon1087a3c10103
-NODE_TYPE_MODEL	node.h	/^    NODE_TYPE_MODEL,$/;"	e	enum:__anon1087a3c10103
+NODE_TYPE_BILLBOARD	node.h	/^  NODE_TYPE_BILLBOARD,$/;"	e	enum:__anon1087a3c10103
+NODE_TYPE_EMPTY	node.h	/^  NODE_TYPE_EMPTY,$/;"	e	enum:__anon1087a3c10103
+NODE_TYPE_MODEL	node.h	/^  NODE_TYPE_MODEL,$/;"	e	enum:__anon1087a3c10103
 NOTE_HEIGHT	editor.c	/^#define NOTE_HEIGHT /;"	d	file:
 NState	gui.h	/^struct NState {$/;"	s
 NUM_ENT_CHUNK	ecs.h	/^#define NUM_ENT_CHUNK /;"	d
@@ -12294,8 +12295,8 @@ PGPU_DEVICE	include/GL/wglew.h	/^} GPU_DEVICE, *PGPU_DEVICE;$/;"	t	typeref:struc
 PI	player.c	/^#define PI /;"	d	file:
 PI	raymath.h	/^    #define PI /;"	d
 PLACE_ACTORS	editor.h	/^  PLACE_ACTORS,$/;"	e	enum:__anonc0cb90020103
-PLACE_BLOCKS	editor.h	/^  PLACE_BLOCKS,$/;"	e	enum:__anonc0cb90020103
 PLACE_MARKERS	editor.h	/^  PLACE_MARKERS,$/;"	e	enum:__anonc0cb90020103
+PLACE_NODES	editor.h	/^  PLACE_NODES,$/;"	e	enum:__anonc0cb90020103
 PLACE_NONE	editor.h	/^  PLACE_NONE,$/;"	e	enum:__anonc0cb90020103
 PLACE_PROPS	editor.h	/^  PLACE_PROPS,$/;"	e	enum:__anonc0cb90020103
 PLAYER_MOVEMENT_SENSITIVITY	player.c	/^#define PLAYER_MOVEMENT_SENSITIVITY /;"	d	file:
@@ -14151,8 +14152,8 @@ __anon0f88c9600108	gui.h	/^static struct {$/;"	s
 __anon0fea82990108	map.h	/^typedef struct {$/;"	s
 __anon0fea82990208	map.h	/^typedef struct {$/;"	s
 __anon1087a3c10103	node.h	/^enum {$/;"	g
-__anon1087a3c1020a	node.h	/^    union {$/;"	u	struct:Node
-__anon1087a3c10308	node.h	/^        struct { Model model; char name[256]; };$/;"	s	union:Node::__anon1087a3c1020a
+__anon1087a3c1020a	node.h	/^  union {$/;"	u	struct:Node
+__anon1087a3c10308	node.h	/^    struct {$/;"	s	union:Node::__anon1087a3c1020a
 __anon156e757c0108	prop.h	/^typedef struct {$/;"	s
 __anon19a7bfac0103	rlgl.h	/^typedef enum { OPENGL_11 = 1, OPENGL_21, OPENGL_33, OPENGL_ES_20 } GlVersion;$/;"	g
 __anon19a7bfac0203	rlgl.h	/^    typedef enum { false, true } bool;$/;"	g
@@ -14183,8 +14184,8 @@ __anon7a0be2910208	gameworld_types.h	/^typedef struct {$/;"	s
 __anon7a0be2910308	gameworld_types.h	/^typedef struct {$/;"	s
 __anon7a0be2910408	gameworld_types.h	/^typedef struct {$/;"	s
 __anon7a0be2910508	gameworld_types.h	/^    struct {$/;"	s	struct:__anon7a0be2910408
-__anon816587f2010a	renderer.h	/^    union {$/;"	u	struct:Drawable
-__anon816587f20208	renderer.h	/^        struct {$/;"	s	union:Drawable::__anon816587f2010a
+__anon816587f2010a	renderer.h	/^  union {$/;"	u	struct:Drawable
+__anon816587f20208	renderer.h	/^    struct {$/;"	s	union:Drawable::__anon816587f2010a
 __anon816587f20308	renderer.h	/^typedef struct {$/;"	s
 __anona8b4b4ae0103	assets.h	/^enum { SHADER_VERTEX, SHADER_FRAGMENT };$/;"	g
 __anona8b4b4ae0208	assets.h	/^typedef struct {$/;"	s
@@ -17239,15 +17240,15 @@ active	editor.h	/^  bool active;$/;"	m	struct:Note	typeref:typename:bool
 active	gameworld_types.h	/^    uint8_t active;$/;"	m	struct:__anon7a0be2910108	typeref:typename:uint8_t
 active	gui.h	/^  uint8_t active;$/;"	m	struct:NState	typeref:typename:uint8_t
 add_actor_spawn	gameworld.c	/^bool add_actor_spawn(Region *self, int type, Vector3 position) {$/;"	f	typeref:typename:bool
-add_child_node	node.c	/^void add_child_node(Node* parent, Node* child) {$/;"	f	typeref:typename:void
+add_child_node	node.c	/^void add_child_node(Node *parent, Node *child) {$/;"	f	typeref:typename:void
 add_comp	ecs.h	/^#define add_comp(/;"	d
 add_comp_obj	ecs.h	/^#define add_comp_obj(/;"	d
 add_ent	ecs.c	/^EntId add_ent(EcsWorld* world, EntStruct* ent) {$/;"	f	typeref:typename:EntId
 add_ent_at	ecs.c	/^void add_ent_at(EcsWorld* world, EntStruct* ent, EntId where) {$/;"	f	typeref:typename:void
 add_exit	gameworld.c	/^bool add_exit(Region *self, Vector3 position, int id, int dest_id,$/;"	f	typeref:typename:bool
-add_opaque_drawable	renderer.c	/^void add_opaque_drawable(GfxState* gfx, Drawable drawable) {}$/;"	f	typeref:typename:void
+add_opaque_drawable	renderer.c	/^void add_opaque_drawable(GfxState *gfx, Drawable drawable) {}$/;"	f	typeref:typename:void
 add_transforms	maths.h	/^static Transform add_transforms(Transform a, Transform b) {$/;"	f	typeref:typename:Transform
-add_transparent_drawable	renderer.c	/^void add_transparent_drawable(GfxState* gfx, Drawable drawable) {}$/;"	f	typeref:typename:void
+add_transparent_drawable	renderer.c	/^void add_transparent_drawable(GfxState *gfx, Drawable drawable) {}$/;"	f	typeref:typename:void
 alive	particles.h	/^    int alive;$/;"	m	struct:__anon3aa623e20208	typeref:typename:int
 alloc_model_from	assets.h	/^static Model *alloc_model_from(Model model) {$/;"	f	typeref:typename:Model *
 alloc_or_die	ecs.h	/^static void* alloc_or_die(size_t size) {$/;"	f	typeref:typename:void *
@@ -17288,7 +17289,7 @@ atsign	janet.c	/^static int atsign(JanetParser *p, JanetParseState *state, uint8
 aux_buffer	include/GL/glxew.h	/^  unsigned int aux_buffer; $/;"	m	struct:__anonacd3e5770108	typeref:typename:unsigned int
 b	include/janet.h	/^    uint32_t a, b, c, d;$/;"	m	struct:JanetRNG	typeref:typename:uint32_t
 b	rlgl.h	/^        unsigned char b;$/;"	m	struct:Color	typeref:typename:unsigned char
-begin_rendering	renderer.c	/^void begin_rendering(GfxState* gfx) {$/;"	f	typeref:typename:void
+begin_rendering	renderer.c	/^void begin_rendering(GfxState *gfx) {$/;"	f	typeref:typename:void
 begin_scroll_panel_v	gui.c	/^void begin_scroll_panel_v(NodeId id, float x, float y, float width,$/;"	f	typeref:typename:void
 bignat_append	janet.c	/^static void bignat_append(struct BigNat *mant, uint32_t dig) {$/;"	f	typeref:typename:void	file:
 bignat_div	janet.c	/^static void bignat_div(struct BigNat *mant, uint32_t divisor) {$/;"	f	typeref:typename:void	file:
@@ -17297,8 +17298,8 @@ bignat_extract	janet.c	/^static double bignat_extract(struct BigNat *mant, int32
 bignat_lshift_n	janet.c	/^static void bignat_lshift_n(struct BigNat *mant, int n) {$/;"	f	typeref:typename:void	file:
 bignat_muladd	janet.c	/^static void bignat_muladd(struct BigNat *mant, uint32_t factor, uint32_t term) {$/;"	f	typeref:typename:void	file:
 bignat_zero	janet.c	/^static void bignat_zero(struct BigNat *x) {$/;"	f	typeref:typename:void	file:
-billboard	node.h	/^        Billboard billboard;$/;"	m	union:Node::__anon1087a3c1020a	typeref:typename:Billboard
-billboard	renderer.h	/^            Billboard billboard;$/;"	m	struct:Drawable::__anon816587f2010a::__anon816587f20208	typeref:typename:Billboard
+billboard	node.h	/^    Billboard billboard;$/;"	m	union:Node::__anon1087a3c1020a	typeref:typename:Billboard
+billboard	renderer.h	/^      Billboard billboard;$/;"	m	struct:Drawable::__anon816587f2010a::__anon816587f20208	typeref:typename:Billboard
 bin/%.o	Makefile	/^bin\/%.o: %.c $(HDRS) Makefile$/;"	t
 bitloc	janet.c	/^static void bitloc(int32_t argc, Janet *argv, JanetBuffer **b, int32_t *index, int *bit) {$/;"	f	typeref:typename:void	file:
 bitmap_set	janet.c	/^static void bitmap_set(uint32_t *bitmap, uint8_t c) {$/;"	f	typeref:typename:void	file:
@@ -17524,7 +17525,7 @@ checkescape	janet.c	/^static int checkescape(uint8_t c) {$/;"	f	typeref:typename
 checkflags	janet.c	/^static int checkflags(const uint8_t *str) {$/;"	f	typeref:typename:int	file:
 child	include/janet.h	/^    JanetFiber *child; \/* Keep linked list of fibers for restarting pending fibers *\/$/;"	m	struct:JanetFiber	typeref:typename:JanetFiber *
 child	janet.c	/^    JanetScope *child;$/;"	m	struct:JanetScope	typeref:typename:JanetScope *	file:
-child	node.h	/^    struct Node* child;$/;"	m	struct:Node	typeref:struct:Node *
+child	node.h	/^  struct Node *child;$/;"	m	struct:Node	typeref:struct:Node *
 chromaAbCorrection	rlgl.h	/^        float chromaAbCorrection[4];    \/\/ HMD chromatic aberration correction parameters$/;"	m	struct:VrDeviceInfo	typeref:typename:float[4]
 chunks	janet.c	/^    uint32_t *chunks;$/;"	m	struct:__anoncda107c80308	typeref:typename:uint32_t *	file:
 cl_context	include/GL/glew.h	/^typedef struct _cl_context *cl_context;$/;"	t	typeref:struct:_cl_context *
@@ -17600,16 +17601,16 @@ create_dict	dict.c	/^Dict* create_dict() {$/;"	f	typeref:typename:Dict *
 create_door	gameworld.c	/^EntStruct *create_door(Vector3 pos, Game *game) {$/;"	f	typeref:typename:EntStruct *
 create_ecs_world	ecs.c	/^EcsWorld* create_ecs_world() {$/;"	f	typeref:typename:EcsWorld *
 create_editor	editor.c	/^Ed *create_editor() {$/;"	f	typeref:typename:Ed *
-create_empty	node.h	/^inline Node* create_empty() { return create_node(); }$/;"	f	typeref:typename:Node *
+create_empty	node.h	/^inline Node *create_empty() { return create_node(); }$/;"	f	typeref:typename:Node *
 create_enemy_actor	behaviours.c	/^Actor create_enemy_actor(int type) {$/;"	f	typeref:typename:Actor
 create_ent	ecs.c	/^EntId create_ent(EcsWorld* world) {$/;"	f	typeref:typename:EntId
 create_game	game.c	/^Game* create_game(Assets* assets, Camera* camera, EcsWorld* ecs,$/;"	f	typeref:typename:Game *
-create_gfx_state	renderer.c	/^GfxState* create_gfx_state() {$/;"	f	typeref:typename:GfxState *
-create_node	node.c	/^Node* create_node() {$/;"	f	typeref:typename:Node *
-create_node_from_mesh	node.c	/^Node* create_node_from_mesh(Mesh mesh) {$/;"	f	typeref:typename:Node *
-create_node_from_mesh_with_transform	node.c	/^Node* create_node_from_mesh_with_transform(Mesh mesh, Transform transform) {$/;"	f	typeref:typename:Node *
-create_node_from_model	node.c	/^Node* create_node_from_model(Model model, const char* name) {$/;"	f	typeref:typename:Node *
-create_node_from_model_with_transform	node.c	/^Node* create_node_from_model_with_transform(Model model, const char* name, Transform transform) /;"	f	typeref:typename:Node *
+create_gfx_state	renderer.c	/^GfxState *create_gfx_state() {$/;"	f	typeref:typename:GfxState *
+create_node	node.c	/^Node *create_node() {$/;"	f	typeref:typename:Node *
+create_node_from_mesh	node.c	/^Node *create_node_from_mesh(Mesh mesh) {$/;"	f	typeref:typename:Node *
+create_node_from_mesh_with_transform	node.c	/^Node *create_node_from_mesh_with_transform(Mesh mesh, Transform transform) {$/;"	f	typeref:typename:Node *
+create_node_from_model	node.c	/^Node *create_node_from_model(Model model, const char *name) {$/;"	f	typeref:typename:Node *
+create_node_from_model_with_transform	node.c	/^Node *create_node_from_model_with_transform(Model model, const char *name,$/;"	f	typeref:typename:Node *
 create_particle_system	particles.c	/^ParticleSystem* create_particle_system() {$/;"	f	typeref:typename:ParticleSystem *
 create_physics	physics_type.c	/^Physics create_physics() {$/;"	f	typeref:typename:Physics
 create_region_from_script	gameworld.c	/^Region *create_region_from_script(const char *path, Game *game) {$/;"	f	typeref:typename:Region *
@@ -17680,7 +17681,7 @@ dest_id	gameworld_types.h	/^    int dest_id;$/;"	m	struct:__anon7a0be2910308	typ
 dest_path	gameworld_types.h	/^    char* dest_path;$/;"	m	struct:__anon7a0be2910308	typeref:typename:char *
 destroy_ent	ecs.c	/^int destroy_ent(EcsWorld* world, EntStruct* ent) {$/;"	f	typeref:typename:int
 destroy_mailbox_pair	janet.c	/^static void destroy_mailbox_pair(JanetMailboxPair *pair) {$/;"	f	typeref:typename:void	file:
-destroy_node_tree	node.c	/^void destroy_node_tree(Node* node) { free_node(node); }$/;"	f	typeref:typename:void
+destroy_node_tree	node.c	/^void destroy_node_tree(Node *node) { free_node(node); }$/;"	f	typeref:typename:void
 destructure	janet.c	/^static int destructure(JanetCompiler *c,$/;"	f	typeref:typename:int	file:
 dict_add	dict.c	/^void dict_add(Dict* self, const char* key, void* value) {$/;"	f	typeref:typename:void
 dict_addi	dict.c	/^void dict_addi(Dict* self, int key, void* value) {$/;"	f	typeref:typename:void
@@ -17689,7 +17690,7 @@ dict_get	dict.c	/^void* dict_get(Dict* self, const char* key) {$/;"	f	typeref:ty
 dict_get_or	dict.c	/^void* dict_get_or(Dict* self, const char* key, void* def) {$/;"	f	typeref:typename:void *
 dict_geti	dict.c	/^void* dict_geti(Dict* self, int key) { return dict_get(self, (uint32_t)key); }$/;"	f	typeref:typename:void *
 dict_has	dict.c	/^bool dict_has(Dict* self, const char* key) {$/;"	f	typeref:typename:bool
-diffuse	renderer.h	/^    Color diffuse;$/;"	m	struct:Drawable	typeref:typename:Color
+diffuse	renderer.h	/^  Color diffuse;$/;"	m	struct:Drawable	typeref:typename:Color
 diffuse	rlights.h	/^    Color diffuse;$/;"	m	struct:__anon07ce6fd80108	typeref:typename:Color
 diffuseLoc	rlights.h	/^    int diffuseLoc;$/;"	m	struct:__anon07ce6fd80108	typeref:typename:int
 digit_lookup	janet.c	/^static uint8_t digit_lookup[128] = {$/;"	v	typeref:typename:uint8_t[128]	file:
@@ -17743,6 +17744,7 @@ do_mouse_picking	editor.c	/^void do_mouse_picking(Ed *self, Region *map, Game *g
 do_mul	janet.c	/^static JanetSlot do_mul(JanetFopts opts, JanetSlot *args) {$/;"	f	typeref:typename:JanetSlot	file:
 do_neq	janet.c	/^static JanetSlot do_neq(JanetFopts opts, JanetSlot *args) {$/;"	f	typeref:typename:JanetSlot	file:
 do_next	janet.c	/^static JanetSlot do_next(JanetFopts opts, JanetSlot *args) {$/;"	f	typeref:typename:JanetSlot	file:
+do_node_dropdown	editor.c	/^void do_node_dropdown(Ed *self, Node *node, int *id, float *cx, float *cy) {$/;"	f	typeref:typename:void
 do_node_tree_modal	editor.c	/^void do_node_tree_modal(Ed *self, GfxState *gfx, Game *game, Region *map) {$/;"	f	typeref:typename:void
 do_panel	gui.c	/^void do_panel(float x, float y, float width, float height) {$/;"	f	typeref:typename:void
 do_propagate	janet.c	/^static JanetSlot do_propagate(JanetFopts opts, JanetSlot *args) {$/;"	f	typeref:typename:JanetSlot	file:
@@ -17751,6 +17753,8 @@ do_remainder	janet.c	/^static JanetSlot do_remainder(JanetFopts opts, JanetSlot 
 do_resume	janet.c	/^static JanetSlot do_resume(JanetFopts opts, JanetSlot *args) {$/;"	f	typeref:typename:JanetSlot	file:
 do_rshift	janet.c	/^static JanetSlot do_rshift(JanetFopts opts, JanetSlot *args) {$/;"	f	typeref:typename:JanetSlot	file:
 do_rshiftu	janet.c	/^static JanetSlot do_rshiftu(JanetFopts opts, JanetSlot *args) {$/;"	f	typeref:typename:JanetSlot	file:
+do_selected_node_panel	editor.c	/^void do_selected_node_panel(Ed *self, GfxState *gfx, Game *game, Region *map) {$/;"	f	typeref:typename:void
+do_selected_node_panel	editor.h	/^  bool do_selected_node_panel;$/;"	m	struct:__anonc0cb90020608	typeref:typename:bool
 do_sub	janet.c	/^static JanetSlot do_sub(JanetFopts opts, JanetSlot *args) {$/;"	f	typeref:typename:JanetSlot	file:
 do_tex_btn	gui.c	/^bool do_tex_btn(float x, float y, float width, float height, const char *text,$/;"	f	typeref:typename:bool
 do_text_input	gui.c	/^bool do_text_input(char *buffer, int *cursor, size_t buffer_size, float x,$/;"	f	typeref:typename:bool
@@ -17763,15 +17767,17 @@ doframe	janet.c	/^static Janet doframe(JanetStackFrame *frame) {$/;"	f	typeref:t
 dohead	janet.c	/^static JanetSlot dohead(JanetCompiler *c, JanetFopts opts, Janet *head, int32_t argn, const Jane/;"	f	typeref:typename:JanetSlot	file:
 done	components.h	/^    bool done;$/;"	m	struct:__anon409636a10208	typeref:typename:bool
 down1	janet.c	/^#define down1(/;"	d	file:
-draw_billboard	renderer.c	/^void draw_billboard(GfxState* gfx, Vector3 position, Texture texture,$/;"	f	typeref:typename:void
-draw_billboard_ent	renderer.c	/^void draw_billboard_ent(GfxState* gfx, Camera* camera, EcsWorld* ecs,$/;"	f	typeref:typename:void
-draw_final_texture_to_screen	renderer.c	/^void draw_final_texture_to_screen(GfxState* gfx) {$/;"	f	typeref:typename:void
-draw_model	renderer.c	/^void draw_model(GfxState* gfx, Model* model, Transform transform,$/;"	f	typeref:typename:void
-draw_models	renderer.c	/^void draw_models(GfxState* gfx, EcsWorld* ecs, EntId ent) {$/;"	f	typeref:typename:void
+draw_billboard	renderer.c	/^void draw_billboard(GfxState *gfx, Vector3 position, Texture texture,$/;"	f	typeref:typename:void
+draw_billboard_ent	renderer.c	/^void draw_billboard_ent(GfxState *gfx, Camera *camera, EcsWorld *ecs,$/;"	f	typeref:typename:void
+draw_final_texture_to_screen	renderer.c	/^void draw_final_texture_to_screen(GfxState *gfx) {$/;"	f	typeref:typename:void
+draw_gui_model	renderer.c	/^void draw_gui_model(GfxState *gfx, Model *model, Rectangle where,$/;"	f	typeref:typename:void
+draw_model	renderer.c	/^void draw_model(GfxState *gfx, Model *model, Transform transform,$/;"	f	typeref:typename:void
+draw_model_2d	renderer.c	/^void draw_model_2d(GfxState *gfx, Model model, Rectangle region) {$/;"	f	typeref:typename:void
+draw_models	renderer.c	/^void draw_models(GfxState *gfx, EcsWorld *ecs, EntId ent) {$/;"	f	typeref:typename:void
 draw_node_tree_bounding_boxes	editor.c	/^void draw_node_tree_bounding_boxes(Node *node) {$/;"	f	typeref:typename:void
 draw_player_gui	player.c	/^void draw_player_gui(Game *game, Region *map) {$/;"	f	typeref:typename:void
-draw_prop	renderer.c	/^void draw_prop(GfxState* gfx, Game* game, Prop prop) {$/;"	f	typeref:typename:void
-draw_root_node	renderer.c	/^void draw_root_node(GfxState* gfx, Node* node) {$/;"	f	typeref:typename:void
+draw_prop	renderer.c	/^void draw_prop(GfxState *gfx, Game *game, Prop prop) {$/;"	f	typeref:typename:void
+draw_root_node	renderer.c	/^void draw_root_node(GfxState *gfx, Node *node) {$/;"	f	typeref:typename:void
 draw_type	include/GL/glxew.h	/^  int draw_type; $/;"	m	struct:__anonacd3e5770108	typeref:typename:int
 draw_type	include/GL/glxew.h	/^typedef struct { int type; unsigned long serial; Bool send_event; Display *display; GLXDrawable /;"	m	struct:__anonacd3e5770608	typeref:typename:int
 drawable	include/GL/glxew.h	/^  GLXDrawable drawable; $/;"	m	struct:__anonacd3e5770108	typeref:typename:GLXDrawable
@@ -17925,7 +17931,7 @@ enabledLoc	rlights.h	/^    int enabledLoc;$/;"	m	struct:__anon07ce6fd80208	typer
 encode	include/janet.h	/^    JanetTable *encode;$/;"	m	struct:JanetThread	typeref:typename:JanetTable *
 end	include/janet.h	/^    int32_t end;$/;"	m	struct:JanetRange	typeref:typename:int32_t
 end	janet.c	/^    const uint8_t *end;$/;"	m	struct:__anoncda107c80708	typeref:typename:const uint8_t *	file:
-end_rendering	renderer.c	/^void end_rendering(GfxState* gfx) { EndTextureMode(); }$/;"	f	typeref:typename:void
+end_rendering	renderer.c	/^void end_rendering(GfxState *gfx) { EndTextureMode(); }$/;"	f	typeref:typename:void
 end_scroll_panel_v	gui.c	/^void end_scroll_panel_v() { EndScissorMode(); }$/;"	f	typeref:typename:void
 entities	ecs.h	/^    EntStruct** entities;$/;"	m	struct:__anon0f5ae4160208	typeref:typename:EntStruct **
 entry_getdst	janet.c	/^static int entry_getdst(Janet env_entry) {$/;"	f	typeref:typename:int	file:
@@ -18015,13 +18021,14 @@ flags	janet.c	/^    int flags;$/;"	m	struct:__anoncda107c80c08	typeref:typename:
 flags	janet.c	/^    int flags;$/;"	m	struct:pretty	typeref:typename:int	file:
 flags	janet.c	/^    uint32_t flags; \/* bit set of accepted primitive types *\/$/;"	m	struct:JanetFopts	typeref:typename:uint32_t	file:
 flags	janet.c	/^    uint32_t flags;$/;"	m	struct:JanetSlot	typeref:typename:uint32_t	file:
-flags	renderer.h	/^    int flags;$/;"	m	struct:Drawable	typeref:typename:int
+flags	renderer.h	/^  int flags;$/;"	m	struct:Drawable	typeref:typename:int
 float16	raymath.h	/^typedef struct float16 { float v[16]; } float16;$/;"	s
 float16	raymath.h	/^typedef struct float16 { float v[16]; } float16;$/;"	t	typeref:struct:float16
 float3	raymath.h	/^typedef struct float3 { float v[3]; } float3;$/;"	s
 float3	raymath.h	/^typedef struct float3 { float v[3]; } float3;$/;"	t	typeref:struct:float3
 floor_tile_models	gameworld_types.h	/^    Model floor_tile_models[1];$/;"	m	struct:__anon7a0be2910408	typeref:typename:Model[1]
-flush_graphics	renderer.c	/^void flush_graphics(GfxState* gfx, Camera* camera) {$/;"	f	typeref:typename:void
+flush_graphics	renderer.c	/^void flush_graphics(GfxState *gfx, Camera *camera) {$/;"	f	typeref:typename:void
+flush_gui_3d_graphics	renderer.c	/^void flush_gui_3d_graphics(GfxState *gfx) {$/;"	f	typeref:typename:void
 fn	janet.c	/^    Janet(*fn)(const JanetParser *p);$/;"	m	struct:ParserStateGetter	typeref:typename:Janet (*)(const JanetParser * p)	file:
 fn	janet.c	/^    Janet(*fn)(jstat_t *st);$/;"	m	struct:OsStatGetter	typeref:typename:Janet (*)(jstat_t * st)	file:
 font	gui.h	/^  Font font;$/;"	m	struct:__anon0f88c9600108	typeref:typename:Font
@@ -18032,7 +18039,7 @@ fovy	rlgl.h	/^        float fovy;             \/\/ Camera field-of-view appertur
 frame	include/janet.h	/^    int32_t frame; \/* Index of the stack frame *\/$/;"	m	struct:JanetFiber	typeref:typename:int32_t
 framebufferHeight	rlgl.h	/^        int framebufferHeight;              \/\/ Default framebuffer height$/;"	m	struct:rlglData::__anon19a7bfac0a08	typeref:typename:int
 framebufferWidth	rlgl.h	/^        int framebufferWidth;               \/\/ Default framebuffer width$/;"	m	struct:rlglData::__anon19a7bfac0a08	typeref:typename:int
-free_node	node.c	/^void free_node(Node* node) {$/;"	f	typeref:typename:void
+free_node	node.c	/^void free_node(Node *node) {$/;"	f	typeref:typename:void
 free_one_scratch	janet.c	/^static void free_one_scratch(JanetScratch *s) {$/;"	f	typeref:typename:void	file:
 free_spot	ecs.h	/^    int free_spot;$/;"	m	struct:__anon0f5ae4160208	typeref:typename:int
 friction	physics_type.h	/^    float friction;$/;"	m	struct:__anonc10f1e9f0108	typeref:typename:float
@@ -18069,7 +18076,7 @@ get_free_space	ecs.c	/^EntId get_free_space(EcsWorld* world) {$/;"	f	typeref:typ
 get_mouse_placement_loc	editor.c	/^bool get_mouse_placement_loc(Game *game, float y, Vector3 *loc) {$/;"	f	typeref:typename:bool
 get_player_translation	behaviours.c	/^Janet get_player_translation(int32_t argc, Janet* argv) {$/;"	f	typeref:typename:Janet
 get_ta_type_by_name	janet.c	/^static JanetTArrayType get_ta_type_by_name(const uint8_t *name) {$/;"	f	typeref:typename:JanetTArrayType	file:
-get_transform_from_node	node.c	/^Transform get_transform_from_node(Node* self) {$/;"	f	typeref:typename:Transform
+get_transform_from_node	node.c	/^Transform get_transform_from_node(Node *self) {$/;"	f	typeref:typename:Transform
 get_translation	behaviours.c	/^Janet get_translation(int32_t argc, Janet* argv) {$/;"	f	typeref:typename:Janet
 get_uuid	ecs.c	/^int get_uuid() {$/;"	f	typeref:typename:int
 getline	utils.c	/^int getline(char **lineptr, size_t *n, FILE *stream) {$/;"	f	typeref:typename:int
@@ -20814,6 +20821,7 @@ group	.vscode/tasks.json	/^      "group": "build"$/;"	s	object:tasks.1
 group	.vscode/tasks.json	/^      "group": "build"$/;"	s	object:tasks.2
 group	.vscode/tasks.json	/^      "group": "build"$/;"	s	object:tasks.3
 group	.vscode/tasks.json	/^      "group": "build"$/;"	s	object:tasks.4
+gui_3d_drawables	renderer.h	/^  Drawable gui_3d_drawables[MAX_NUMBER_OF_3D_GUI_DRAWABLES];$/;"	m	struct:__anon816587f20308	typeref:typename:Drawable[]
 hResolution	rlgl.h	/^        int hResolution;                \/\/ HMD horizontal resolution in pixels$/;"	m	struct:VrDeviceInfo	typeref:typename:int
 hScreenSize	rlgl.h	/^        float hScreenSize;              \/\/ HMD horizontal size in meters$/;"	m	struct:VrDeviceInfo	typeref:typename:float
 halfsiphash	janet.c	/^static uint32_t halfsiphash(const uint8_t *in, const size_t inlen, const uint8_t *k) {$/;"	f	typeref:typename:uint32_t	file:
@@ -21732,8 +21740,8 @@ mode	player.h	/^    int mode;                  \/\/ Current camera mode$/;"	m	st
 mode	rlgl.h	/^    int mode;                   \/\/ Drawing mode: LINES, TRIANGLES, QUADS$/;"	m	struct:DrawCall	typeref:typename:int
 model	editor.h	/^  int model;$/;"	m	struct:__anonc0cb90020608	typeref:typename:int
 model	gameworld_types.h	/^    uint8_t model;$/;"	m	struct:__anon7a0be2910108	typeref:typename:uint8_t
-model	node.h	/^        struct { Model model; char name[256]; };$/;"	m	struct:Node::__anon1087a3c1020a::__anon1087a3c10308	typeref:typename:Model
-model	renderer.h	/^        Model model;$/;"	m	union:Drawable::__anon816587f2010a	typeref:typename:Model
+model	node.h	/^      Model model;$/;"	m	struct:Node::__anon1087a3c1020a::__anon1087a3c10308	typeref:typename:Model
+model	renderer.h	/^    Model model;$/;"	m	union:Drawable::__anon816587f2010a	typeref:typename:Model
 models	assets.h	/^  Model *models;$/;"	m	struct:__anona8b4b4ae0208	typeref:typename:Model *
 models	editor.h	/^  Model models[MESH_NUM_MESHES];$/;"	m	struct:__anonc0cb90020608	typeref:typename:Model[]
 models	gameworld_types.h	/^    Model models[MAX_MODELS];$/;"	m	struct:__anon7a0be2910408	typeref:typename:Model[]
@@ -21767,7 +21775,7 @@ name	janet.c	/^    const char *name;$/;"	m	struct:OsStatGetter	typeref:typename:
 name	janet.c	/^    const char *name;$/;"	m	struct:ParserStateGetter	typeref:typename:const char *	file:
 name	janet.c	/^    const char *name;$/;"	m	struct:TypeAlias	typeref:typename:const char *	file:
 name	janet.c	/^    const char *name;$/;"	m	struct:__anoncda107c81908	typeref:typename:const char *	file:
-name	node.h	/^        struct { Model model; char name[256]; };$/;"	m	struct:Node::__anon1087a3c1020a::__anon1087a3c10308	typeref:typename:char[256]
+name	node.h	/^      char name[256];$/;"	m	struct:Node::__anon1087a3c1020a::__anon1087a3c10308	typeref:typename:char[256]
 namelocal	janet.c	/^static int namelocal(JanetCompiler *c, const uint8_t *head, int32_t flags, JanetSlot ret) {$/;"	f	typeref:typename:int	file:
 nbits	janet.c	/^#define nbits(/;"	d	file:
 nbuckets	map.h	/^  unsigned nbuckets, nnodes;$/;"	m	struct:__anon0fea82990108	typeref:typename:unsigned
@@ -21779,7 +21787,7 @@ next	ecs.h	/^    struct EntIt* next;$/;"	m	struct:EntIt	typeref:struct:EntIt *
 next	include/janet.h	/^    Janet(*next)(void *p, Janet key);$/;"	m	struct:JanetAbstractType	typeref:typename:Janet (*)(void * p,Janet key)
 next	include/janet.h	/^    JanetGCObject *next;$/;"	m	struct:JanetGCObject	typeref:typename:JanetGCObject *
 next	map.c	/^  map_node_t *next;$/;"	m	struct:map_node_t	typeref:typename:map_node_t *	file:
-next	node.h	/^    struct Node* next;$/;"	m	struct:Node	typeref:struct:Node *
+next	node.h	/^  struct Node *next;$/;"	m	struct:Node	typeref:struct:Node *
 next	sb.h	/^	struct _StringFragment	*next;$/;"	m	struct:_StringFragment	typeref:struct:_StringFragment *
 next_asm	janet.c	/^static const uint32_t next_asm[] = {$/;"	v	typeref:typename:const uint32_t[]	file:
 nextid	janet.c	/^    int32_t nextid;$/;"	m	struct:__anoncda107c80408	typeref:typename:int32_t	file:
@@ -21787,6 +21795,7 @@ nexttag	janet.c	/^    uint32_t nexttag;$/;"	m	struct:__anoncda107c81708	typeref:
 nnodes	map.h	/^  unsigned nbuckets, nnodes;$/;"	m	struct:__anon0fea82990108	typeref:typename:unsigned
 noclip	game.h	/^    bool noclip;$/;"	m	struct:__anonff3b1fb50108	typeref:typename:bool
 node	map.h	/^  map_node_t *node;$/;"	m	struct:__anon0fea82990208	typeref:typename:map_node_t *
+node_prepend	node.c	/^void node_prepend(Node *parent, Node *new) {$/;"	f	typeref:typename:void
 node_tree_panel_y	editor.h	/^  float node_tree_panel_y;$/;"	m	struct:__anonc0cb90020608	typeref:typename:float
 noise	maths.c	/^double noise(double x, double y, double z) {$/;"	f	typeref:typename:double
 normals	rlgl.h	/^        float *normals;         \/\/ vertex normals (XYZ - 3 components per vertex) (shader-loca/;"	m	struct:Mesh	typeref:typename:float *
@@ -21795,16 +21804,17 @@ nowait	janet.c	/^    int nowait;$/;"	m	struct:__anoncda107c81c08	typeref:typenam
 num_constants	include/janet.h	/^    uint32_t num_constants;$/;"	m	struct:__anon0605a8400b08	typeref:typename:uint32_t
 num_entities	ecs.h	/^    int num_entities;$/;"	m	struct:__anon0f5ae4160208	typeref:typename:int
 num_exits	gameworld_types.h	/^    int num_exits;$/;"	m	struct:__anon7a0be2910408	typeref:typename:int
+num_gui_3d_drawables	renderer.h	/^  int num_gui_3d_drawables;$/;"	m	struct:__anon816587f20308	typeref:typename:int
 num_layers	gameworld_types.h	/^    int num_layers;$/;"	m	struct:__anon7a0be2910408	typeref:typename:int
 num_lights	assets.h	/^  int num_lights;$/;"	m	struct:__anona8b4b4ae0208	typeref:typename:int
 num_maps	editor.h	/^  int num_maps;$/;"	m	struct:__anonc0cb90020608	typeref:typename:int
 num_models	assets.h	/^  int num_models;$/;"	m	struct:__anona8b4b4ae0208	typeref:typename:int
 num_models	gameworld_types.h	/^    int num_models;$/;"	m	struct:__anon7a0be2910408	typeref:typename:int
 num_notes	editor.h	/^  int num_notes;$/;"	m	struct:__anonc0cb90020608	typeref:typename:int
-num_opaque_drawables	renderer.h	/^    int num_opaque_drawables;$/;"	m	struct:__anon816587f20308	typeref:typename:int
+num_opaque_drawables	renderer.h	/^  int num_opaque_drawables;$/;"	m	struct:__anon816587f20308	typeref:typename:int
 num_props	gameworld_types.h	/^    int num_props;$/;"	m	struct:__anon7a0be2910408	typeref:typename:int
 num_spawns	gameworld_types.h	/^    int num_spawns;$/;"	m	struct:__anon7a0be2910408	typeref:typename:int
-num_transparent_drawables	renderer.h	/^    int num_transparent_drawables;$/;"	m	struct:__anon816587f20308	typeref:typename:int
+num_transparent_drawables	renderer.h	/^  int num_transparent_drawables;$/;"	m	struct:__anon816587f20308	typeref:typename:int
 number	ecs.h	/^    int number;$/;"	m	struct:CompList	typeref:typename:int
 number	include/janet.h	/^        double number;$/;"	m	union:Janet::__anon0605a840060a	typeref:typename:double
 number	include/janet.h	/^    double number;$/;"	m	union:Janet	typeref:typename:double
@@ -21814,7 +21824,7 @@ object_placement_type	editor.h	/^  int object_placement_type;$/;"	m	struct:__ano
 offset	include/janet.h	/^    int32_t offset; \/* Stack offset when values still on stack. If offset is <= 0, then$/;"	m	struct:JanetFuncEnv	typeref:typename:int32_t
 on_error	janet.c	/^    jmp_buf on_error;$/;"	m	struct:JanetAssembler	typeref:typename:jmp_buf	file:
 on_exit	editor.c	/^void on_exit(void) {$/;"	f	typeref:typename:void
-opaque_drawables	renderer.h	/^    Drawable opaque_drawables[MAX_NUMBER_OF_DRAWABLES];$/;"	m	struct:__anon816587f20308	typeref:typename:Drawable[]
+opaque_drawables	renderer.h	/^  Drawable opaque_drawables[MAX_NUMBER_OF_DRAWABLES];$/;"	m	struct:__anon816587f20308	typeref:typename:Drawable[]
 oparg	janet.c	/^#define oparg(/;"	d	file:
 opcode	janet.c	/^    enum JanetOpCode opcode;$/;"	m	struct:JanetInstructionDef	typeref:enum:JanetOpCode	file:
 opcode	janet.c	/^#define opcode /;"	d	file:
@@ -21891,7 +21901,7 @@ panControl	player.h	/^    int panControl;         \/\/ raylib: MOUSE_MIDDLE_BUTT
 params	rlgl.h	/^        float *params;          \/\/ Material generic parameters (if required)$/;"	m	struct:Material	typeref:typename:float *
 parent	janet.c	/^    JanetAssembler *parent;$/;"	m	struct:JanetAssembler	typeref:typename:JanetAssembler *	file:
 parent	janet.c	/^    JanetScope *parent;$/;"	m	struct:JanetScope	typeref:typename:JanetScope *	file:
-parent	node.h	/^    struct Node* parent;$/;"	m	struct:Node	typeref:struct:Node *
+parent	node.h	/^  struct Node *parent;$/;"	m	struct:Node	typeref:struct:Node *
 parse_cfuns	janet.c	/^static const JanetReg parse_cfuns[] = {$/;"	v	typeref:typename:const JanetReg[]	file:
 parser_methods	janet.c	/^static const JanetMethod parser_methods[] = {$/;"	v	typeref:typename:const JanetMethod[]	file:
 parser_state_delimiters	janet.c	/^static Janet parser_state_delimiters(const JanetParser *_p) {$/;"	f	typeref:typename:Janet	file:
@@ -22011,19 +22021,19 @@ reg	janet.c	/^    JanetTable *reg;$/;"	m	struct:__anoncda107c80708	typeref:typen
 region	particles.h	/^    Rectangle region;$/;"	m	struct:__anon3aa623e20108	typeref:typename:Rectangle
 region	particles.h	/^    int region;$/;"	m	struct:__anon3aa623e20208	typeref:typename:int
 region	prop.h	/^    Rectangle region;$/;"	m	struct:__anon156e757c0108	typeref:typename:Rectangle
-region	renderer.h	/^            Rectangle region;$/;"	m	struct:Drawable::__anon816587f2010a::__anon816587f20208	typeref:typename:Rectangle
+region	renderer.h	/^      Rectangle region;$/;"	m	struct:Drawable::__anon816587f2010a::__anon816587f20208	typeref:typename:Rectangle
 regions	particles.h	/^    Rectangle regions[100];$/;"	m	struct:__anon3aa623e20308	typeref:typename:Rectangle[100]
 register_janet_c_functions	behaviours.c	/^void register_janet_c_functions(Game* game) {$/;"	f	typeref:typename:void
 regtemps	janet.c	/^    int32_t regtemps; \/* Hold which temp. registers are allocated. *\/$/;"	m	struct:__anoncda107c80308	typeref:typename:int32_t	file:
 reload_region	gameworld.c	/^void reload_region(Region *self, Game *game) {$/;"	f	typeref:typename:void
 remainder_asm	janet.c	/^static const uint32_t remainder_asm[] = {$/;"	v	typeref:typename:const uint32_t[]	file:
 render_console	editor.c	/^void render_console(Ed *self, Region *map, Game *game, int id) {$/;"	f	typeref:typename:void
-render_drawable	renderer.c	/^void render_drawable(Drawable* d, Camera* camera) {$/;"	f	typeref:typename:void
+render_drawable	renderer.c	/^void render_drawable(Drawable *d, Camera *camera) {$/;"	f	typeref:typename:void
 render_editor	editor.c	/^void render_editor(Ed *self, GfxState *gfx, Region *map, Game *game) {$/;"	f	typeref:typename:void
 render_editor_ui	editor.c	/^void render_editor_ui(Ed *self, GfxState *gfx, Region *map, Game *game) {$/;"	f	typeref:typename:void
 render_particle_system	particles.c	/^void render_particle_system(ParticleSystem* sys) {}/;"	f	typeref:typename:void
 render_region	gameworld.c	/^void render_region(Region *self, GfxState *gfx, Game *game) {$/;"	f	typeref:typename:void
-render_texture	renderer.h	/^    RenderTexture2D render_texture;$/;"	m	struct:__anon816587f20308	typeref:typename:RenderTexture2D
+render_texture	renderer.h	/^  RenderTexture2D render_texture;$/;"	m	struct:__anon816587f20308	typeref:typename:RenderTexture2D
 replace_state	janet.c	/^struct replace_state {$/;"	s	file:
 replacesetup	janet.c	/^static void replacesetup(int32_t argc, Janet *argv, struct replace_state *s) {$/;"	f	typeref:typename:void	file:
 request	.vscode/launch.json	/^      "request": "launch",$/;"	s	object:configurations.0
@@ -22125,6 +22135,7 @@ rng_get_4bytes	janet.c	/^static void rng_get_4bytes(JanetRNG *rng, uint8_t *buf)
 rng_methods	janet.c	/^static const JanetMethod rng_methods[] = {$/;"	v	typeref:typename:const JanetMethod[]	file:
 root	janet.c	/^static int root(JanetParser *p, JanetParseState *state, uint8_t c) {$/;"	f	typeref:typename:int	file:
 root	sb.h	/^	struct _StringFragment	*root;$/;"	m	struct:_StringBuilder	typeref:struct:_StringFragment *
+rot_mouse_start	editor.h	/^  Vector2 rot_mouse_start;$/;"	m	struct:__anonc0cb90020608	typeref:typename:Vector2
 rotation	player.h	/^    float rotation;$/;"	m	struct:__anon3d1d55680108	typeref:typename:float
 rreg	janet.c	/^    JanetTable *rreg;$/;"	m	struct:__anoncda107c80408	typeref:typename:JanetTable *	file:
 run_vm	janet.c	/^static JanetSignal run_vm(JanetFiber *fiber, Janet in) {$/;"	f	typeref:typename:JanetSignal	file:
@@ -22142,7 +22153,7 @@ sb_free	sb.c	/^void sb_free(StringBuilder *sb)$/;"	f	typeref:typename:void
 sb_reset	sb.c	/^void sb_reset(StringBuilder *sb)$/;"	f	typeref:typename:void
 scale	billboard.h	/^    float scale;$/;"	m	struct:__anonf35588260108	typeref:typename:float
 scale	prop.h	/^    float scale;$/;"	m	struct:__anon156e757c0108	typeref:typename:float
-scamera	renderer.c	/^static Camera* scamera = NULL;$/;"	v	typeref:typename:Camera *	file:
+scamera	renderer.c	/^static Camera *scamera = NULL;$/;"	v	typeref:typename:Camera *	file:
 scan_uint64	janet.c	/^static int scan_uint64($/;"	f	typeref:typename:int	file:
 scanformat	janet.c	/^static const char *scanformat($/;"	f	typeref:typename:const char *	file:
 scene	game.h	/^    int scene;$/;"	m	struct:__anonff3b1fb50108	typeref:typename:int
@@ -22184,7 +22195,7 @@ sm_line	include/janet.h	/^    int32_t sm_line;$/;"	m	struct:JanetTupleHead	typer
 smoothZoomControl	player.h	/^    int smoothZoomControl;  \/\/ raylib: KEY_LEFT_CONTROL$/;"	m	struct:__anon3d1d55680308	typeref:typename:int
 solution	.vscode/msbuild-tools.json	/^  "solution": "${workspaceRoot}\/Benis3D.sln",$/;"	s
 sort_levenshtein	editor.c	/^int sort_levenshtein(const void *a, const void *b) {$/;"	f	typeref:typename:int
-sorting	renderer.c	/^int sorting(const void* _a, const void* _b) {$/;"	f	typeref:typename:int
+sorting	renderer.c	/^int sorting(const void *_a, const void *_b) {$/;"	f	typeref:typename:int
 source	include/janet.h	/^    JanetString source;$/;"	m	struct:JanetFuncDef	typeref:typename:JanetString
 source	janet.c	/^    const uint8_t *source;$/;"	m	struct:JanetCompiler	typeref:typename:const uint8_t *	file:
 sourcemap	include/janet.h	/^    JanetSourceMapping *sourcemap;$/;"	m	struct:JanetFuncDef	typeref:typename:JanetSourceMapping *
@@ -22346,12 +22357,12 @@ toggle_model_node_tree_modal	editor.c	/^void toggle_model_node_tree_modal(Ed *se
 toggle_model_selector_modal	editor.c	/^void toggle_model_selector_modal(Ed *self) {$/;"	f	typeref:typename:void
 tokenchar	janet.c	/^static int tokenchar(JanetParser *p, JanetParseState *state, uint8_t c) {$/;"	f	typeref:typename:int	file:
 tostring	include/janet.h	/^    void (*tostring)(void *p, JanetBuffer *buffer);$/;"	m	struct:JanetAbstractType	typeref:typename:void (*)(void * p,JanetBuffer * buffer)
-transform	node.h	/^    Transform transform;$/;"	m	struct:Node	typeref:typename:Transform
-transform	renderer.h	/^    Transform transform;$/;"	m	struct:Drawable	typeref:typename:Transform
+transform	node.h	/^  Transform transform;$/;"	m	struct:Node	typeref:typename:Transform
+transform	renderer.h	/^  Transform transform;$/;"	m	struct:Drawable	typeref:typename:Transform
 transform	rlgl.h	/^        Matrix transform;                   \/\/ Transform matrix to be used with rlTranslate, r/;"	m	struct:rlglData::__anon19a7bfac0a08	typeref:typename:Matrix
 transform_identity	renderer.c	/^Transform transform_identity() {$/;"	f	typeref:typename:Transform
 transform_translation	renderer.c	/^Transform transform_translation(Vector3 v) {$/;"	f	typeref:typename:Transform
-transparent_drawables	renderer.h	/^    Drawable transparent_drawables[MAX_NUMBER_OF_DRAWABLES];$/;"	m	struct:__anon816587f20308	typeref:typename:Drawable[]
+transparent_drawables	renderer.h	/^  Drawable transparent_drawables[MAX_NUMBER_OF_DRAWABLES];$/;"	m	struct:__anon816587f20308	typeref:typename:Drawable[]
 traversal_next	janet.c	/^static int traversal_next(Janet *x, Janet *y) {$/;"	f	typeref:typename:int	file:
 triangleCount	rlgl.h	/^        int triangleCount;      \/\/ number of triangles stored (indexed or not)$/;"	m	struct:Mesh	typeref:typename:int
 trim_help_args	janet.c	/^static void trim_help_args(int32_t argc, Janet *argv, JanetByteView *str, JanetByteView *set) {$/;"	f	typeref:typename:void	file:
@@ -22381,9 +22392,9 @@ type	include/janet.h	/^        uint32_t type;$/;"	m	struct:Janet::__anon0605a840
 type	include/janet.h	/^    JanetTArrayType type;$/;"	m	struct:__anon0605a8400e08	typeref:typename:JanetTArrayType
 type	include/janet.h	/^    JanetType type;$/;"	m	struct:Janet	typeref:typename:JanetType
 type	include/janet.h	/^    const JanetAbstractType *type;$/;"	m	struct:JanetAbstractHead	typeref:typename:const JanetAbstractType *
-type	node.h	/^    int type;$/;"	m	struct:Node	typeref:typename:int
+type	node.h	/^  int type;$/;"	m	struct:Node	typeref:typename:int
 type	particles.h	/^    int type;$/;"	m	struct:__anon3aa623e20208	typeref:typename:int
-type	renderer.h	/^    int type;$/;"	m	struct:Drawable	typeref:typename:int
+type	renderer.h	/^  int type;$/;"	m	struct:Drawable	typeref:typename:int
 type	rlights.h	/^    int type;$/;"	m	struct:__anon07ce6fd80208	typeref:typename:int
 typeLoc	rlights.h	/^    int typeLoc;$/;"	m	struct:__anon07ce6fd80208	typeref:typename:int
 type_aliases	janet.c	/^static const TypeAlias type_aliases[] = {$/;"	v	typeref:typename:const TypeAlias[]	file:
@@ -22412,14 +22423,14 @@ update_and_render_game_scene_with_editor	main.c	/^void update_and_render_game_sc
 update_and_render_menu_scene	main.c	/^void update_and_render_menu_scene(MainMenuState *state, Game *game,$/;"	f	typeref:typename:void
 update_assets	assets.c	/^void update_assets(Assets *self) {$/;"	f	typeref:typename:void
 update_behaviours	behaviours.c	/^void update_behaviours(Game* game, EcsWorld* ecs, EntId id) {$/;"	f	typeref:typename:void
-update_billboard	renderer.c	/^void update_billboard(EcsWorld* ecs, EntId ent) {}$/;"	f	typeref:typename:void
+update_billboard	renderer.c	/^void update_billboard(EcsWorld *ecs, EntId ent) {}$/;"	f	typeref:typename:void
 update_doors	components.c	/^void update_doors(EcsWorld* ecs, EntId id) {$/;"	f	typeref:typename:void
 update_editor	editor.c	/^void update_editor(Ed *self, Region *map, Game *game) {$/;"	f	typeref:typename:void
 update_end_target	behaviours.c	/^void update_end_target(EcsWorld* ecs, EntStruct* self, Actor* actor) {$/;"	f	typeref:typename:void
 update_enemy	behaviours.c	/^void update_enemy(EcsWorld* ecs, Actor* actor, EntId id) {$/;"	f	typeref:typename:void
 update_game	game.c	/^void update_game(Game* game) {$/;"	f	typeref:typename:void
 update_gui	gui.c	/^void update_gui() { GuiState.a_el_is_hot = false; }$/;"	f	typeref:typename:void
-update_models	renderer.c	/^void update_models(EcsWorld* ecs, EntId ent) {}$/;"	f	typeref:typename:void
+update_models	renderer.c	/^void update_models(EcsWorld *ecs, EntId ent) {}$/;"	f	typeref:typename:void
 update_particle_system	particles.c	/^void update_particle_system(ParticleSystem* sys) {}$/;"	f	typeref:typename:void
 update_physics	physics.c	/^void update_physics(Region* map, EcsWorld* ecs, Game* game, EntId ent) {$/;"	f	typeref:typename:void
 update_pinapple_bomb	behaviours.c	/^void update_pinapple_bomb(EcsWorld* ecs, EntStruct* self, Actor* actor) {$/;"	f	typeref:typename:void

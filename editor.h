@@ -16,7 +16,7 @@
 
 enum {
   PLACE_NONE,
-  PLACE_BLOCKS,
+  PLACE_NODES,
   PLACE_ACTORS,
   PLACE_PROPS,
   PLACE_MARKERS,
@@ -62,6 +62,7 @@ typedef struct {
   Model models[MESH_NUM_MESHES];
 
   Node *selected_node;
+  Vector2 rot_mouse_start;
 
   Note notes[100];
   int num_notes;
@@ -74,6 +75,8 @@ typedef struct {
   int light_grabbed;
 
   int which_marker;
+
+  bool do_selected_node_panel;
 
   float lights_panel_y;
   float models_panel_y;

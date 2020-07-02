@@ -408,6 +408,8 @@ void update_and_render_game_scene_with_editor(Game *game, EcsWorld *ecs,
   }
   // #endif
 
+  flush_gui_3d_graphics(gfx);
+
   DrawFPS(10, 10);
   EndDrawing();
 }

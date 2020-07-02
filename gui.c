@@ -254,11 +254,11 @@ bool do_collapsing_header(bool *active, const char *label, float x, float y,
   char buff[512];
   sprintf(buff, "%s %s", ((*active) ? "-" : "+"), label);
 
-  const Vector2 size = MeasureTextEx(GuiState.font, buff, 30, 1.0f);
+  const Vector2 size = MeasureTextEx(GuiState.font, buff, height - 2, 1.0f);
 
   // Draw the button
   do_panel(x, y, width, height);
-  do_label(buff, x + width / 2 - size.x / 2, y + 1, width, height, 30);
+  do_label(buff, x + width / 2 - size.x / 2, y + 1, width, height, height - 2);
 
   return (*active);
 }
