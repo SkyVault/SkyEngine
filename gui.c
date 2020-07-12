@@ -1,5 +1,7 @@
 #include "gui.h"
 
+#define MARGIN (8)
+
 #define CHECK_IF_HOT()                                                         \
   Rectangle rect = {x + GuiState.px, y + GuiState.py, width, height};          \
   state->hot = CheckCollisionPointRec(GetMousePosition(), rect);               \
@@ -41,6 +43,56 @@ void do_frame(float x, float y, float width, float height, float alpha) {
   DrawRectangle(x, y, width, height, color);
   DrawRectangleLinesEx((Rectangle){x, y, width, height}, 3,
                        (Color){200, 200, 200, 200});
+}
+
+void do_window(WindowState *state, const char *title) {
+  Vector2 title_size = MeasureTextEx(GuiState.font, title, 20, 1);
+  do_frame(state->region.x, state->region.y, state->region.width,
+           state->region.height, 0.9f);
+  do_frame(state->region.x, state->region.y - 20, title_size.x + MARGIN * 2, 20,
+           0.9f);
+
+  do_label(title, state->region.x + MARGIN, state->region.y - 20, title_size.x,
+           20, 20);
+
+  bool hot = false;
+  bool title_bar_hot = false;
+  if (CheckCollisionPointRec(GetMousePosition(), state->region)) {
+    GuiState.a_el_is_hot = true;
+    hot = true;
+  }
+
+  if (CheckCollisionPointRec(GetMousePosition(),
+                             (Rectangle){.x = state->region.x,
+                                         .y = state->region.y - 20,
+                                         .width = title_size.x,
+                                         .height = 20})) {
+    GuiState.a_el_is_hot = true;
+    hot = true;
+    title_bar_hot = true;
+  }
+
+  if (hot) {
+    if (title_bar_hot) {
+      if (IsMouseButtonPressed(MOUSE_LEFT_BUTTON)) {
+        state->last_mouse = GetMousePosition();
+      } else if (IsMouseButtonDown(MOUSE_LEFT_BUTTON)) {
+        Vector2 delta = Vector2Subtract(GetMousePosition(), state->last_mouse);
+        state->region.x += delta.x;
+        state->region.y += delta.y;
+
+        state->last_mouse = GetMousePosition();
+      }
+    } else if (IsMouseButtonPressed(MOUSE_MIDDLE_BUTTON)) {
+      state->last_mouse = GetMousePosition();
+    } else if (IsMouseButtonDown(MOUSE_MIDDLE_BUTTON)) {
+      Vector2 delta = Vector2Subtract(GetMousePosition(), state->last_mouse);
+      state->region.x += delta.x;
+      state->region.y += delta.y;
+
+      state->last_mouse = GetMousePosition();
+    }
+  }
 }
 
 void do_label(const char *str, float x, float y, float width, float height,

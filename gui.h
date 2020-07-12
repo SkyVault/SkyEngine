@@ -4,6 +4,7 @@
 #include <stdbool.h>
 
 #include "raylib.h"
+#include "raymath.h"
 #include "tween.h"
 #include "utils.h"
 
@@ -39,12 +40,19 @@ static struct {
   bool a_el_is_hot;
 } GuiState = {.px = 0.0f, .py = 0.0f, .locked = false};
 
+typedef struct {
+  Rectangle region;
+  Vector2 last_mouse;
+  int flags;
+} WindowState;
+
 void init_gui();
 void reset_gui();
 void update_gui();
 
 void do_panel(float x, float y, float width, float height);
 void do_frame(float x, float y, float width, float height, float alpha);
+void do_window(WindowState *state, const char *title);
 bool do_btn(float x, float y, float width, float height, const char *text);
 
 bool do_tex_btn(float x, float y, float width, float height, const char *text,

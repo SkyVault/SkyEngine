@@ -229,7 +229,7 @@ void update_editor(Ed *self, Region *map, Game *game) {
   }
 
   // ROTATION WITH MIDDLE MOUSE
-  if (self->selected_node != NULL) {
+  if (self->selected_node != NULL && !IsMouseOnUiElement()) {
     if (IsMouseButtonPressed(MOUSE_MIDDLE_BUTTON)) {
       self->rot_mouse_start = GetMousePosition();
     } else if (IsMouseButtonDown(MOUSE_MIDDLE_BUTTON)) {
@@ -908,11 +908,14 @@ void do_models_modal(Ed *self, GfxState *gfx, Game *game, Region *map) {
 }
 
 void do_selected_node_panel(Ed *self, GfxState *gfx, Game *game, Region *map) {
-  int x = 100;
-  int y = 32;
-  int w = 300;
-  int h = GetScreenHeight() - 60;
-  do_panel(x, y, w, h);
+  static WindowState wstate = {.region = (Rectangle){100, 32, 300, 800},
+                               .flags = 0};
+  int x = wstate.region.x;
+  int y = wstate.region.y;
+  int w = wstate.region.width;
+  int h = wstate.region.height;
+
+  do_window(&wstate, "Node propterties");
 
   int cursor_y = y + 20;
 

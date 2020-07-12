@@ -9197,6 +9197,7 @@ MAP_ROUGHNESS	rlgl.h	/^        MAP_ROUGHNESS = 3,$/;"	e	enum:__anon19a7bfac0903
 MAP_SPECULAR	rlgl.h	/^    #define MAP_SPECULAR /;"	d
 MAP_VERSION	map.h	/^#define MAP_VERSION /;"	d
 MARGIN	editor.c	/^#define MARGIN /;"	d	file:
+MARGIN	gui.c	/^#define MARGIN /;"	d	file:
 MARKER_EXIT	editor.h	/^  MARKER_EXIT,$/;"	e	enum:__anonc0cb90020203
 MARKER_NUM_MARKERS	editor.h	/^  MARKER_NUM_MARKERS,$/;"	e	enum:__anonc0cb90020203
 MARKER_PLAYER_START	editor.h	/^  MARKER_PLAYER_START,$/;"	e	enum:__anonc0cb90020203
@@ -13038,6 +13039,7 @@ WIN32_LEAN_AND_MEAN	janet.c	/^#define WIN32_LEAN_AND_MEAN$/;"	d	file:
 WINGDIAPI	include/GL/glew.h	/^#define WINGDIAPI /;"	d
 WINGDIAPI	rlgl.h	/^            #define WINGDIAPI /;"	d
 Wall	gameworld_types.h	/^} Wall;$/;"	t	typeref:struct:__anon7a0be2910108
+WindowState	gui.h	/^} WindowState;$/;"	t	typeref:struct:__anon0f88c9600208
 X	ecs.h	/^#define X(/;"	d
 XCOMP	comps.h	/^#define XCOMP$/;"	d
 XOrigin	include/GL/glxew.h	/^  int XOrigin; $/;"	m	struct:__anonacd3e5770308	typeref:typename:int
@@ -14151,6 +14153,7 @@ __anon0d38083b0108	main.c	/^typedef struct {$/;"	s	file:
 __anon0f5ae4160108	ecs.h	/^typedef struct {$/;"	s
 __anon0f5ae4160208	ecs.h	/^typedef struct {$/;"	s
 __anon0f88c9600108	gui.h	/^static struct {$/;"	s
+__anon0f88c9600208	gui.h	/^typedef struct {$/;"	s
 __anon0fea82990108	map.h	/^typedef struct {$/;"	s
 __anon0fea82990208	map.h	/^typedef struct {$/;"	s
 __anon1087a3c10103	node.h	/^enum {$/;"	g
@@ -17761,6 +17764,7 @@ do_sub	janet.c	/^static JanetSlot do_sub(JanetFopts opts, JanetSlot *args) {$/;"
 do_tex_btn	gui.c	/^bool do_tex_btn(float x, float y, float width, float height, const char *text,$/;"	f	typeref:typename:bool
 do_text_input	gui.c	/^bool do_text_input(char *buffer, int *cursor, size_t buffer_size, float x,$/;"	f	typeref:typename:bool
 do_toggle_group_v	gui.c	/^void do_toggle_group_v(int *which_, const char *names, float x, float y,$/;"	f	typeref:typename:void
+do_window	gui.c	/^void do_window(WindowState *state, const char *title) {$/;"	f	typeref:typename:void
 do_yield	janet.c	/^static JanetSlot do_yield(JanetFopts opts, JanetSlot *args) {$/;"	f	typeref:typename:JanetSlot	file:
 doarg	janet.c	/^static uint32_t doarg($/;"	f	typeref:typename:uint32_t	file:
 doarg_1	janet.c	/^static int32_t doarg_1($/;"	f	typeref:typename:int32_t	file:
@@ -18009,6 +18013,7 @@ fixarity2	janet.c	/^static int fixarity2(JanetFopts opts, JanetSlot *args) {$/;"
 fixarity3	janet.c	/^static int fixarity3(JanetFopts opts, JanetSlot *args) {$/;"	f	typeref:typename:int	file:
 flag	include/janet.h	/^    int flag;$/;"	m	struct:JanetParser	typeref:typename:int
 flags	entity_type.h	/^    int flags;$/;"	m	struct:__anonf82457790108	typeref:typename:int
+flags	gui.h	/^  int flags;$/;"	m	struct:__anon0f88c9600208	typeref:typename:int
 flags	include/janet.h	/^    int flags;$/;"	m	struct:JanetFile	typeref:typename:int
 flags	include/janet.h	/^    int flags;$/;"	m	struct:__anon0605a8400808	typeref:typename:int
 flags	include/janet.h	/^    int32_t flags; \/* More flags *\/$/;"	m	struct:JanetFiber	typeref:typename:int32_t
@@ -21595,6 +21600,7 @@ label	.vscode/tasks.json	/^      "label": "MSBuild",$/;"	s	object:tasks.0
 label	.vscode/tasks.json	/^      "label": "Publish Update",$/;"	s	object:tasks.4
 label	.vscode/tasks.json	/^      "label": "Release",$/;"	s	object:tasks.3
 labels	janet.c	/^    JanetTable labels; \/* keyword -> bytecode index *\/$/;"	m	struct:JanetAssembler	typeref:typename:JanetTable	file:
+last_mouse	gui.h	/^  Vector2 last_mouse;$/;"	m	struct:__anon0f88c9600208	typeref:typename:Vector2
 last_time_modified	assets.h	/^  long last_time_modified[2];$/;"	m	struct:Hotload	typeref:typename:long[2]
 last_value	gui.h	/^  float last_value;$/;"	m	struct:NState	typeref:typename:float
 len	gameworld_types.h	/^        size_t len;$/;"	m	struct:__anon7a0be2910408::__anon7a0be2910508	typeref:typename:size_t
@@ -22022,6 +22028,7 @@ readnat	janet.c	/^static int32_t readnat(UnmarshalState *st, const uint8_t **atd
 recursion_guard	janet.c	/^    int recursion_guard;$/;"	m	struct:JanetCompiler	typeref:typename:int	file:
 refCount	janet.c	/^    int refCount;$/;"	m	struct:JanetMailbox	typeref:typename:int	file:
 reg	janet.c	/^    JanetTable *reg;$/;"	m	struct:__anoncda107c80708	typeref:typename:JanetTable *	file:
+region	gui.h	/^  Rectangle region;$/;"	m	struct:__anon0f88c9600208	typeref:typename:Rectangle
 region	particles.h	/^    Rectangle region;$/;"	m	struct:__anon3aa623e20108	typeref:typename:Rectangle
 region	particles.h	/^    int region;$/;"	m	struct:__anon3aa623e20208	typeref:typename:int
 region	prop.h	/^    Rectangle region;$/;"	m	struct:__anon156e757c0108	typeref:typename:Rectangle
