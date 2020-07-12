@@ -237,8 +237,6 @@ void update_editor(Ed *self, Region *map, Game *game) {
       Vector2 delta =
           Vector2Subtract(self->rot_mouse_start, GetMousePosition());
 
-      printf("%f %f\n", delta.x, delta.y);
-
       self->selected_node->transform.rotation =
           QuaternionMultiply(self->selected_node->transform.rotation,
                              QuaternionFromEuler(0, delta.x * GetFrameTime(),
@@ -908,7 +906,7 @@ void do_models_modal(Ed *self, GfxState *gfx, Game *game, Region *map) {
 }
 
 void do_selected_node_panel(Ed *self, GfxState *gfx, Game *game, Region *map) {
-  static WindowState wstate = {.region = (Rectangle){100, 32, 300, 800},
+  static WindowState wstate = {.region = (Rectangle){100, 32, 300, 600},
                                .flags = 0};
   int x = wstate.region.x;
   int y = wstate.region.y;
@@ -918,9 +916,16 @@ void do_selected_node_panel(Ed *self, GfxState *gfx, Game *game, Region *map) {
   do_window(&wstate, "Node propterties");
 
   int cursor_y = y + 20;
-
-  const float label_w = 50;
   int id = 700;
+
+  const float label_w = 60;
+
+  if (do_btn(x + 20, cursor_y, label_w, 20, "Delete")) {
+    if (self->selected_node != NULL)
+      delete_node_from_tree(game->map->scene_root, self->selected_node);
+  }
+
+  cursor_y += 20 + MARGIN;
 
   do_label("pos: ", x + 20, cursor_y, label_w, 20, 20);
 
@@ -938,12 +943,16 @@ void do_selected_node_panel(Ed *self, GfxState *gfx, Game *game, Region *map) {
   do_drag_float_3(&id, x + 20 + label_w, cursor_y, w - (label_w + 20 * 2), 20,
                   &rot, 0.01f);
   Vector3 delta = Vector3Subtract(before, rot);
-
   Quaternion result =
       QuaternionMultiply(self->selected_node->transform.rotation,
                          QuaternionFromEuler(delta.x, delta.y, delta.z));
-
   self->selected_node->transform.rotation = result;
+
+  cursor_y += 20 + MARGIN;
+  do_label("scale: ", x + 20, cursor_y, label_w, 20, 20);
+
+  do_drag_float_3(&id, x + 20 + label_w, cursor_y, w - (label_w + 20 * 2), 20,
+                  &self->selected_node->transform.scale, 0.01f);
 }
 
 void render_editor_ui(Ed *self, GfxState *gfx, Region *map, Game *game) {

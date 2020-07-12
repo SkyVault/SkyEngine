@@ -110,7 +110,7 @@ Node *load_node_tree(Assets *assets, JanetTable *node_table) {
       for (size_t i = 0; i < strlen(str); i++)
         node->name[i] = str[i];
     } else {
-      node->model = assets->models[0];
+      node->type = NODE_TYPE_EMPTY;
     }
 
     if (janet_checktype(transform_j, JANET_ARRAY)) {
@@ -463,7 +463,7 @@ void reset_region_to_zero(Region *self, Game *game) {
   zero_out_region(self);
 
   if (self->scene_root) {
-    destroy_node_tree(self->scene_root);
+    delete_node_tree(self->scene_root);
     self->scene_root = NULL;
   }
 

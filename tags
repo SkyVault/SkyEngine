@@ -17669,6 +17669,11 @@ defs	janet.c	/^    JanetFuncDef **defs;$/;"	m	struct:JanetScope	typeref:typename
 defs	janet.c	/^    JanetTable defs; \/* symbol -> funcdefs index *\/$/;"	m	struct:JanetAssembler	typeref:typename:JanetTable	file:
 defs_capacity	janet.c	/^    int32_t defs_capacity;$/;"	m	struct:JanetAssembler	typeref:typename:int32_t	file:
 defs_length	include/janet.h	/^    int32_t defs_length;$/;"	m	struct:JanetFuncDef	typeref:typename:int32_t
+delete_branch_node_rec	node.c	/^bool delete_branch_node_rec(Node *node) {}$/;"	f	typeref:typename:bool
+delete_node	node.c	/^void delete_node(Node *node) { free(node); }$/;"	f	typeref:typename:void
+delete_node_from_tree	node.c	/^bool delete_node_from_tree(Node *tree, Node *to_delete) {$/;"	f	typeref:typename:bool
+delete_node_rec	node.c	/^void delete_node_rec(Node *node) {$/;"	f	typeref:typename:void
+delete_node_tree	node.c	/^void delete_node_tree(Node *node) { delete_node_rec(node); }$/;"	f	typeref:typename:void
 deleted	include/janet.h	/^    int32_t deleted;$/;"	m	struct:JanetTable	typeref:typename:int32_t
 depth	janet.c	/^    int depth;$/;"	m	struct:__anoncda107c81708	typeref:typename:int	file:
 depth	janet.c	/^    int depth;$/;"	m	struct:pretty	typeref:typename:int	file:
@@ -17686,7 +17691,6 @@ dest_id	gameworld_types.h	/^    int dest_id;$/;"	m	struct:__anon7a0be2910308	typ
 dest_path	gameworld_types.h	/^    char* dest_path;$/;"	m	struct:__anon7a0be2910308	typeref:typename:char *
 destroy_ent	ecs.c	/^int destroy_ent(EcsWorld* world, EntStruct* ent) {$/;"	f	typeref:typename:int
 destroy_mailbox_pair	janet.c	/^static void destroy_mailbox_pair(JanetMailboxPair *pair) {$/;"	f	typeref:typename:void	file:
-destroy_node_tree	node.c	/^void destroy_node_tree(Node *node) { free_node(node); }$/;"	f	typeref:typename:void
 destructure	janet.c	/^static int destructure(JanetCompiler *c,$/;"	f	typeref:typename:int	file:
 dict_add	dict.c	/^void dict_add(Dict* self, const char* key, void* value) {$/;"	f	typeref:typename:void
 dict_addi	dict.c	/^void dict_addi(Dict* self, int key, void* value) {$/;"	f	typeref:typename:void
@@ -18046,7 +18050,6 @@ fovy	rlgl.h	/^        float fovy;             \/\/ Camera field-of-view appertur
 frame	include/janet.h	/^    int32_t frame; \/* Index of the stack frame *\/$/;"	m	struct:JanetFiber	typeref:typename:int32_t
 framebufferHeight	rlgl.h	/^        int framebufferHeight;              \/\/ Default framebuffer height$/;"	m	struct:rlglData::__anon19a7bfac0a08	typeref:typename:int
 framebufferWidth	rlgl.h	/^        int framebufferWidth;               \/\/ Default framebuffer width$/;"	m	struct:rlglData::__anon19a7bfac0a08	typeref:typename:int
-free_node	node.c	/^void free_node(Node *node) {$/;"	f	typeref:typename:void
 free_one_scratch	janet.c	/^static void free_one_scratch(JanetScratch *s) {$/;"	f	typeref:typename:void	file:
 free_spot	ecs.h	/^    int free_spot;$/;"	m	struct:__anon0f5ae4160208	typeref:typename:int
 friction	physics_type.h	/^    float friction;$/;"	m	struct:__anonc10f1e9f0108	typeref:typename:float

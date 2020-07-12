@@ -1,6 +1,8 @@
 #ifndef BENIS_NODE_H
 #define BENIS_NODE_H
 
+#include <assert.h>
+
 #include "billboard.h"
 #include "maths.h"
 #include "raylib.h"
@@ -40,7 +42,8 @@ Node *create_node_from_model_with_transform(Model model, const char *name,
 
 void node_prepend(Node *parent, Node *new);
 
-void destroy_node_tree(Node *node);
+bool delete_node_from_tree(Node *tree, Node *to_delete);
+void delete_node_tree(Node *node);
 
 inline Node *create_empty() { return create_node(); }
 

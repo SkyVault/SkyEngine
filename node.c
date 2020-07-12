@@ -17,16 +17,36 @@ Node *create_node() {
   return node;
 }
 
-void free_node(Node *node) {
+void delete_node(Node *node) { free(node); }
+
+void delete_node_rec(Node *node) {
   if (node->child)
-    free_node(node->child);
+    delete_node_rec(node->child);
   if (node->next)
-    free_node(node->next);
-  node->child = node->next = node->parent = NULL;
+    delete_node_rec(node->next);
   free(node);
 }
 
-void destroy_node_tree(Node *node) { free_node(node); }
+bool delete_branch_node_rec(Node *node) {}
+
+bool delete_node_from_tree(Node *tree, Node *to_delete) {
+  // Algorithm:
+  // 1. Assert that the tree root node is an empty
+  // 2. loop over the nexts, and if any match to_delete, delete it
+  //    2.1. for each next node, recursively call delete_branch_node_rec on each
+  //    child, 2.2. if
+
+  assert(tree->type == NODE_TYPE_EMPTY && tree->child != NULL);
+
+  // bool deleted = false;
+
+  // Node *it = tree->child;
+
+  // while (!deleted) {
+  //}
+}
+
+void delete_node_tree(Node *node) { delete_node_rec(node); }
 
 Node *create_node_from_mesh(Mesh mesh) {
   Node *node = create_node();
