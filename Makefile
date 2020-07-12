@@ -1,6 +1,6 @@
 CC=gcc
 CFLAGS= -std=c11 -W -Wall -ggdb -Iinclude/  -Wno-missing-field-initializers -Wno-unused-parameter -Wno-unused-variable
-TARGET=bin/benis.exe
+TARGET=bin/sky.exe
 
 SRCS := $(wildcard *.c)
 HDRS := $(wildcard *.h)

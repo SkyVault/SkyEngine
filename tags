@@ -12434,6 +12434,7 @@ SHOWING_NOTHING	editor.h	/^  SHOWING_NOTHING,$/;"	e	enum:__anonc0cb90020303
 SI	janet.c	/^#define SI(/;"	d	file:
 SIPROUND	janet.c	/^#define SIPROUND /;"	d	file:
 SKY_DICT_H	dict.h	/^#define SKY_DICT_H$/;"	d
+SKY_WORLD_INTERACTION_H	world_interaction.h	/^#define SKY_WORLD_INTERACTION_H$/;"	d
 SRCS	Makefile	/^SRCS := $(wildcard *.c)$/;"	m
 SS	janet.c	/^#define SS(/;"	d	file:
 SSI	janet.c	/^#define SSI(/;"	d	file:
@@ -12473,7 +12474,7 @@ StringFragment	sb.h	/^} StringFragment;$/;"	t	typeref:struct:_StringFragment
 Sun	rlights.h	/^} Sun;$/;"	t	typeref:struct:__anon07ce6fd80108
 SymPair	janet.c	/^typedef struct SymPair {$/;"	s	file:
 SymPair	janet.c	/^} SymPair;$/;"	t	typeref:struct:SymPair	file:
-TARGET	Makefile	/^TARGET=bin\/benis.exe$/;"	m
+TARGET	Makefile	/^TARGET=bin\/sky.exe$/;"	m
 TA_ATOM_MAXSIZE	janet.c	/^#define TA_ATOM_MAXSIZE /;"	d	file:
 TA_COUNT_TYPES	janet.c	/^#define TA_COUNT_TYPES /;"	d	file:
 TA_FLAG_BIG_ENDIAN	janet.c	/^#define TA_FLAG_BIG_ENDIAN /;"	d	file:
@@ -17519,7 +17520,7 @@ cfun_typed_array_slice	janet.c	/^static Janet cfun_typed_array_slice(int32_t arg
 cfun_typed_array_swap_bytes	janet.c	/^static Janet cfun_typed_array_swap_bytes(int32_t argc, Janet *argv) {$/;"	f	typeref:typename:Janet	file:
 cfun_unmarshal	janet.c	/^static Janet cfun_unmarshal(int32_t argc, Janet *argv) {$/;"	f	typeref:typename:Janet	file:
 channel	include/GL/glxew.h	/^  int channel; $/;"	m	struct:__anonacd3e5770408	typeref:typename:int
-check_if_clicked	editor.c	/^Node *check_if_clicked(Ray ray, Node *node) {$/;"	f	typeref:typename:Node *
+check_if_clicked	world_interaction.c	/^Node *check_if_clicked(Ray ray, Node *node) {$/;"	f	typeref:typename:Node *
 check_str_const	janet.c	/^static int check_str_const(const char *cstr, const uint8_t *str, int32_t len) {$/;"	f	typeref:typename:int	file:
 checkescape	janet.c	/^static int checkescape(uint8_t c) {$/;"	f	typeref:typename:int	file:
 checkflags	janet.c	/^static int checkflags(const uint8_t *str) {$/;"	f	typeref:typename:int	file:
@@ -17740,7 +17741,7 @@ do_lte	janet.c	/^static JanetSlot do_lte(JanetFopts opts, JanetSlot *args) {$/;"
 do_modal	gui.c	/^void do_modal() {$/;"	f	typeref:typename:void
 do_models_modal	editor.c	/^void do_models_modal(Ed *self, GfxState *gfx, Game *game, Region *map) {$/;"	f	typeref:typename:void
 do_modulo	janet.c	/^static JanetSlot do_modulo(JanetFopts opts, JanetSlot *args) {$/;"	f	typeref:typename:JanetSlot	file:
-do_mouse_picking	editor.c	/^void do_mouse_picking(Ed *self, Region *map, Game *game) {$/;"	f	typeref:typename:void
+do_mouse_picking	world_interaction.c	/^Node *do_mouse_picking(Region *map, Camera *camera) {$/;"	f	typeref:typename:Node *
 do_mul	janet.c	/^static JanetSlot do_mul(JanetFopts opts, JanetSlot *args) {$/;"	f	typeref:typename:JanetSlot	file:
 do_neq	janet.c	/^static JanetSlot do_neq(JanetFopts opts, JanetSlot *args) {$/;"	f	typeref:typename:JanetSlot	file:
 do_next	janet.c	/^static JanetSlot do_next(JanetFopts opts, JanetSlot *args) {$/;"	f	typeref:typename:JanetSlot	file:

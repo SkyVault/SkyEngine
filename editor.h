@@ -6,6 +6,7 @@
 #include <limits.h>
 
 #include "assembler.h"
+#include "world_interaction.h"
 #include "game.h"
 #include "gameworld.h"
 #include "node.h"

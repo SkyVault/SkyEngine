@@ -138,7 +138,8 @@ void update_player(EcsWorld *ecs, Assets *ass, Game *game, EntId id) {
   }
 
   if (IsKeyPressed(KEY_ESCAPE)) {
-    game->lock_camera = !game->lock_camera;
+    game->lock_camera = !game->lock_camera; 
+    SetMousePosition(GetScreenWidth()/2, GetScreenHeight()/2); 
   }
 
   static int first = 0;
@@ -162,10 +163,15 @@ void update_player(EcsWorld *ecs, Assets *ass, Game *game, EntId id) {
                        IsKeyDown(CAMERA.moveControl[MOVE_UP]),
                        IsKeyDown(CAMERA.moveControl[MOVE_DOWN])};
 
-  mousePositionDelta.x = mousePosition.x - previousMousePosition.x;
-  mousePositionDelta.y = mousePosition.y - previousMousePosition.y;
+  mousePositionDelta.x = mousePosition.x - GetScreenWidth() / 2.0f;
+  mousePositionDelta.y = mousePosition.y - GetScreenHeight() / 2.0f;
 
   previousMousePosition = mousePosition;
+
+  if (!game->lock_camera) {
+    // Make the cursor stay in the middle
+    SetMousePosition(GetScreenWidth()/2, GetScreenHeight()/2);
+  }
 
   const float speed = game->editor_open ? 120.0f : 25.0f;
 

@@ -149,6 +149,12 @@ Assets *create_and_load_assets(void) {
   }
 
   {
+    Model monkey = LoadModel("resources/models/testhouse.glb");
+    monkey.materials[0].shader = ass->shaders[SHADER_PHONG_LIGHTING];
+    map_set(ass->models_dict, "testhouse", alloc_model_from(monkey));
+  }
+
+  {
     Model m = LoadModel("resources/models/rocks1.obj");
     m.materials[0].shader = ass->shaders[SHADER_PHONG_LIGHTING];
     map_set(ass->models_dict, "rocks1", alloc_model_from(m));

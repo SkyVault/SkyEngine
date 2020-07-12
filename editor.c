@@ -77,47 +77,6 @@ void push_message(Ed *self, const char *mesg) {
   };
 }
 
-Node *check_if_clicked(Ray ray, Node *node) {
-  if (node == NULL)
-    return node;
-
-  if (node->type == NODE_TYPE_MODEL) {
-    BoundingBox box = MeshBoundingBox(node->model.meshes[0]);
-
-    Vector3 pos = get_transform_from_node(node).translation;
-    box.min = Vector3Add(box.min, pos);
-    box.max = Vector3Add(box.max, pos);
-
-    if (CheckCollisionRayBox(ray, box)) {
-      if (GetCollisionRayModel(ray, node->model).hit) {
-        return node;
-      }
-    }
-  }
-
-  if (node->child) {
-    Node *child = check_if_clicked(ray, node->child);
-    if (child != NULL)
-      return child;
-  }
-
-  if (node->next) {
-    Node *next = check_if_clicked(ray, node->next);
-    if (next != NULL)
-      return next;
-  }
-
-  return NULL;
-}
-
-void do_mouse_picking(Ed *self, Region *map, Game *game) {
-  if (IsMouseButtonPressed(MOUSE_LEFT_BUTTON) && map->scene_root != NULL) {
-    Ray ray = GetMouseRay(
-        (Vector2){GetScreenWidth() / 2, GetScreenHeight() / 2}, *game->camera);
-    self->selected_node = check_if_clicked(ray, map->scene_root);
-  }
-}
-
 void push_command_output(Ed *self, const char *str) {
   char *copy = malloc(strlen(str));
   sprintf(copy, "%s", str);
@@ -192,7 +151,9 @@ void update_editor(Ed *self, Region *map, Game *game) {
   //     self->state = EDITOR_STATE_EXPORT_MODAL;
   // }
 
-  do_mouse_picking(self, map, game);
+  if (IsMouseButtonPressed(MOUSE_LEFT_BUTTON) && !IsMouseOnUiElement()) {
+    self->selected_node = do_mouse_picking(map, game->camera);
+  }
 
   if (IsKeyPressed(KEY_E)) {
     toggle_model_selector_modal(self);
@@ -272,10 +233,18 @@ void update_editor(Ed *self, Region *map, Game *game) {
     if (IsMouseButtonPressed(MOUSE_MIDDLE_BUTTON)) {
       self->rot_mouse_start = GetMousePosition();
     } else if (IsMouseButtonDown(MOUSE_MIDDLE_BUTTON)) {
+
       Vector2 delta =
           Vector2Subtract(self->rot_mouse_start, GetMousePosition());
 
-      self->selected_node->transform.rotation.y += delta.x;
+      printf("%f %f\n", delta.x, delta.y);
+
+      self->selected_node->transform.rotation =
+          QuaternionMultiply(self->selected_node->transform.rotation,
+                             QuaternionFromEuler(0, delta.x * GetFrameTime(),
+                                                 delta.y * GetFrameTime()));
+
+      self->rot_mouse_start = GetMousePosition();
     }
   }
 
@@ -947,14 +916,22 @@ void do_selected_node_panel(Ed *self, GfxState *gfx, Game *game, Region *map) {
 
   int cursor_y = y + 20;
 
-  const float label_w = 60;
+  const float label_w = 50;
 
   do_label("rot: ", x + 20, cursor_y, label_w, 20, 20);
 
   Vector3 rot = QuaternionToEuler(self->selected_node->transform.rotation);
+  Vector3 before = rot;
   int id = 700;
-  do_drag_float_3(&id, x + 20 + label_w, cursor_y, 300 - (label_w - 20), 20,
-                  &rot, 0.1f);
+  do_drag_float_3(&id, x + 20 + label_w, cursor_y, w - (label_w + 20 * 2), 20,
+                  &rot, 0.01f);
+  Vector3 delta = Vector3Subtract(before, rot);
+
+  Quaternion result =
+      QuaternionMultiply(self->selected_node->transform.rotation,
+                         QuaternionFromEuler(delta.x, delta.y, delta.z));
+
+  self->selected_node->transform.rotation = result;
 }
 
 void render_editor_ui(Ed *self, GfxState *gfx, Region *map, Game *game) {
