@@ -45,7 +45,7 @@ Ed *create_editor() {
   editor->models_panel_y = (float)GetScreenHeight();
   editor->node_tree_panel_y = (float)GetScreenHeight();
 
-  editor->object_placement_type = PLACE_NODES;
+  editor->object_placement_type = PLACE_NONE;
 
   editor->state = EDITOR_STATE_NONE;
 
@@ -908,7 +908,7 @@ void do_models_modal(Ed *self, GfxState *gfx, Game *game, Region *map) {
 }
 
 void do_selected_node_panel(Ed *self, GfxState *gfx, Game *game, Region *map) {
-  int x = GetScreenWidth() / 2 - 600;
+  int x = 100;
   int y = 32;
   int w = 300;
   int h = GetScreenHeight() - 60;
@@ -917,12 +917,21 @@ void do_selected_node_panel(Ed *self, GfxState *gfx, Game *game, Region *map) {
   int cursor_y = y + 20;
 
   const float label_w = 50;
+  int id = 700;
+
+  do_label("pos: ", x + 20, cursor_y, label_w, 20, 20);
+
+  do_drag_float_3(&id, x + 20 + label_w, cursor_y, w - (label_w + 20 * 2), 20,
+                  &self->selected_node->transform.translation, 0.1f);
+
+  cursor_y += 20 + MARGIN;
 
   do_label("rot: ", x + 20, cursor_y, label_w, 20, 20);
 
   Vector3 rot = QuaternionToEuler(self->selected_node->transform.rotation);
   Vector3 before = rot;
-  int id = 700;
+
+  id++;
   do_drag_float_3(&id, x + 20 + label_w, cursor_y, w - (label_w + 20 * 2), 20,
                   &rot, 0.01f);
   Vector3 delta = Vector3Subtract(before, rot);

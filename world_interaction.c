@@ -4,40 +4,68 @@ Node *do_mouse_picking(Region *map, Camera *camera) {
   if (map->scene_root != NULL) {
     Vector2 mpos = GetMousePosition();
     Ray ray = GetMouseRay(mpos, *camera);
-    return check_if_clicked(ray, map->scene_root);
+
+    Node *node = check_if_clicked(ray, map->scene_root).node;
+    if (node == NULL) {
+      printf("Nothing clicked! %d\n", rand());
+    }
+    return node;
   }
 }
 
-Node *check_if_clicked(Ray ray, Node *node) {
-  if (node == NULL)
-    return node;
+struct NodeRayInfo check_if_clicked(Ray ray, Node *node) {
 
-  if (node->next) {
-    Node *next = check_if_clicked(ray, node->next);
-    if (next != NULL)
-      return next;
-  } 
-
-  if (node->child) {
-    Node *child = check_if_clicked(ray, node->child);
-    if (child != NULL)
-      return child;
-  } 
+  // Algorithm
+  // 3. If the childs ray is closer then the closest one found in step 1, then
+  // return the child, else the other
 
   if (node->type == NODE_TYPE_MODEL) {
-    BoundingBox box = MeshBoundingBox(node->model.meshes[0]);
+    struct NodeRayInfo nearest = {.node = NULL, .info = {0}};
 
-    Vector3 pos = get_transform_from_node(node).translation;
-    box.min = Vector3Add(box.min, pos);
-    box.max = Vector3Add(box.max, pos);
+    // 1. Iterate all nodes in the branch and find the one that was clicked, and
+    // the closest to the ray start
 
-    if (CheckCollisionRayBox(ray, box)) {
-      if (GetCollisionRayModel(ray, node->model).hit) {
-        return node;
+    Node *it = node;
+
+    while (it != NULL) {
+      BoundingBox box = MeshBoundingBox(it->model.meshes[0]);
+      Vector3 pos = get_transform_from_node(it).translation;
+      box.min = Vector3Add(box.min, pos);
+      box.max = Vector3Add(box.max, pos);
+
+      if (CheckCollisionRayBox(ray, box)) {
+        RayHitInfo info = GetCollisionRayModel(ray, it->model);
+
+        if (info.hit) {
+          printf("here!!%d\n", rand());
+          if (nearest.node != NULL) {
+            if (info.distance < nearest.info.distance)
+              nearest = (struct NodeRayInfo){.node = it, .info = info};
+          } else {
+            nearest = (struct NodeRayInfo){.node = it, .info = info};
+          }
+        }
       }
+
+      // Check the children
+      if (it->child != NULL) {
+        struct NodeRayInfo child_info = check_if_clicked(ray, it->child);
+        if (child_info.node != NULL) {
+          if (nearest.node != NULL) {
+            if (child_info.info.distance < nearest.info.distance) {
+              nearest = child_info;
+            }
+          } else {
+            nearest = child_info;
+          }
+        }
+      }
+
+      it = it->next;
     }
+
+    return nearest;
   }
 
-  return NULL;
+  return (struct NodeRayInfo){.node = NULL, .info = {0}};
 }
-

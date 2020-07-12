@@ -373,4 +373,5 @@ publish-log
 
 *.dll
 
-tags
+*tags*
+*TAGS*

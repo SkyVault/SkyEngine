@@ -9293,6 +9293,7 @@ NUM_RGBS	main.c	/^#define NUM_RGBS /;"	d	file:
 Node	node.h	/^typedef struct Node {$/;"	s
 Node	node.h	/^} Node;$/;"	t	typeref:struct:Node
 NodeId	gui.h	/^typedef int NodeId;$/;"	t	typeref:typename:int
+NodeRayInfo	world_interaction.h	/^struct NodeRayInfo {$/;"	s
 Note	editor.h	/^typedef struct Note {$/;"	s
 Note	editor.h	/^} Note;$/;"	t	typeref:struct:Note
 OBJS	Makefile	/^OBJS := $(patsubst %.c,bin\/%.o,$(SRCS))$/;"	m
@@ -17520,7 +17521,7 @@ cfun_typed_array_slice	janet.c	/^static Janet cfun_typed_array_slice(int32_t arg
 cfun_typed_array_swap_bytes	janet.c	/^static Janet cfun_typed_array_swap_bytes(int32_t argc, Janet *argv) {$/;"	f	typeref:typename:Janet	file:
 cfun_unmarshal	janet.c	/^static Janet cfun_unmarshal(int32_t argc, Janet *argv) {$/;"	f	typeref:typename:Janet	file:
 channel	include/GL/glxew.h	/^  int channel; $/;"	m	struct:__anonacd3e5770408	typeref:typename:int
-check_if_clicked	world_interaction.c	/^Node *check_if_clicked(Ray ray, Node *node) {$/;"	f	typeref:typename:Node *
+check_if_clicked	world_interaction.c	/^struct NodeRayInfo check_if_clicked(Ray ray, Node *node) {$/;"	f	typeref:struct:NodeRayInfo
 check_str_const	janet.c	/^static int check_str_const(const char *cstr, const uint8_t *str, int32_t len) {$/;"	f	typeref:typename:int	file:
 checkescape	janet.c	/^static int checkescape(uint8_t c) {$/;"	f	typeref:typename:int	file:
 checkflags	janet.c	/^static int checkflags(const uint8_t *str) {$/;"	f	typeref:typename:int	file:
@@ -20883,6 +20884,7 @@ index2	janet.c	/^    int32_t index2;$/;"	m	struct:__anoncda107c80108	typeref:typ
 indices	rlgl.h	/^        unsigned short *indices;\/\/ vertex indices (in case vertex data comes indexed)$/;"	m	struct:Mesh	typeref:typename:unsigned short *
 indices	rlgl.h	/^    unsigned int *indices;      \/\/ vertex indices (in case vertex data comes indexed) (6 indic/;"	m	struct:DynamicBuffer	typeref:typename:unsigned int *
 indices	rlgl.h	/^    unsigned short *indices;    \/\/ vertex indices (in case vertex data comes indexed) (6 indic/;"	m	struct:DynamicBuffer	typeref:typename:unsigned short *
+info	world_interaction.h	/^  RayHitInfo info;$/;"	m	struct:NodeRayInfo	typeref:typename:RayHitInfo
 init	gui.h	/^  uint8_t init;$/;"	m	struct:NState	typeref:typename:uint8_t
 init_gui	gui.c	/^void init_gui() {$/;"	f	typeref:typename:void
 int32_t	janet.c	/^int32_t (janet_unwrap_integer)(Janet x) {$/;"	f
@@ -21796,6 +21798,7 @@ nexttag	janet.c	/^    uint32_t nexttag;$/;"	m	struct:__anoncda107c81708	typeref:
 nnodes	map.h	/^  unsigned nbuckets, nnodes;$/;"	m	struct:__anon0fea82990108	typeref:typename:unsigned
 noclip	game.h	/^    bool noclip;$/;"	m	struct:__anonff3b1fb50108	typeref:typename:bool
 node	map.h	/^  map_node_t *node;$/;"	m	struct:__anon0fea82990208	typeref:typename:map_node_t *
+node	world_interaction.h	/^  Node *node;$/;"	m	struct:NodeRayInfo	typeref:typename:Node *
 node_prepend	node.c	/^void node_prepend(Node *parent, Node *new) {$/;"	f	typeref:typename:void
 node_tree_panel_y	editor.h	/^  float node_tree_panel_y;$/;"	m	struct:__anonc0cb90020608	typeref:typename:float
 noise	maths.c	/^double noise(double x, double y, double z) {$/;"	f	typeref:typename:double

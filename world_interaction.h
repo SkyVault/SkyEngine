@@ -5,7 +5,13 @@
 
 #include "gameworld.h"
 
-Node *do_mouse_picking(Region *map, Camera *camera); 
-Node *check_if_clicked(Ray ray, Node *node); 
+struct NodeRayInfo {
+  Node *node;
+  RayHitInfo info;
+};
 
-#endif//SKY_WORLD_INTERACTION_H
+Node *do_mouse_picking(Region *map, Camera *camera);
+
+struct NodeRayInfo check_if_clicked(Ray ray, Node *node);
+
+#endif // SKY_WORLD_INTERACTION_H
