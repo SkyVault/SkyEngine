@@ -150,7 +150,6 @@ void update_player(EcsWorld *ecs, Assets *ass, Game *game, EntId id) {
   }
 
   static int swingCounter = 0; // Used for 1st person swinging movement
-  static Vector2 previousMousePosition = {0.0f, 0.0f};
 
   // Mouse movement detection
   Vector2 mousePositionDelta = {0.0f, 0.0f};
@@ -166,7 +165,7 @@ void update_player(EcsWorld *ecs, Assets *ass, Game *game, EntId id) {
   mousePositionDelta.x = mousePosition.x - GetScreenWidth() / 2.0f;
   mousePositionDelta.y = mousePosition.y - GetScreenHeight() / 2.0f;
 
-  previousMousePosition = mousePosition;
+  // printf("delta; %f %f\n", mousePositionDelta.x, mousePositionDelta.y);
 
   if (!game->lock_camera) {
     // Make the cursor stay in the middle

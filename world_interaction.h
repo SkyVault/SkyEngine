@@ -10,8 +10,9 @@ struct NodeRayInfo {
   RayHitInfo info;
 };
 
-Node *do_mouse_picking(Region *map, Camera *camera);
+typedef struct NodeRayInfo NodeRayInfo;
 
-struct NodeRayInfo check_if_clicked(Ray ray, Node *node);
+NodeRayInfo do_mouse_picking(Region *map, Camera *camera); 
+NodeRayInfo check_if_clicked(Ray ray, Node *node);
 
 #endif // SKY_WORLD_INTERACTION_H

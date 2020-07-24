@@ -1,25 +1,30 @@
 #include "world_interaction.h"
 
-Node *do_mouse_picking(Region *map, Camera *camera) {
+NodeRayInfo do_mouse_picking(Region *map, Camera *camera) {
   if (map->scene_root != NULL) {
     Vector2 mpos = GetMousePosition();
     Ray ray = GetMouseRay(mpos, *camera);
 
-    Node *node = check_if_clicked(ray, map->scene_root).node;
+    NodeRayInfo info = check_if_clicked(ray, map->scene_root);
+
+    Node *node = info.node;
     if (node == NULL) {
       printf("Nothing clicked! %d\n", rand());
     }
-    return node;
+
+    return info;
   }
+  
+  return (NodeRayInfo){.node = NULL, .info = {0}};
 }
 
-struct NodeRayInfo check_if_clicked(Ray ray, Node *node) {
+NodeRayInfo check_if_clicked(Ray ray, Node *node) {
 
   // Algorithm
   // 3. If the childs ray is closer then the closest one found in step 1, then
   // return the child, else the other
 
-  struct NodeRayInfo nearest = {.node = NULL, .info = {0}};
+  NodeRayInfo nearest = {.node = NULL, .info = {0}};
 
   // 1. Iterate all nodes in the branch and find the one that was clicked, and
   // the closest to the ray start
@@ -42,9 +47,9 @@ struct NodeRayInfo check_if_clicked(Ray ray, Node *node) {
           printf("here!!%d\n", rand());
           if (nearest.node != NULL) {
             if (info.distance < nearest.info.distance)
-              nearest = (struct NodeRayInfo){.node = it, .info = info};
+              nearest = (NodeRayInfo){.node = it, .info = info};
           } else {
-            nearest = (struct NodeRayInfo){.node = it, .info = info};
+            nearest = (NodeRayInfo){.node = it, .info = info};
           }
         }
       }
@@ -52,7 +57,7 @@ struct NodeRayInfo check_if_clicked(Ray ray, Node *node) {
 
     // Check the children
     if (it->child != NULL) {
-      struct NodeRayInfo child_info = check_if_clicked(ray, it->child);
+      NodeRayInfo child_info = check_if_clicked(ray, it->child);
       if (child_info.node != NULL) {
         if (nearest.node != NULL) {
           if (child_info.info.distance < nearest.info.distance) {

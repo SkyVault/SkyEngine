@@ -152,7 +152,7 @@ void update_editor(Ed *self, Region *map, Game *game) {
   // }
 
   if (IsMouseButtonPressed(MOUSE_LEFT_BUTTON) && !IsMouseOnUiElement()) {
-    self->selected_node = do_mouse_picking(map, game->camera);
+    self->selected_node = do_mouse_picking(map, game->camera).node;
   }
 
   if (IsKeyPressed(KEY_E)) {
@@ -190,19 +190,17 @@ void update_editor(Ed *self, Region *map, Game *game) {
   if (player_id >= 0) {
     EntStruct *player = get_ent(game->ecs, player_id);
 
-    if (IsKeyPressed(KEY_SPACE)) {
-      self->y++;
-      get_comp(game->ecs, player, Transform)->translation.y =
-          self->y * (float)CUBE_SIZE + (GLOBAL_SCALE - ACTOR_HEIGHT);
+    Transform* t = get_comp(game->ecs, player, Transform);
+
+    if (IsKeyDown(KEY_SPACE)) {
+      t->translation.y += GetFrameTime() * 10.0f;
     }
 
-    if (IsKeyPressed(KEY_LEFT_SHIFT)) {
-      self->y--;
-      if (self->y < 0)
-        self->y = 0;
-      get_comp(game->ecs, player, Transform)->translation.y =
-          self->y * (float)CUBE_SIZE + (ACTOR_HEIGHT - GLOBAL_SCALE);
+    if (IsKeyDown(KEY_LEFT_SHIFT) && !IsKeyDown(KEY_TAB)) { 
+      t->translation.y -= GetFrameTime() * 10.0f;
     }
+
+    self->y = t->translation.y;
   }
 
   int sc = GetMouseWheelMove();
@@ -286,7 +284,7 @@ void update_editor(Ed *self, Region *map, Game *game) {
 
 bool get_mouse_placement_loc(Game *game, float y, Vector3 *loc) {
   Ray ray =
-      GetMouseRay((Vector2){GetScreenWidth() / 2, GetScreenHeight() / 2 - 50},
+      GetMouseRay((Vector2){GetScreenWidth() / 2, GetScreenHeight() / 2},
                   *game->camera);
 
   RayHitInfo nearestHit = {0};
@@ -300,8 +298,16 @@ bool get_mouse_placement_loc(Game *game, float y, Vector3 *loc) {
     nearestHit = groundHitInfo;
   }
 
-  if (nearestHit.hit) {
+  NodeRayInfo info = do_mouse_picking(game->map, game->camera);
+  Node* node = info.node;
+
+  if (nearestHit.hit && !node) {
     *loc = nearestHit.position;
+    return true;
+  }
+
+  if (node) {
+    *loc = info.info.position;
     return true;
   }
 
@@ -341,24 +347,13 @@ void render_editor(Ed *self, GfxState *gfx, Region *map, Game *game) {
   if (!self->open)
     return;
 
-  Vector3 loc;
-
+  Vector3 loc; 
   bool hit =
-      get_mouse_placement_loc(game, self->y * (float)(GLOBAL_SCALE), &loc);
+      get_mouse_placement_loc(game, self->y, &loc);
 
   // loc = Vector3Transform(loc, MatrixRotateY(180.0f));
 
-  // DrawCube(loc, 0.2f, 0.2f, 0.2f, GREEN);
-
-  const int cs = CUBE_SIZE;
-  Vector3 clamped =
-      (Vector3){ceil(loc.x) - 0.5f, ceil(loc.y), ceil(loc.z) - 0.5f};
-  clamped.y = self->y;
-  // clamped.x -= 1;
-  // clamped.z -= 1;
-
-  if (IsKeyDown(KEY_LEFT_ALT))
-    clamped = loc;
+  DrawCube(loc, 0.02f, 0.02f, 0.02f, RED);
 
   DrawCylinder((Vector3){map->player_x, -3.0f, map->player_z}, 0.2f, 0.2f, 4.0f,
                20, (Color){0, 100, 255, 100});
