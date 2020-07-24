@@ -7,8 +7,7 @@ NodeRayInfo do_mouse_picking(Region *map, Camera *camera) {
 
     NodeRayInfo info = check_if_clicked(ray, map->scene_root);
 
-    Node *node = info.node;
-    if (node == NULL) {
+    if (info.node == NULL) {
       printf("Nothing clicked! %d\n", rand());
     }
 

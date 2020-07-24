@@ -29,26 +29,35 @@ void delete_node_rec(Node *node) {
 
 bool delete_branch_node_rec(Node *node) {}
 
-bool delete_node_from_tree(Node *tree, Node *to_delete) {
-  // Algorithm:
-  // 1. Assert that the tree root node is an empty
-  // 2. loop over the nexts, and if any match to_delete, delete it
-  //    2.1. for each next node, recursively call delete_branch_node_rec on each
-  //    child, 2.2. if
-
+bool delete_node_from_tree(Node *tree, Node *to_delete) { 
   assert(tree->type == NODE_TYPE_EMPTY && tree->child != NULL);
 
-  Node *it = tree->child;
+  if (to_delete->parent) {
 
-  if (it == to_delete) {
-    if (it->next || it->child)
-      it->parent->child = (it->next != NULL ? it->next : it->child);
-    else
-      it->parent->child = NULL;
-    delete_node(it);
-    return true;
-  } else {
-  }
+    if (to_delete->child) {
+      // Needs re-parent
+    } else { 
+    }
+
+    // Find the node in the list so that we
+    // can  know the prev
+
+    Node* it = to_delete->parent->child;
+    
+    if (it == to_delete) { 
+      to_delete->parent->child = it->next;
+      delete_node(it); 
+    }
+
+    Node* prev = it;
+    while (it != to_delete && it != NULL) { 
+      prev = it;
+      it = it->next;
+    }
+
+    prev->next = it->next;
+    delete_node(it); 
+  } 
 
   return false;
 }
@@ -103,6 +112,7 @@ void node_prepend(Node *parent, Node *new) {
     Node *tmp = parent->next;
     parent->next = new;
     parent->next->next = tmp;
+    new->parent = parent->parent;
   }
 }
 
