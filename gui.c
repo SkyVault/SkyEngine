@@ -321,6 +321,14 @@ bool do_drag_region_float(NodeId id, float x, float y, float width,
 
   CHECK_IF_HOT()
 
+  bool hot = IS_HOT();
+
+  if (hot && IsKeyPressed(KEY_ZERO)) {
+    *value = 0.0f;
+    return true;
+  }
+
+
   bool last = state->active;
   state->active = state->hot && IsMouseButtonDown(MOUSE_LEFT_BUTTON);
 
@@ -361,8 +369,10 @@ bool do_drag_float_3(NodeId *id, float x, float y, float width, float height,
   do_drag_float(nid++, x + width / 3 * 1, y, width / 3, height, &value->y,
                 step);
   do_drag_float(nid++, x + width / 3 * 2, y, width / 3, height, &value->z,
-                step);
+                step); 
   *id = nid;
+
+  return IS_HOT();
 }
 
 bool do_color_drag_float_4(NodeId *id, float x, float y, float width,

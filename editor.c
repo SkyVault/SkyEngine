@@ -916,13 +916,18 @@ void do_selected_node_panel(Ed *self, GfxState *gfx, Game *game, Region *map) {
   Vector3 before = rot;
 
   id++;
-  do_drag_float_3(&id, x + 20 + label_w, cursor_y, w - (label_w + 20 * 2), 20,
+  bool hot = do_drag_float_3(&id, x + 20 + label_w, cursor_y, w - (label_w + 20 * 2), 20,
                   &rot, 0.01f);
-  Vector3 delta = Vector3Subtract(before, rot);
-  Quaternion result =
-      QuaternionMultiply(self->selected_node->transform.rotation,
-                         QuaternionFromEuler(delta.x, delta.y, delta.z));
-  self->selected_node->transform.rotation = result;
+
+  if (rot.x == 0 && rot.y == 0 && rot.z == 0) { 
+    self->selected_node->transform.rotation = QuaternionIdentity();
+  } else {
+    Vector3 delta = Vector3Subtract(before, rot);
+    Quaternion result =
+        QuaternionMultiply(self->selected_node->transform.rotation,
+                          QuaternionFromEuler(delta.x, delta.y, delta.z));
+    self->selected_node->transform.rotation = result;
+  }
 
   cursor_y += 20 + MARGIN;
   do_label("scale: ", x + 20, cursor_y, label_w, 20, 20);
