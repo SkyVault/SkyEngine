@@ -33,11 +33,15 @@
 #define GLSL_VERSION 100
 #endif
 
-#define BENIS_VERSION_MAJOR "0"
-#define BENIS_VERSION_MINOR "1"
-#define BENIS_VERSION_PATCH "15"
-#define BENIS_VERSION                                                          \
-  BENIS_VERSION_MAJOR "." BENIS_VERSION_MINOR "." BENIS_VERSION_PATCH
+#define ENGINE_NAME "Vault Engine"
+#define VAULT_TITLE "The " ENGINE_NAME "!"
+#define COMPANY_NAME "Joy Vault"
+
+#define VAULT_VERSION_MAJOR "0"
+#define VAULT_VERSION_MINOR "1"
+#define VAULT_VERSION_PATCH "15"
+#define VAULT_VERSION                                                          \
+  VAULT_VERSION_MAJOR "." VAULT_VERSION_MINOR "." VAULT_VERSION_PATCH
 
 #define MAX_COLUMNS (20)
 #define MAIN_SHADER SHADER_PHONG_LIGHTING
@@ -163,10 +167,10 @@ void update_and_render_menu_scene(MainMenuState *state, Game *game,
   const float shw = GetScreenWidth() / 2;
   const float shh = GetScreenHeight() / 2;
 
-  do_center_x_label(GetScreenWidth(), 30, 100, "Benis Shooter 3D");
+  do_center_x_label(GetScreenWidth(), 30, 100, VAULT_TITLE);
 
   do_center_x_label(GetScreenWidth() + cosf(GetTime() * 2) * 50.0f, 120, 30,
-                    TextFormat("Edit Version: %s", BENIS_VERSION));
+                    TextFormat("Edit Version: %s", VAULT_VERSION));
 
   // Buttons
   int id = 0;
@@ -259,7 +263,7 @@ void update_and_render_menu_scene(MainMenuState *state, Game *game,
   }
 #endif
 
-  if (do_btn(shw + 300, (shh - (tot_h / 2)), 200, btn_h, "Edit")) {
+  if (do_btn(shw + btn_w / 2 + 20, (shh - (tot_h / 2)), 200, btn_h, "Edit")) {
     game->scene = SCENE_EDIT;
   }
 
