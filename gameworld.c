@@ -101,6 +101,21 @@ Node *load_node_tree(Assets *assets, JanetTable *node_table) {
     node->type = NODE_TYPE_MODEL;
   }
 
+  if (janet_checktype(transform_j, JANET_ARRAY)) {
+    Transform transform;
+    transform.translation = (Vector3){janet_unwrap_number(trans->data[0]),
+                                      janet_unwrap_number(trans->data[1]),
+                                      janet_unwrap_number(trans->data[2])};
+    transform.scale = (Vector3){janet_unwrap_number(trans->data[3]),
+                                janet_unwrap_number(trans->data[4]),
+                                janet_unwrap_number(trans->data[5])};
+    transform.rotation = (Quaternion){janet_unwrap_number(trans->data[6]),
+                                      janet_unwrap_number(trans->data[7]),
+                                      janet_unwrap_number(trans->data[8]),
+                                      janet_unwrap_number(trans->data[9])};
+    node->transform = transform;
+  }
+
   if (node->type == NODE_TYPE_MODEL) {
     Janet val = janet_table_get(node_table, janet_ckeywordv("model"));
 
@@ -113,26 +128,15 @@ Node *load_node_tree(Assets *assets, JanetTable *node_table) {
       node->type = NODE_TYPE_EMPTY;
     }
 
-    if (janet_checktype(transform_j, JANET_ARRAY)) {
-      Transform transform;
-      transform.translation = (Vector3){janet_unwrap_number(trans->data[0]),
-                                        janet_unwrap_number(trans->data[1]),
-                                        janet_unwrap_number(trans->data[2])};
-      transform.scale = (Vector3){janet_unwrap_number(trans->data[3]),
-                                  janet_unwrap_number(trans->data[4]),
-                                  janet_unwrap_number(trans->data[5])};
-      transform.rotation = (Quaternion){janet_unwrap_number(trans->data[6]),
-                                        janet_unwrap_number(trans->data[7]),
-                                        janet_unwrap_number(trans->data[8]),
-                                        janet_unwrap_number(trans->data[9])};
-      node->transform = transform;
+    if (janet_checktype(child_j, JANET_TABLE)) {
+      node->child = load_node_tree(assets, child);
+      node->child->parent = node;
     }
 
-    if (janet_checktype(child_j, JANET_TABLE))
-      node->child = load_node_tree(assets, child);
-
-    if (janet_checktype(next_j, JANET_TABLE))
+    if (janet_checktype(next_j, JANET_TABLE)) {
       node->next = load_node_tree(assets, next);
+      node->parent = NULL;
+    }
   }
 
   return node;

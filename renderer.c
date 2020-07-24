@@ -271,6 +271,8 @@ void draw_root_node(GfxState *gfx, Node *node) {
 
   Transform transform = get_transform_from_node(node);
 
+  // TODO(Dustin): @important dont draw the gizmo when
+  // not in edit mode, we probably have to move this to the editor somehow
   DrawGizmo(transform.translation);
 
   switch (node->type) {

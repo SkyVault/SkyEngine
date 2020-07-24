@@ -38,12 +38,19 @@ bool delete_node_from_tree(Node *tree, Node *to_delete) {
 
   assert(tree->type == NODE_TYPE_EMPTY && tree->child != NULL);
 
-  // bool deleted = false;
+  Node *it = tree->child;
 
-  // Node *it = tree->child;
+  if (it == to_delete) {
+    if (it->next || it->child)
+      it->parent->child = (it->next != NULL ? it->next : it->child);
+    else
+      it->parent->child = NULL;
+    delete_node(it);
+    return true;
+  } else {
+  }
 
-  // while (!deleted) {
-  //}
+  return false;
 }
 
 void delete_node_tree(Node *node) { delete_node_rec(node); }
@@ -82,9 +89,21 @@ Node *create_node_from_model_with_transform(Model model, const char *name,
 }
 
 void node_prepend(Node *parent, Node *new) {
-  Node *tmp = parent->next;
-  parent->next = new;
-  parent->next->next = tmp;
+  if (parent->type == NODE_TYPE_EMPTY) {
+    if (parent->child != NULL)
+      node_prepend(parent->child, new);
+    else
+      parent->child = new;
+    return;
+  }
+
+  if (parent->child != NULL) {
+    node_prepend(parent->child, new);
+  } else {
+    Node *tmp = parent->next;
+    parent->next = new;
+    parent->next->next = tmp;
+  }
 }
 
 void add_child_node(Node *parent, Node *child) {

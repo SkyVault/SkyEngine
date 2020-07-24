@@ -91,8 +91,6 @@ void draw_billboard(GfxState *gfx, Vector3 position, Texture texture,
 
 void draw_prop(GfxState *gfx, Game *game, Prop prop);
 
-void draw_node_tree(Node *node);
-
 void begin_rendering(GfxState *gfx);
 void end_rendering(GfxState *gfx);
 void draw_final_texture_to_screen(GfxState *gfx);

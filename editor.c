@@ -745,36 +745,14 @@ void do_node_tree_modal(Ed *self, GfxState *gfx, Game *game, Region *map) {
         lerp(GetFrameTime() * 10.0f, self->node_tree_panel_y, PANEL_BTN_HEIGHT);
     cursor_y += PANEL_BTN_HEIGHT;
 
-    // Start drawing the panel
-    {
-      Node *child = map->scene_root;
-      Node *next = NULL;
+    // TODO(Dustin): Implement this panel, essentially it's going to show the
+    // node tree in a tree like structure that is collapsible
 
-      float cx = lx + MARGIN;
-      float cy = cursor_y + MARGIN;
+    // Ex.
+    // [R]
+    // [C][N][N][N]
+    //    [C][N][N]
 
-      int id = 500;
-
-      while (child) {
-        id++;
-        do_node_dropdown(self, child, &id, &cx, &cy);
-
-        cx += 8;
-        cy += 20;
-
-        if (child->next) {
-          next = child->next;
-          while (next) {
-            id++;
-            do_node_dropdown(self, next, &id, &cx, &cy);
-            cy += 20;
-            next = next->next;
-          }
-        }
-
-        child = child->child;
-      }
-    }
   } else {
     self->node_tree_panel_y =
         lerp(GetFrameTime() * 10.0f, self->node_tree_panel_y,
@@ -921,8 +899,11 @@ void do_selected_node_panel(Ed *self, GfxState *gfx, Game *game, Region *map) {
   const float label_w = 60;
 
   if (do_btn(x + 20, cursor_y, label_w, 20, "Delete")) {
-    if (self->selected_node != NULL)
+    if (self->selected_node != NULL) {
       delete_node_from_tree(game->map->scene_root, self->selected_node);
+      self->selected_node = NULL;
+      return;
+    }
   }
 
   cursor_y += 20 + MARGIN;
