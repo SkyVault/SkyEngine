@@ -5,16 +5,16 @@
   "version": "0.2.0",
   "configurations": [
     {
-      "preLaunchTask": "MSBuild",
-      "name": "(Windows) Launch",
-      "type": "cppvsdbg",
+      "preLaunchTask": "Make",
+      "name": "Launch",
+      "type": "cppdbg",
       "request": "launch",
-      "program": "${workspaceFolder}/x64/Debug/Benis3D.exe",
+      "program": "${workspaceFolder}/bin/sky.exe",
       "args": [],
       "stopAtEntry": false,
       "cwd": "${workspaceFolder}",
       "environment": [],
-      "externalConsole": true
+      "externalConsole": false
     }
   ]
 }

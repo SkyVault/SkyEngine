@@ -152,7 +152,6 @@ void update_player(EcsWorld *ecs, Assets *ass, Game *game, EntId id) {
   static int swingCounter = 0; // Used for 1st person swinging movement
 
   // Mouse movement detection
-  Vector2 mousePositionDelta = {0.0f, 0.0f};
   Vector2 mousePosition = GetMousePosition();
 
   bool direction[6] = {IsKeyDown(CAMERA.moveControl[MOVE_FRONT]),
@@ -162,10 +161,13 @@ void update_player(EcsWorld *ecs, Assets *ass, Game *game, EntId id) {
                        IsKeyDown(CAMERA.moveControl[MOVE_UP]),
                        IsKeyDown(CAMERA.moveControl[MOVE_DOWN])};
 
+  Vector2 mousePositionDelta = {0.0f, 0.0f};
   mousePositionDelta.x = mousePosition.x - GetScreenWidth() / 2.0f;
   mousePositionDelta.y = mousePosition.y - GetScreenHeight() / 2.0f;
 
-  // printf("delta; %f %f\n", mousePositionDelta.x, mousePositionDelta.y);
+  //@debug
+  if (IsKeyDown(KEY_Z))
+    printf("delta; %f %f\n", mousePositionDelta.x, mousePositionDelta.y);
 
   if (!game->lock_camera) {
     // Make the cursor stay in the middle
@@ -173,6 +175,10 @@ void update_player(EcsWorld *ecs, Assets *ass, Game *game, EntId id) {
   }
 
   const float speed = game->editor_open ? 120.0f : 25.0f;
+
+  if (!game->editor_open) {
+    // Apply gravity
+  }
 
   // Handle collisions
   {

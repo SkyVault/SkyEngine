@@ -15,21 +15,11 @@ $(TARGET)	Makefile	/^$(TARGET): $(OBJS) $(HDRS) Makefile$/;"	t
 0	.vscode/msbuild-tools.json	/^    {$/;"	o	array:preBuildTasks
 0	.vscode/msbuild-tools.json	/^  "buildConfigurations": ["Debug", "Release"],$/;"	s	array:buildConfigurations
 0	.vscode/msbuild-tools.json	/^  "platformConfigurations": ["x64", "x86"],$/;"	s	array:platformConfigurations
-0	.vscode/tasks.json	/^      "args": ["create_and_publish_build.py"],$/;"	s	array:tasks.4.args
-0	.vscode/tasks.json	/^      "problemMatcher": ["$msCompile"],$/;"	s	array:tasks.0.problemMatcher
-0	.vscode/tasks.json	/^      "problemMatcher": ["$msCompile"],$/;"	s	array:tasks.1.problemMatcher
-0	.vscode/tasks.json	/^      "problemMatcher": ["$msCompile"],$/;"	s	array:tasks.2.problemMatcher
-0	.vscode/tasks.json	/^      "problemMatcher": ["$msCompile"],$/;"	s	array:tasks.3.problemMatcher
-0	.vscode/tasks.json	/^      "problemMatcher": ["$msCompile"],$/;"	s	array:tasks.4.problemMatcher
 0	.vscode/tasks.json	/^    {$/;"	o	array:tasks
 1	.vscode/msbuild-tools.json	/^      "args": ["\/c", "echo [post-build task]: ANOTHER MESSAGE"],$/;"	s	array:postBuildTasks.0.args
 1	.vscode/msbuild-tools.json	/^      "args": ["\/c", "echo [pre-build task]: MESSAGE"],$/;"	s	array:preBuildTasks.0.args
 1	.vscode/msbuild-tools.json	/^  "buildConfigurations": ["Debug", "Release"],$/;"	s	array:buildConfigurations
 1	.vscode/msbuild-tools.json	/^  "platformConfigurations": ["x64", "x86"],$/;"	s	array:platformConfigurations
-1	.vscode/tasks.json	/^    {$/;"	o	array:tasks
-2	.vscode/tasks.json	/^    {$/;"	o	array:tasks
-3	.vscode/tasks.json	/^    {$/;"	o	array:tasks
-4	.vscode/tasks.json	/^    {$/;"	o	array:tasks
 A	janet.c	/^#define A /;"	d	file:
 ACTOR_BLOCK_C	assembler.c	/^EntId ACTOR_BLOCK_C(Game* game, float x, float y, float z, float vx, float vy) {$/;"	f	typeref:typename:EntId
 ACTOR_END_TARGET_C	assembler.c	/^EntId ACTOR_END_TARGET_C(Game* game, float x, float y, float z, float vx,$/;"	f	typeref:typename:EntId
@@ -89,10 +79,6 @@ BENIS_PLAYER_H	player.h	/^#define BENIS_PLAYER_H$/;"	d
 BENIS_PROP_H	prop.h	/^#define BENIS_PROP_H$/;"	d
 BENIS_TWEEN_H	tween.h	/^#define BENIS_TWEEN_H$/;"	d
 BENIS_UTILS_H	utils.h	/^#define BENIS_UTILS_H$/;"	d
-BENIS_VERSION	main.c	/^#define BENIS_VERSION /;"	d	file:
-BENIS_VERSION_MAJOR	main.c	/^#define BENIS_VERSION_MAJOR /;"	d	file:
-BENIS_VERSION_MINOR	main.c	/^#define BENIS_VERSION_MINOR /;"	d	file:
-BENIS_VERSION_PATCH	main.c	/^#define BENIS_VERSION_PATCH /;"	d	file:
 BIGNAT_BASE	janet.c	/^#define BIGNAT_BASE /;"	d	file:
 BIGNAT_NBIT	janet.c	/^#define BIGNAT_NBIT /;"	d	file:
 BLEND_ADDITIVE	rlgl.h	/^        BLEND_ADDITIVE,$/;"	e	enum:__anon19a7bfac0603
@@ -130,6 +116,7 @@ CAT	ecs.h	/^#define CAT(/;"	d
 CC	Makefile	/^CC=gcc$/;"	m
 CFLAGS	Makefile	/^CFLAGS= -std=c11 -W -Wall -ggdb -Iinclude\/  -Wno-missing-field-initializers -Wno-unused-paramet/;"	m
 CHECK_IF_HOT	gui.c	/^#define CHECK_IF_HOT(/;"	d	file:
+COMPANY_NAME	main.c	/^#define COMPANY_NAME /;"	d	file:
 COMPMETHOD	janet.c	/^#define COMPMETHOD(/;"	d	file:
 COMPRESSED_ASTC_4x4_RGBA	rlgl.h	/^        COMPRESSED_ASTC_4x4_RGBA,       \/\/ 8 bpp$/;"	e	enum:__anon19a7bfac0403
 COMPRESSED_ASTC_8x8_RGBA	rlgl.h	/^        COMPRESSED_ASTC_8x8_RGBA        \/\/ 2 bpp$/;"	e	enum:__anon19a7bfac0403
@@ -1008,6 +995,7 @@ EGLnsecsANDROID	include/GL/eglew.h	/^typedef khronos_stime_nanoseconds_t EGLnsec
 EGLsizeiANDROID	include/GL/eglew.h	/^typedef khronos_ssize_t EGLsizeiANDROID;$/;"	t	typeref:typename:khronos_ssize_t
 EGLuint64KHR	include/GL/eglew.h	/^typedef khronos_uint64_t EGLuint64KHR;$/;"	t	typeref:typename:khronos_uint64_t
 EGLuint64NV	include/GL/eglew.h	/^typedef khronos_utime_nanoseconds_t EGLuint64NV;$/;"	t	typeref:typename:khronos_utime_nanoseconds_t
+ENGINE_NAME	main.c	/^#define ENGINE_NAME /;"	d	file:
 ENTITY_TYPES	entity_type.h	/^#define ENTITY_TYPES(/;"	d
 ENTITY_TYPES	entity_type.h	/^enum EntityTypesE { ENTITY_TYPES(TO_ENUM) };$/;"	e	enum:EntityTypesE
 ERROR_INCOMPATIBLE_DEVICE_CONTEXTS_ARB	include/GL/wglew.h	/^#define ERROR_INCOMPATIBLE_DEVICE_CONTEXTS_ARB /;"	d
@@ -9240,6 +9228,7 @@ MESH_BARREL	assets.h	/^  MESH_BARREL,$/;"	e	enum:Meshes
 MESH_CUBE	assets.h	/^  MESH_CUBE,$/;"	e	enum:Meshes
 MESH_NUM_MESHES	assets.h	/^  MESH_NUM_MESHES$/;"	e	enum:Meshes
 MESH_PLANE	assets.h	/^  MESH_PLANE,$/;"	e	enum:Meshes
+MESH_SCRALAPUS	assets.h	/^  MESH_SCRALAPUS,$/;"	e	enum:Meshes
 MESH_SKYBOX	assets.h	/^  MESH_SKYBOX,$/;"	e	enum:Meshes
 MIN	rlgl.h	/^        #define MIN(/;"	d
 MIN3	editor.c	/^#define MIN3(/;"	d	file:
@@ -9288,6 +9277,8 @@ Mesh	rlgl.h	/^    } Mesh;$/;"	t	typeref:struct:Mesh
 Meshes	assets.h	/^enum Meshes {$/;"	g
 Monsters	documentation/rpg_game_ideas.md	/^### Monsters$/;"	S
 NEW_COMP	ecs.h	/^#define NEW_COMP(/;"	d
+NODE_FLAG_NONE	node.h	/^  NODE_FLAG_NONE    = 1 << 0,$/;"	e	enum:__anon1087a3c10203
+NODE_FLAG_SOLID	node.h	/^  NODE_FLAG_SOLID   = 1 << 1,$/;"	e	enum:__anon1087a3c10203
 NODE_TYPE_BILLBOARD	node.h	/^  NODE_TYPE_BILLBOARD,$/;"	e	enum:__anon1087a3c10103
 NODE_TYPE_EMPTY	node.h	/^  NODE_TYPE_EMPTY,$/;"	e	enum:__anon1087a3c10103
 NODE_TYPE_MODEL	node.h	/^  NODE_TYPE_MODEL,$/;"	e	enum:__anon1087a3c10103
@@ -9300,6 +9291,7 @@ Node	node.h	/^} Node;$/;"	t	typeref:struct:Node
 Node system	documentation/todo.md	/^### Node system$/;"	S
 NodeId	gui.h	/^typedef int NodeId;$/;"	t	typeref:typename:int
 NodeRayInfo	world_interaction.h	/^struct NodeRayInfo {$/;"	s
+NodeRayInfo	world_interaction.h	/^typedef struct NodeRayInfo NodeRayInfo;$/;"	t	typeref:struct:NodeRayInfo
 Note	editor.h	/^typedef struct Note {$/;"	s
 Note	editor.h	/^} Note;$/;"	t	typeref:struct:Note
 OBJS	Makefile	/^OBJS := $(patsubst %.c,bin\/%.o,$(SRCS))$/;"	m
@@ -12499,6 +12491,7 @@ TEX_ORANGE	assets.h	/^  TEX_ORANGE,$/;"	e	enum:Textures
 TEX_PINEAPPLE	assets.h	/^  TEX_PINEAPPLE,$/;"	e	enum:Textures
 TEX_PROPS	assets.h	/^  TEX_PROPS,$/;"	e	enum:Textures
 TEX_SALAMI	assets.h	/^  TEX_SALAMI,$/;"	e	enum:Textures
+TEX_SCRALAPUS	assets.h	/^  TEX_SCRALAPUS,$/;"	e	enum:Textures
 TEX_WALL_1	assets.h	/^  TEX_WALL_1,$/;"	e	enum:Textures
 TEX_WALL_2	assets.h	/^  TEX_WALL_2,$/;"	e	enum:Textures
 TEX_WALL_3	assets.h	/^  TEX_WALL_3,$/;"	e	enum:Textures
@@ -12613,6 +12606,11 @@ V4TC	gui.c	/^Color V4TC(Vector4 v) {$/;"	f	typeref:typename:Color
 VAULT_COMPONENTS_H	components.h	/^#define VAULT_COMPONENTS_H$/;"	d
 VAULT_ECS_H	ecs.h	/^#define VAULT_ECS_H$/;"	d
 VAULT_MATHS_H	maths.h	/^#define VAULT_MATHS_H$/;"	d
+VAULT_TITLE	main.c	/^#define VAULT_TITLE /;"	d	file:
+VAULT_VERSION	main.c	/^#define VAULT_VERSION /;"	d	file:
+VAULT_VERSION_MAJOR	main.c	/^#define VAULT_VERSION_MAJOR /;"	d	file:
+VAULT_VERSION_MINOR	main.c	/^#define VAULT_VERSION_MINOR /;"	d	file:
+VAULT_VERSION_PATCH	main.c	/^#define VAULT_VERSION_PATCH /;"	d	file:
 VEC3_TO_COLOR	renderer.h	/^#define VEC3_TO_COLOR(/;"	d
 VEC4_TO_COLOR	renderer.h	/^#define VEC4_TO_COLOR(/;"	d
 VM_DEFAULT	janet.c	/^#define VM_DEFAULT(/;"	d	file:
@@ -14162,8 +14160,9 @@ __anon0f88c9600208	gui.h	/^typedef struct {$/;"	s
 __anon0fea82990108	map.h	/^typedef struct {$/;"	s
 __anon0fea82990208	map.h	/^typedef struct {$/;"	s
 __anon1087a3c10103	node.h	/^enum {$/;"	g
-__anon1087a3c1020a	node.h	/^  union {$/;"	u	struct:Node
-__anon1087a3c10308	node.h	/^    struct {$/;"	s	union:Node::__anon1087a3c1020a
+__anon1087a3c10203	node.h	/^enum {$/;"	g
+__anon1087a3c1030a	node.h	/^  union {$/;"	u	struct:Node
+__anon1087a3c10408	node.h	/^    struct {$/;"	s	union:Node::__anon1087a3c1030a
 __anon156e757c0108	prop.h	/^typedef struct {$/;"	s
 __anon19a7bfac0103	rlgl.h	/^typedef enum { OPENGL_11 = 1, OPENGL_21, OPENGL_33, OPENGL_ES_20 } GlVersion;$/;"	g
 __anon19a7bfac0203	rlgl.h	/^    typedef enum { false, true } bool;$/;"	g
@@ -17276,11 +17275,6 @@ args	.vscode/launch.json	/^      "args": [],$/;"	a	object:configurations.0
 args	.vscode/msbuild-tools.json	/^      "args": ["\/c", "echo [post-build task]: ANOTHER MESSAGE"],$/;"	a	object:postBuildTasks.0
 args	.vscode/msbuild-tools.json	/^      "args": ["\/c", "echo [pre-build task]: MESSAGE"],$/;"	a	object:preBuildTasks.0
 args	.vscode/msbuild-tools.json	/^      "args": []$/;"	a	object:debugConfigurations.0
-args	.vscode/tasks.json	/^      "args": ["create_and_publish_build.py"],$/;"	a	object:tasks.4
-args	.vscode/tasks.json	/^      "args": [],$/;"	a	object:tasks.0
-args	.vscode/tasks.json	/^      "args": [],$/;"	a	object:tasks.1
-args	.vscode/tasks.json	/^      "args": [],$/;"	a	object:tasks.2
-args	.vscode/tasks.json	/^      "args": [],$/;"	a	object:tasks.3
 args	include/janet.h	/^    Janet *args;$/;"	m	struct:JanetParser	typeref:typename:Janet *
 arity	include/janet.h	/^    int32_t arity; \/* Not including varargs *\/$/;"	m	struct:JanetFuncDef	typeref:typename:int32_t
 arity1or2	janet.c	/^static int arity1or2(JanetFopts opts, JanetSlot *args) {$/;"	f	typeref:typename:int	file:
@@ -17308,7 +17302,7 @@ bignat_extract	janet.c	/^static double bignat_extract(struct BigNat *mant, int32
 bignat_lshift_n	janet.c	/^static void bignat_lshift_n(struct BigNat *mant, int n) {$/;"	f	typeref:typename:void	file:
 bignat_muladd	janet.c	/^static void bignat_muladd(struct BigNat *mant, uint32_t factor, uint32_t term) {$/;"	f	typeref:typename:void	file:
 bignat_zero	janet.c	/^static void bignat_zero(struct BigNat *x) {$/;"	f	typeref:typename:void	file:
-billboard	node.h	/^    Billboard billboard;$/;"	m	union:Node::__anon1087a3c1020a	typeref:typename:Billboard
+billboard	node.h	/^    Billboard billboard;$/;"	m	union:Node::__anon1087a3c1030a	typeref:typename:Billboard
 billboard	renderer.h	/^      Billboard billboard;$/;"	m	struct:Drawable::__anon816587f2010a::__anon816587f20208	typeref:typename:Billboard
 bin/%.o	Makefile	/^bin\/%.o: %.c $(HDRS) Makefile$/;"	t
 bitloc	janet.c	/^static void bitloc(int32_t argc, Janet *argv, JanetBuffer **b, int32_t *index, int *bit) {$/;"	f	typeref:typename:void	file:
@@ -17529,7 +17523,7 @@ cfun_typed_array_slice	janet.c	/^static Janet cfun_typed_array_slice(int32_t arg
 cfun_typed_array_swap_bytes	janet.c	/^static Janet cfun_typed_array_swap_bytes(int32_t argc, Janet *argv) {$/;"	f	typeref:typename:Janet	file:
 cfun_unmarshal	janet.c	/^static Janet cfun_unmarshal(int32_t argc, Janet *argv) {$/;"	f	typeref:typename:Janet	file:
 channel	include/GL/glxew.h	/^  int channel; $/;"	m	struct:__anonacd3e5770408	typeref:typename:int
-check_if_clicked	world_interaction.c	/^struct NodeRayInfo check_if_clicked(Ray ray, Node *node) {$/;"	f	typeref:struct:NodeRayInfo
+check_if_clicked	world_interaction.c	/^NodeRayInfo check_if_clicked(Ray ray, Node *node) {$/;"	f	typeref:typename:NodeRayInfo
 check_str_const	janet.c	/^static int check_str_const(const char *cstr, const uint8_t *str, int32_t len) {$/;"	f	typeref:typename:int	file:
 checkescape	janet.c	/^static int checkescape(uint8_t c) {$/;"	f	typeref:typename:int	file:
 checkflags	janet.c	/^static int checkflags(const uint8_t *str) {$/;"	f	typeref:typename:int	file:
@@ -17560,11 +17554,7 @@ colors	rlgl.h	/^    unsigned char *colors;      \/\/ vertex colors (RGBA - 4 com
 column	include/janet.h	/^    int32_t column;$/;"	m	struct:JanetSourceMapping	typeref:typename:int32_t
 column	include/janet.h	/^    size_t column;$/;"	m	struct:JanetParser	typeref:typename:size_t
 column	janet.c	/^    size_t column;$/;"	m	struct:JanetParseState	typeref:typename:size_t	file:
-command	.vscode/tasks.json	/^      "command": "build-release.bat",$/;"	s	object:tasks.3
-command	.vscode/tasks.json	/^      "command": "build.bat",$/;"	s	object:tasks.0
-command	.vscode/tasks.json	/^      "command": "bundle.bat",$/;"	s	object:tasks.1
-command	.vscode/tasks.json	/^      "command": "clean.bat",$/;"	s	object:tasks.2
-command	.vscode/tasks.json	/^      "command": "python",$/;"	s	object:tasks.4
+command	.vscode/tasks.json	/^      "command": "make",$/;"	s	object:tasks.0
 comment	janet.c	/^static int comment(JanetParser *p, JanetParseState *state, uint8_t c) {$/;"	f	typeref:typename:int	file:
 compare	include/janet.h	/^    int (*compare)(void *lhs, void *rhs);$/;"	m	struct:JanetAbstractType	typeref:typename:int (*)(void * lhs,void * rhs)
 compile	janet.c	/^    JanetSlot(*compile)(JanetFopts opts, int32_t argn, const Janet *argv);$/;"	m	struct:JanetSpecial	typeref:typename:JanetSlot (*)(JanetFopts opts,int32_t argn,const Janet * argv)	file:
@@ -17676,7 +17666,7 @@ defs_capacity	janet.c	/^    int32_t defs_capacity;$/;"	m	struct:JanetAssembler	t
 defs_length	include/janet.h	/^    int32_t defs_length;$/;"	m	struct:JanetFuncDef	typeref:typename:int32_t
 delete_branch_node_rec	node.c	/^bool delete_branch_node_rec(Node *node) {}$/;"	f	typeref:typename:bool
 delete_node	node.c	/^void delete_node(Node *node) { free(node); }$/;"	f	typeref:typename:void
-delete_node_from_tree	node.c	/^bool delete_node_from_tree(Node *tree, Node *to_delete) {$/;"	f	typeref:typename:bool
+delete_node_from_tree	node.c	/^bool delete_node_from_tree(Node *tree, Node *to_delete) { $/;"	f	typeref:typename:bool
 delete_node_rec	node.c	/^void delete_node_rec(Node *node) {$/;"	f	typeref:typename:void
 delete_node_tree	node.c	/^void delete_node_tree(Node *node) { delete_node_rec(node); }$/;"	f	typeref:typename:void
 deleted	include/janet.h	/^    int32_t deleted;$/;"	m	struct:JanetTable	typeref:typename:int32_t
@@ -17754,7 +17744,7 @@ do_lte	janet.c	/^static JanetSlot do_lte(JanetFopts opts, JanetSlot *args) {$/;"
 do_modal	gui.c	/^void do_modal() {$/;"	f	typeref:typename:void
 do_models_modal	editor.c	/^void do_models_modal(Ed *self, GfxState *gfx, Game *game, Region *map) {$/;"	f	typeref:typename:void
 do_modulo	janet.c	/^static JanetSlot do_modulo(JanetFopts opts, JanetSlot *args) {$/;"	f	typeref:typename:JanetSlot	file:
-do_mouse_picking	world_interaction.c	/^Node *do_mouse_picking(Region *map, Camera *camera) {$/;"	f	typeref:typename:Node *
+do_mouse_picking	world_interaction.c	/^NodeRayInfo do_mouse_picking(Region *map, Camera *camera) {$/;"	f	typeref:typename:NodeRayInfo
 do_mul	janet.c	/^static JanetSlot do_mul(JanetFopts opts, JanetSlot *args) {$/;"	f	typeref:typename:JanetSlot	file:
 do_neq	janet.c	/^static JanetSlot do_neq(JanetFopts opts, JanetSlot *args) {$/;"	f	typeref:typename:JanetSlot	file:
 do_next	janet.c	/^static JanetSlot do_next(JanetFopts opts, JanetSlot *args) {$/;"	f	typeref:typename:JanetSlot	file:
@@ -17986,7 +17976,7 @@ event_type	include/GL/glxew.h	/^typedef struct { int type; unsigned long serial;
 event_type	janet.c	/^    } event_type;$/;"	m	struct:__anoncda107c80d08	typeref:enum:__anoncda107c80d08::__anoncda107c80e03	file:
 example	documentation/thoughts.html	/^<h3 id="example">Example<\/h3>$/;"	I
 exits	gameworld_types.h	/^    Exit exits[MAX_EXITS];$/;"	m	struct:__anon7a0be2910408	typeref:typename:Exit[]
-externalConsole	.vscode/launch.json	/^      "externalConsole": true$/;"	b	object:configurations.0
+externalConsole	.vscode/launch.json	/^      "externalConsole": false$/;"	b	object:configurations.0
 extrac	janet.c	/^    int32_t extrac;$/;"	m	struct:__anoncda107c81408	typeref:typename:int32_t	file:
 extrav	janet.c	/^    const Janet *extrav;$/;"	m	struct:__anoncda107c81408	typeref:typename:const Janet *	file:
 eyeToScreenDistance	rlgl.h	/^        float eyeToScreenDistance;      \/\/ HMD distance between eye and display in meters$/;"	m	struct:VrDeviceInfo	typeref:typename:float
@@ -18037,6 +18027,7 @@ flags	janet.c	/^    int flags;$/;"	m	struct:__anoncda107c80c08	typeref:typename:
 flags	janet.c	/^    int flags;$/;"	m	struct:pretty	typeref:typename:int	file:
 flags	janet.c	/^    uint32_t flags; \/* bit set of accepted primitive types *\/$/;"	m	struct:JanetFopts	typeref:typename:uint32_t	file:
 flags	janet.c	/^    uint32_t flags;$/;"	m	struct:JanetSlot	typeref:typename:uint32_t	file:
+flags	node.h	/^  uint32_t flags; $/;"	m	struct:Node	typeref:typename:uint32_t
 flags	renderer.h	/^  int flags;$/;"	m	struct:Drawable	typeref:typename:int
 float16	raymath.h	/^typedef struct float16 { float v[16]; } float16;$/;"	s
 float16	raymath.h	/^typedef struct float16 { float v[16]; } float16;$/;"	t	typeref:struct:float16
@@ -20831,11 +20822,7 @@ grad	maths.c	/^double grad(int hash, double x, double y, double z) {$/;"	f	typer
 grammar	janet.c	/^    JanetTable *grammar;$/;"	m	struct:__anoncda107c81708	typeref:typename:JanetTable *	file:
 gravity_scale	physics_type.h	/^    float gravity_scale;$/;"	m	struct:__anonc10f1e9f0108	typeref:typename:float
 grounded	physics_type.h	/^    bool grounded;$/;"	m	struct:__anonc10f1e9f0108	typeref:typename:bool
-group	.vscode/tasks.json	/^      "group": "build"$/;"	s	object:tasks.0
-group	.vscode/tasks.json	/^      "group": "build"$/;"	s	object:tasks.1
-group	.vscode/tasks.json	/^      "group": "build"$/;"	s	object:tasks.2
-group	.vscode/tasks.json	/^      "group": "build"$/;"	s	object:tasks.3
-group	.vscode/tasks.json	/^      "group": "build"$/;"	s	object:tasks.4
+group	.vscode/tasks.json	/^      "group": {$/;"	o	object:tasks.0
 gui_3d_drawables	renderer.h	/^  Drawable gui_3d_drawables[MAX_NUMBER_OF_3D_GUI_DRAWABLES];$/;"	m	struct:__anon816587f20308	typeref:typename:Drawable[]
 hResolution	rlgl.h	/^        int hResolution;                \/\/ HMD horizontal resolution in pixels$/;"	m	struct:VrDeviceInfo	typeref:typename:int
 hScreenSize	rlgl.h	/^        float hScreenSize;              \/\/ HMD horizontal size in meters$/;"	m	struct:VrDeviceInfo	typeref:typename:float
@@ -20911,6 +20898,7 @@ interval	janet.c	/^    DWORD interval;$/;"	m	struct:__anoncda107c81c08	typeref:t
 io_cfuns	janet.c	/^static const JanetReg io_cfuns[] = {$/;"	v	typeref:typename:const JanetReg[]	file:
 io_file_get	janet.c	/^static int io_file_get(void *p, Janet key, Janet *out) {$/;"	f	typeref:typename:int	file:
 io_file_methods	janet.c	/^static JanetMethod io_file_methods[] = {$/;"	v	typeref:typename:JanetMethod[]	file:
+isDefault	.vscode/tasks.json	/^        "isDefault": true$/;"	b	object:tasks.0.group
 is_ent_alive	ecs.c	/^int is_ent_alive(EcsWorld* world, EntId ent) {$/;"	f	typeref:typename:int
 is_number	gameworld.c	/^bool is_number(const char *str) {$/;"	f	typeref:typename:bool
 is_path_sep	janet.c	/^static int is_path_sep(char c) {$/;"	f	typeref:typename:int	file:
@@ -21595,6 +21583,7 @@ keep	janet.c	/^    int keep;$/;"	m	struct:SymPair	typeref:typename:int	file:
 key	dict.h	/^    char* key;$/;"	m	struct:Entry	typeref:typename:char *
 key	include/janet.h	/^    Janet key;$/;"	m	struct:JanetKV	typeref:typename:Janet
 kill_ent	ecs.c	/^int kill_ent(EntStruct* ent) {$/;"	f	typeref:typename:int
+kind	.vscode/tasks.json	/^        "kind": "build",$/;"	s	object:tasks.0.group
 kmp	janet.c	/^    struct kmp_state kmp;$/;"	m	struct:replace_state	typeref:struct:kmp_state	file:
 kmp_deinit	janet.c	/^static void kmp_deinit(struct kmp_state *state) {$/;"	f	typeref:typename:void	file:
 kmp_init	janet.c	/^static void kmp_init($/;"	f	typeref:typename:void	file:
@@ -21602,11 +21591,7 @@ kmp_next	janet.c	/^static int32_t kmp_next(struct kmp_state *state) {$/;"	f	type
 kmp_seti	janet.c	/^static void kmp_seti(struct kmp_state *state, int32_t i) {$/;"	f	typeref:typename:void	file:
 kmp_state	janet.c	/^struct kmp_state {$/;"	s	file:
 kvs	include/janet.h	/^    const JanetKV *kvs;$/;"	m	struct:JanetDictView	typeref:typename:const JanetKV *
-label	.vscode/tasks.json	/^      "label": "Bundle",$/;"	s	object:tasks.1
-label	.vscode/tasks.json	/^      "label": "Clean",$/;"	s	object:tasks.2
-label	.vscode/tasks.json	/^      "label": "MSBuild",$/;"	s	object:tasks.0
-label	.vscode/tasks.json	/^      "label": "Publish Update",$/;"	s	object:tasks.4
-label	.vscode/tasks.json	/^      "label": "Release",$/;"	s	object:tasks.3
+label	.vscode/tasks.json	/^      "label": "Make",$/;"	s	object:tasks.0
 labels	janet.c	/^    JanetTable labels; \/* keyword -> bytecode index *\/$/;"	m	struct:JanetAssembler	typeref:typename:JanetTable	file:
 last_mouse	gui.h	/^  Vector2 last_mouse;$/;"	m	struct:__anon0f88c9600208	typeref:typename:Vector2
 last_time_modified	assets.h	/^  long last_time_modified[2];$/;"	m	struct:Hotload	typeref:typename:long[2]
@@ -21757,7 +21742,7 @@ mode	player.h	/^    int mode;                  \/\/ Current camera mode$/;"	m	st
 mode	rlgl.h	/^    int mode;                   \/\/ Drawing mode: LINES, TRIANGLES, QUADS$/;"	m	struct:DrawCall	typeref:typename:int
 model	editor.h	/^  int model;$/;"	m	struct:__anonc0cb90020608	typeref:typename:int
 model	gameworld_types.h	/^    uint8_t model;$/;"	m	struct:__anon7a0be2910108	typeref:typename:uint8_t
-model	node.h	/^      Model model;$/;"	m	struct:Node::__anon1087a3c1020a::__anon1087a3c10308	typeref:typename:Model
+model	node.h	/^      Model model;$/;"	m	struct:Node::__anon1087a3c1030a::__anon1087a3c10408	typeref:typename:Model
 model	renderer.h	/^    Model model;$/;"	m	union:Drawable::__anon816587f2010a	typeref:typename:Model
 models	assets.h	/^  Model *models;$/;"	m	struct:__anona8b4b4ae0208	typeref:typename:Model *
 models	editor.h	/^  Model models[MESH_NUM_MESHES];$/;"	m	struct:__anonc0cb90020608	typeref:typename:Model[]
@@ -21776,7 +21761,7 @@ n	maths.h	/^    int n[2];$/;"	m	union:__anonb4fdf1f80a0a	typeref:typename:int[2]
 n	player.h	/^    int n;$/;"	m	struct:__anon3d1d55680108	typeref:typename:int
 nV2	maths.c	/^V2 nV2(float x, float y) {return (V2) {.x = x, .y = y};}$/;"	f	typeref:typename:V2
 nV3	maths.c	/^V3 nV3(float x, float y, float z) {$/;"	f	typeref:typename:V3
-name	.vscode/launch.json	/^      "name": "(Windows) Launch",$/;"	s	object:configurations.0
+name	.vscode/launch.json	/^      "name": "Launch",$/;"	s	object:configurations.0
 name	.vscode/msbuild-tools.json	/^      "name": "Print a message",$/;"	s	object:preBuildTasks.0
 name	.vscode/msbuild-tools.json	/^      "name": "Print another message",$/;"	s	object:postBuildTasks.0
 name	.vscode/msbuild-tools.json	/^      "name": "test",$/;"	s	object:debugConfigurations.0
@@ -21792,7 +21777,7 @@ name	janet.c	/^    const char *name;$/;"	m	struct:OsStatGetter	typeref:typename:
 name	janet.c	/^    const char *name;$/;"	m	struct:ParserStateGetter	typeref:typename:const char *	file:
 name	janet.c	/^    const char *name;$/;"	m	struct:TypeAlias	typeref:typename:const char *	file:
 name	janet.c	/^    const char *name;$/;"	m	struct:__anoncda107c81908	typeref:typename:const char *	file:
-name	node.h	/^      char name[256];$/;"	m	struct:Node::__anon1087a3c1020a::__anon1087a3c10308	typeref:typename:char[256]
+name	node.h	/^      char name[256];$/;"	m	struct:Node::__anon1087a3c1030a::__anon1087a3c10408	typeref:typename:char[256]
 namelocal	janet.c	/^static int namelocal(JanetCompiler *c, const uint8_t *head, int32_t flags, JanetSlot ret) {$/;"	f	typeref:typename:int	file:
 nbits	janet.c	/^#define nbits(/;"	d	file:
 nbuckets	map.h	/^  unsigned nbuckets, nnodes;$/;"	m	struct:__anon0fea82990108	typeref:typename:unsigned
@@ -21982,17 +21967,14 @@ postBuildTasks	.vscode/msbuild-tools.json	/^  "postBuildTasks": [$/;"	a
 pp_is_symbol_char	janet.c	/^static int pp_is_symbol_char(uint8_t c) {$/;"	f	typeref:typename:int	file:
 pp_symchars	janet.c	/^static const uint32_t pp_symchars[8] = {$/;"	v	typeref:typename:const uint32_t[8]	file:
 preBuildTasks	.vscode/msbuild-tools.json	/^  "preBuildTasks": [$/;"	a
-preLaunchTask	.vscode/launch.json	/^      "preLaunchTask": "MSBuild",$/;"	s	object:configurations.0
+preLaunchTask	.vscode/launch.json	/^      "preLaunchTask": "Make",$/;"	s	object:configurations.0
 pretty	janet.c	/^struct pretty {$/;"	s	file:
+pretty_print_node	node.c	/^void pretty_print_node(Node* node) {$/;"	f	typeref:typename:void
 prevframe	include/janet.h	/^    int32_t prevframe;$/;"	m	struct:JanetStackFrame	typeref:typename:int32_t
 print_jdn_one	janet.c	/^static int print_jdn_one(struct pretty *S, Janet x, int depth) {$/;"	f	typeref:typename:int	file:
 print_newline	janet.c	/^static void print_newline(struct pretty *S, int just_a_space) {$/;"	f	typeref:typename:void	file:
-problemMatcher	.vscode/tasks.json	/^      "problemMatcher": ["$msCompile"],$/;"	a	object:tasks.0
-problemMatcher	.vscode/tasks.json	/^      "problemMatcher": ["$msCompile"],$/;"	a	object:tasks.1
-problemMatcher	.vscode/tasks.json	/^      "problemMatcher": ["$msCompile"],$/;"	a	object:tasks.2
-problemMatcher	.vscode/tasks.json	/^      "problemMatcher": ["$msCompile"],$/;"	a	object:tasks.3
-problemMatcher	.vscode/tasks.json	/^      "problemMatcher": ["$msCompile"],$/;"	a	object:tasks.4
-program	.vscode/launch.json	/^      "program": "${workspaceFolder}\/x64\/Debug\/Benis3D.exe",$/;"	s	object:configurations.0
+problemMatcher	.vscode/tasks.json	/^      "problemMatcher": [],$/;"	a	object:tasks.0
+program	.vscode/launch.json	/^      "program": "${workspaceFolder}\/bin\/sky.exe",$/;"	s	object:configurations.0
 program	.vscode/msbuild-tools.json	/^      "program": "${workspaceRoot}\/x64\/${buildConfig}\/Benis3D.exe",$/;"	s	object:debugConfigurations.0
 program	.vscode/msbuild-tools.json	/^      "program": "cmd",$/;"	s	object:postBuildTasks.0
 program	.vscode/msbuild-tools.json	/^      "program": "cmd",$/;"	s	object:preBuildTasks.0
@@ -22176,7 +22158,7 @@ scamera	renderer.c	/^static Camera *scamera = NULL;$/;"	v	typeref:typename:Camer
 scan_uint64	janet.c	/^static int scan_uint64($/;"	f	typeref:typename:int	file:
 scanformat	janet.c	/^static const char *scanformat($/;"	f	typeref:typename:const char *	file:
 scene	game.h	/^    int scene;$/;"	m	struct:__anonff3b1fb50108	typeref:typename:int
-scene_root	gameworld_types.h	/^    Node* scene_root;$/;"	m	struct:__anon7a0be2910408	typeref:typename:Node *
+scene_root	gameworld_types.h	/^    Node* scene_root; \/\/ The tree of all nodes$/;"	m	struct:__anon7a0be2910408	typeref:typename:Node *
 scope	janet.c	/^    JanetScope *scope;$/;"	m	struct:JanetCompiler	typeref:typename:JanetScope *	file:
 scratch	janet.c	/^    JanetBuffer *scratch;$/;"	m	struct:__anoncda107c81408	typeref:typename:JanetBuffer *	file:
 scratch	janet.c	/^    int32_t scratch;$/;"	m	struct:__anoncda107c81608	typeref:typename:int32_t	file:
@@ -22212,6 +22194,7 @@ slots	janet.c	/^    JanetTable slots; \/* symbol -> slot index *\/$/;"	m	struct:
 sm_column	include/janet.h	/^    int32_t sm_column;$/;"	m	struct:JanetTupleHead	typeref:typename:int32_t
 sm_line	include/janet.h	/^    int32_t sm_line;$/;"	m	struct:JanetTupleHead	typeref:typename:int32_t
 smoothZoomControl	player.h	/^    int smoothZoomControl;  \/\/ raylib: KEY_LEFT_CONTROL$/;"	m	struct:__anon3d1d55680308	typeref:typename:int
+solids	gameworld_types.h	/^    Node* solids; \/\/ List of solid nodes, used for collisions$/;"	m	struct:__anon7a0be2910408	typeref:typename:Node *
 solution	.vscode/msbuild-tools.json	/^  "solution": "${workspaceRoot}\/Benis3D.sln",$/;"	s
 sort_levenshtein	editor.c	/^int sort_levenshtein(const void *a, const void *b) {$/;"	f	typeref:typename:int
 sorting	renderer.c	/^int sorting(const void *_a, const void *_b) {$/;"	f	typeref:typename:int
@@ -22398,12 +22381,8 @@ tup3	janet.c	/^static const Janet *tup3(Janet x, Janet y, Janet z) {$/;"	f	typer
 tup4	janet.c	/^static const Janet *tup4(Janet w, Janet x, Janet y, Janet z) {$/;"	f	typeref:typename:const Janet *	file:
 tuple_cfuns	janet.c	/^static const JanetReg tuple_cfuns[] = {$/;"	v	typeref:typename:const JanetReg[]	file:
 tween$bounceout	tween.c	/^#define tween$bounceout(/;"	d	file:
-type	.vscode/launch.json	/^      "type": "cppvsdbg",$/;"	s	object:configurations.0
-type	.vscode/tasks.json	/^      "type": "process",$/;"	s	object:tasks.0
-type	.vscode/tasks.json	/^      "type": "process",$/;"	s	object:tasks.1
-type	.vscode/tasks.json	/^      "type": "process",$/;"	s	object:tasks.2
-type	.vscode/tasks.json	/^      "type": "process",$/;"	s	object:tasks.3
-type	.vscode/tasks.json	/^      "type": "process",$/;"	s	object:tasks.4
+type	.vscode/launch.json	/^      "type": "cppdbg",$/;"	s	object:configurations.0
+type	.vscode/tasks.json	/^      "type": "shell",$/;"	s	object:tasks.0
 type	entity_type.h	/^    int type;  \/\/ entity types defined above$/;"	m	struct:__anonf82457790108	typeref:typename:int
 type	gameworld_types.h	/^    int type;$/;"	m	struct:__anon7a0be2910208	typeref:typename:int
 type	include/GL/glxew.h	/^typedef struct { int type; unsigned long serial; Bool send_event; Display *display; GLXDrawable /;"	m	struct:__anonacd3e5770608	typeref:typename:int

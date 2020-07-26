@@ -128,3 +128,7 @@ Transform get_transform_from_node(Node *self) {
   Transform parent_t = get_transform_from_node(self->parent);
   return add_transforms(self_t, parent_t);
 }
+
+void pretty_print_node(Node* node) {
+  // Print it as a s-expression
+}

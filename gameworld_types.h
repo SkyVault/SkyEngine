@@ -51,7 +51,8 @@ typedef struct {
 
     ActorSpawn spawns[MAX_ACTOR_SPAWNS];
 
-    Node* scene_root;
+    Node* scene_root; // The tree of all nodes
+    Node* solids; // List of solid nodes, used for collisions
 
     int num_models;
     int num_props;

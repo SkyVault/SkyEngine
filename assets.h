@@ -44,6 +44,8 @@ enum Textures {
 
   TEX_BARREL,
 
+  TEX_SCRALAPUS,
+
   // Terrain Textures
   TEX_GRASS_1,
 
@@ -57,6 +59,7 @@ enum Meshes {
   MESH_SKYBOX,
   MESH_PLANE,
   MESH_BARREL,
+  MESH_SCRALAPUS,
   MESH_NUM_MESHES
 };
 

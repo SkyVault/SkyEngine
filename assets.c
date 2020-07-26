@@ -57,6 +57,8 @@ Assets *create_and_load_assets(void) {
   ass->textures[TEX_GIRL_4] = LoadTexture("resources/girls/girl_4.png");
   ass->textures[TEX_GRASS_1] = LoadTexture("resources/textures/grass_1.png");
 
+  ass->textures[TEX_SCRALAPUS] = LoadTexture("resources/textures/scralapus.png");
+
   ass->textures[TEX_BARREL] = LoadTexture("resources/textures/barrel.png");
 
   ass->shaders[SHADER_PHONG_LIGHTING] =
@@ -166,6 +168,14 @@ Assets *create_and_load_assets(void) {
         ass->textures[TEX_GRASS_1];
     terrain_m.materials[0].shader = ass->shaders[SHADER_PHONG_LIGHTING];
     map_set(ass->models_dict, "terrain", alloc_model_from(terrain_m));
+  }
+
+  {
+    Model scralapus = LoadModel("resources/models/Creatures/scralapus.obj");
+    scralapus.materials[0].maps[MAP_DIFFUSE].texture =
+        ass->textures[TEX_SCRALAPUS];
+    scralapus.materials[0].shader = ass->shaders[SHADER_PHONG_LIGHTING];
+    map_set(ass->models_dict, "scralapus", alloc_model_from(scralapus));
   }
 
   return ass;

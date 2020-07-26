@@ -2,6 +2,7 @@
 #define BENIS_NODE_H
 
 #include <assert.h>
+#include <inttypes.h>
 
 #include "billboard.h"
 #include "maths.h"
@@ -14,9 +15,14 @@ enum {
   NODE_TYPE_BILLBOARD,
 };
 
+enum {
+  NODE_FLAG_NONE    = 1 << 0,
+  NODE_FLAG_SOLID   = 1 << 1,
+};
+
 typedef struct Node {
   int type;
-
+  
   union {
     struct {
       Model model;
@@ -30,6 +36,8 @@ typedef struct Node {
   struct Node *parent;
   struct Node *next;
   struct Node *child;
+
+  uint32_t flags; 
 } Node;
 
 Node *create_node();
@@ -50,5 +58,7 @@ inline Node *create_empty() { return create_node(); }
 void add_child_node(Node *parent, Node *child);
 
 Transform get_transform_from_node(Node *self);
+
+void pretty_print_node(Node* node);
 
 #endif // BENIS_NODE_H

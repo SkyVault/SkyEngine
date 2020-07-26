@@ -155,7 +155,9 @@ void update_editor(Ed *self, Region *map, Game *game) {
     self->selected_node = do_mouse_picking(map, game->camera).node;
   }
 
-  if (IsKeyPressed(KEY_E)) {
+  if (IsKeyPressed(KEY_E) 
+    && self->state != EDITOR_STATE_EXPORT_MODAL 
+    && self->state != EDITOR_STATE_LOAD_MODAL) {
     toggle_model_selector_modal(self);
     self->object_placement_type =
         (self->state == EDITOR_STATE_MODEL_SELECTOR_MODAL ? PLACE_NODES

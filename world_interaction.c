@@ -5,12 +5,7 @@ NodeRayInfo do_mouse_picking(Region *map, Camera *camera) {
     Vector2 mpos = GetMousePosition();
     Ray ray = GetMouseRay(mpos, *camera);
 
-    NodeRayInfo info = check_if_clicked(ray, map->scene_root);
-
-    if (info.node == NULL) {
-      printf("Nothing clicked! %d\n", rand());
-    }
-
+    NodeRayInfo info = check_if_clicked(ray, map->scene_root); 
     return info;
   }
   
@@ -43,7 +38,6 @@ NodeRayInfo check_if_clicked(Ray ray, Node *node) {
         RayHitInfo info = GetCollisionRayModel(ray, it->model);
 
         if (info.hit) {
-          printf("here!!%d\n", rand());
           if (nearest.node != NULL) {
             if (info.distance < nearest.info.distance)
               nearest = (NodeRayInfo){.node = it, .info = info};

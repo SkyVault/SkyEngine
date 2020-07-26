@@ -2,44 +2,14 @@
   "version": "2.0.0",
   "tasks": [
     {
-      "type": "process",
-      "label": "MSBuild",
-      "command": "build.bat",
-      "args": [],
-      "problemMatcher": ["$msCompile"],
-      "group": "build"
-    },
-    {
-      "type": "process",
-      "label": "Bundle",
-      "command": "bundle.bat",
-      "args": [],
-      "problemMatcher": ["$msCompile"],
-      "group": "build"
-    },
-    {
-      "type": "process",
-      "label": "Clean",
-      "command": "clean.bat",
-      "args": [],
-      "problemMatcher": ["$msCompile"],
-      "group": "build"
-    },
-    {
-      "type": "process",
-      "label": "Release",
-      "command": "build-release.bat",
-      "args": [],
-      "problemMatcher": ["$msCompile"],
-      "group": "build"
-    },
-    {
-      "type": "process",
-      "label": "Publish Update",
-      "command": "python",
-      "args": ["create_and_publish_build.py"],
-      "problemMatcher": ["$msCompile"],
-      "group": "build"
+      "label": "Make",
+      "type": "shell",
+      "command": "make",
+      "problemMatcher": [],
+      "group": {
+        "kind": "build",
+        "isDefault": true
+      }
     }
   ]
 }
