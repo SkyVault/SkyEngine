@@ -433,29 +433,8 @@ void update_region(Region *self, Game *game) {}
 void render_region(Region *self, GfxState *gfx, Game *game) {
   rlEnableBackfaceCulling();
   rlEnableDepthTest();
-  for (int layer = 0; layer < MAX_NUM_LAYERS; layer++) {
-    for (int z = 0; z < self->height; z++) {
-      for (int x = 0; x < self->width; x++) {
-        Vector3 pos =
-            (Vector3){x * CUBE_SIZE + CUBE_SIZE / 2, layer * CUBE_SIZE,
-                      z * CUBE_SIZE + CUBE_SIZE / 2};
 
-        if (layer == 0) {
-          // DrawModel(map->floor_tile_models[0],
-          //           (Vector3){pos.x, -CUBE_SIZE, pos.z}, CUBE_SIZE,
-          //           WHITE);
-        }
-
-        if (self->walls[layer][x + z * self->width].active ||
-            self->walls[layer][x + z * self->width].model > 0) {
-          int index = self->walls[layer][x + z * self->width].model;
-          DrawModel(game->assets->models[index], pos, CUBE_SIZE, WHITE);
-        }
-      }
-    }
-  }
-
-  // Rendering all of the props
+  //  Rendering all of the props
   for (int pi = 0; pi < self->num_props; pi++) {
     draw_prop(gfx, game, self->props[pi]);
   }

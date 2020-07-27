@@ -8,6 +8,7 @@ GfxState *create_gfx_state() {
   }
   gfx->num_opaque_drawables = 0;
   gfx->num_transparent_drawables = 0;
+  gfx->num_gui_3d_drawables = 0;
 
   gfx->render_texture = rlLoadRenderTexture(RESOLUTION_WIDTH, RESOLUTION_HEIGHT,
                                             UNCOMPRESSED_R8G8B8A8, 24, true);
@@ -291,6 +292,7 @@ void draw_root_node(GfxState *gfx, Node *node) {
 
   default: {
   }
+
   }
 
   if (node->next) {

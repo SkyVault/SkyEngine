@@ -415,6 +415,7 @@ void render_editor(Ed *self, GfxState *gfx, Region *map, Game *game) {
   float occ =
       (1.0f - scale) + ((1.0f + cosf((float)GetTime() * 10.0f)) * 0.5f) * scale;
 
+  // This could be done a lot more efficiently
   Model model = game->assets->models[0];
   int i = 0;
   const char *key;
@@ -423,7 +424,6 @@ void render_editor(Ed *self, GfxState *gfx, Region *map, Game *game) {
     model = *(*(Model **)map_get(game->assets->models_dict, key));
     if (i == self->model)
       break;
-
     i++;
   }
 
