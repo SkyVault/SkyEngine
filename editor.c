@@ -250,6 +250,9 @@ void update_editor(Ed *self, Region *map, Game *game) {
     // Deleting nodes
     if (IsKeyPressed(KEY_DELETE)) {
       if (self->selected_node != NULL) {
+        delete_node_from_tree(game->map->scene_root, self->selected_node);
+        self->selected_node = NULL;
+        return;
       }
     }
   }
@@ -365,9 +368,8 @@ void render_editor(Ed *self, GfxState *gfx, Region *map, Game *game) {
 
     if (node->type == NODE_TYPE_MODEL) {
       Transform trans = node->transform;
-
-      DrawModelWiresEx(node->model, Vector3Zero(), (Vector3){0, 0, 0}, 0.0f,
-                       trans.scale, (Color){255, 0, 255, 200});
+      DrawModelWiresEx(node->model, Vector3Zero(), Vector3Zero(), 0.0f,
+                       Vector3One(), (Color){255, 0, 255, 200});
     }
   }
 
@@ -896,11 +898,9 @@ void do_selected_node_panel(Ed *self, GfxState *gfx, Game *game, Region *map) {
   const float label_w = 60;
 
   if (do_btn(x + 20, cursor_y, label_w, 20, "Delete")) {
-    if (self->selected_node != NULL) {
-      delete_node_from_tree(game->map->scene_root, self->selected_node);
-      self->selected_node = NULL;
-      return;
-    }
+    delete_node_from_tree(game->map->scene_root, self->selected_node);
+    self->selected_node = NULL;
+    return;
   }
 
   cursor_y += 20 + MARGIN;
@@ -1185,7 +1185,7 @@ void render_editor_ui(Ed *self, GfxState *gfx, Region *map, Game *game) {
   do_models_modal(self, gfx, game, map);
   do_node_tree_modal(self, gfx, game, map);
 
-  if (self->do_selected_node_panel) {
+  if (self->do_selected_node_panel && self->selected_node != NULL) {
     do_selected_node_panel(self, gfx, game, map);
   }
 }
