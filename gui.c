@@ -21,8 +21,10 @@ void reset_gui() {
 }
 
 void init_gui() {
-  // GuiState.font = LoadFont("resources/HappyTime.otf");
-  GuiState.font = GetFontDefault();
+    //GuiState.font = GetFontDefault();
+  GuiState.font = LoadFontEx("resources/HappyTime.otf", 64, 0, 0);
+  SetTextureFilter(GuiState.font.texture, FILTER_BILINEAR);
+
   GuiState.a_el_is_hot = false;
 }
 
@@ -34,7 +36,7 @@ void do_panel(float x, float y, float width, float height) {
   Color color = (!hot) ? BASE_COLOR : (Color){200, 200, 200, 255};
 
   DrawRectangle(x, y, width, height, color);
-  DrawRectangleLinesEx((Rectangle){x, y, width, height}, 3, ALT_COLOR);
+  //DrawRectangleLinesEx((Rectangle){x, y, width, height}, 3, ALT_COLOR);
 }
 
 void do_frame(float x, float y, float width, float height, float alpha) {

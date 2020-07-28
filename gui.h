@@ -14,10 +14,10 @@ typedef int NodeId;
   (Color) { 100, 100, 100, 200 }
 
 #define HIGHLIGHT_COLOR                                                        \
-  (Color) { 0, 200, 200, 200 }
+  (Color) { 240, 240, 210, 200 }
 
 #define ALT_COLOR                                                              \
-  (Color) { 100, 255, 255, 200 }
+  (Color) { 120, 120, 120, 200 }
 
 struct NState {
   uint8_t active;

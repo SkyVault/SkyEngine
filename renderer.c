@@ -225,19 +225,13 @@ void render_drawable(Drawable *d, Camera *camera) {
     f.y = (f.y + (f.y * fogFactor)) - 1.0f;
     f.z = (f.z + (f.z * fogFactor)) - 1.0f;
 
-    if (f.x < 0)
-      f.x = 0;
-    if (f.y < 0)
-      f.y = 0;
-    if (f.z < 0)
-      f.z = 0;
+    if (f.x < 0) f.x = 0;
+    if (f.y < 0) f.y = 0;
+    if (f.z < 0) f.z = 0;
 
-    if (f.x > 1)
-      f.x = 1;
-    if (f.y > 1)
-      f.y = 1;
-    if (f.z > 1)
-      f.z = 1;
+    if (f.x > 1) f.x = 1;
+    if (f.y > 1) f.y = 1;
+    if (f.z > 1) f.z = 1;
 
     d->diffuse = VEC3_TO_COLOR(f);
 
