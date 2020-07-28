@@ -4,7 +4,9 @@ Node *create_node() {
   Node *node = malloc(sizeof(Node));
 
   node->type = NODE_TYPE_EMPTY;
-  node->name[0] = '\0';
+
+  for (size_t i = 0; i < sizeof(node->name); i++)
+      node->name[i] = '\0';
 
   node->transform = (Transform){.translation = Vector3Zero(),
                                 .rotation = QuaternionIdentity(),

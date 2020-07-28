@@ -115,20 +115,29 @@ void draw_model(GfxState *gfx, Model *model, Transform transform,
 
 void draw_gui_model(GfxState *gfx, Model *model, Rectangle where,
                     Vector3 rotation, Color diffuse) {
+
+  if (model->meshCount <= 0) return;
+
   Transform transform = transform_identity();
 
-  const float s = (1.0f / 16.0f);
-  float w = 2 * s * where.width;
-  float h = 2 * s * where.height;
+  BoundingBox box = MeshBoundingBox(model->meshes[0]);
 
-  float x = (s * where.x * 2.0f) + -s * (GetScreenWidth()) + w / 2.0f;
-  float y = -(s * where.y * 2.0f) + (GetScreenHeight() * s * 2) +
-            -s * (GetScreenHeight()) - h / 2.0f;
+  float w = box.max.x - box.min.x;
+  float h = box.max.y - box.min.y;
+
+  float scaleW = (where.width / w) / 8;
+  float scaleH = (where.height / h) / 8;
+
+  float x = where.x/8 + w + scaleW / 2;
+  float y = -(where.y/8 + h + scaleH / 2);
 
   float aspect = (float)GetScreenHeight() / (float)GetScreenWidth();
 
-  transform.translation = (Vector3){x, y, 0};
-  transform.scale = (Vector3){w, h, w};
+  const float cx = -80;
+  const float cy = 80 * aspect;
+
+  transform.translation = (Vector3){cx + x, cy + y, 0};
+  transform.scale = (Vector3){scaleW, scaleH, (scaleW + scaleH) / 2.0f};
   transform.rotation = QuaternionFromEuler(rotation.x, rotation.y, rotation.z);
 
   if (gfx->num_gui_3d_drawables < MAX_NUMBER_OF_3D_GUI_DRAWABLES) {
@@ -268,7 +277,7 @@ void draw_root_node(GfxState *gfx, Node *node) {
 
   // TODO(Dustin): @important dont draw the gizmo when
   // not in edit mode, we probably have to move this to the editor somehow
-  DrawGizmo(transform.translation);
+  // DrawGizmo(transform.translation);
 
   switch (node->type) {
   case NODE_TYPE_MODEL: {

@@ -289,8 +289,8 @@ bool do_check_box(bool *active, float x, float y, float width, float height) {
   do_panel(x, y, width, height);
 
   if (*active)
-    DrawRectangle((int)x + 1, (int)y + 1, (int)width - 2, (int)height - 2,
-                  ALT_COLOR);
+    DrawRectangle((int)x + 2, (int)y + 2, (int)width - 4, (int)height - 4,
+                  HIGHLIGHT_COLOR);
 
   return (*active);
 }
@@ -308,11 +308,11 @@ bool do_collapsing_header(bool *active, const char *label, float x, float y,
   char buff[512];
   sprintf(buff, "%s %s", ((*active) ? "-" : "+"), label);
 
-  const Vector2 size = MeasureTextEx(GuiState.font, buff, height - 2, 1.0f);
+  const Vector2 size = MeasureTextEx(GuiState.font, buff, height, 1.0f);
 
   // Draw the button
   do_panel(x, y, width, height);
-  do_label(buff, x + width / 2 - size.x / 2, y + 1, width, height, height - 2);
+  do_label(buff, x + width / 2 - size.x / 2, y + 1, width, height, height);
 
   return (*active);
 }

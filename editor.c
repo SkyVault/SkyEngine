@@ -356,9 +356,7 @@ void render_editor(Ed *self, GfxState *gfx, Region *map, Game *game) {
   bool hit =
       get_mouse_placement_loc(game, self->y, &loc);
 
-  // loc = Vector3Transform(loc, MatrixRotateY(180.0f));
-
-  DrawCube(loc, 0.02f, 0.02f, 0.02f, RED);
+  //DrawSphere(loc, 0.2f, RED);
 
   DrawCylinder((Vector3){map->player_x, -3.0f, map->player_z}, 0.2f, 0.2f, 4.0f,
                20, (Color){0, 100, 255, 100});
@@ -861,6 +859,7 @@ void do_models_modal(Ed *self, GfxState *gfx, Game *game, Region *map) {
         Model model = *(*(Model **)map_get(game->assets->models_dict, key));
 
         draw_gui_model(gfx, &model, where, (Vector3){0, GetTime(), 0}, RED);
+        //
 
         if (self->model == i) {
           DrawRectangleLinesEx(
@@ -994,7 +993,7 @@ void render_editor_ui(Ed *self, GfxState *gfx, Region *map, Game *game) {
   }
 
   // Region loading and unloading
-  if (do_btn(100, GetScreenHeight() - 30.0f, 100, 30, "Export")) {
+  if (do_btn(100, GetScreenHeight() - 30.0f, 100, 30, "Save")) {
     // self->do_export_modal = true;
     self->state = EDITOR_STATE_EXPORT_MODAL;
   }
@@ -1212,6 +1211,7 @@ void dump_node(StringBuilder *sb, Node *node) {
   sb_append(sb, "\n");
   dump_transform(sb, node->transform);
 
+  // TODO(Dustin): instead of a linked list we should use an array
   if (node->next) {
     sb_append(sb, "\n:next ");
     dump_node(sb, node->next);
