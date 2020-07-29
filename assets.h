@@ -4,6 +4,7 @@
 #include <janet.h>
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 
 //#include "dict.h"
 #include "map.h"
@@ -45,6 +46,7 @@ enum Textures {
   TEX_BARREL,
 
   TEX_SCRALAPUS,
+  TEX_BRICKS,
 
   // Terrain Textures
   TEX_GRASS_1,
@@ -73,6 +75,11 @@ enum Shaders {
   SHADER_NUM_SHADERS,
 };
 
+enum PrefabTags {
+    PREFAB_TAG_WOOD = 1 << 0,
+    PREFAB_TAG_DEMO = 1 << 1,
+};
+
 enum Fonts {
   FONT_MAIN_FONT,
   FONT_NUM_FONTS,
@@ -85,6 +92,13 @@ struct Hotload {
 
   bool just_hotloaded;
 };
+
+struct Prefab {
+    char *name, *texture, *model;
+    uint64_t tags;
+};
+
+typedef struct Prefab Prefab;
 
 typedef struct {
   Mesh meshes[MESH_NUM_MESHES];
@@ -101,6 +115,7 @@ typedef struct {
   int num_models;
 
   map_void_t *models_dict;
+  map_void_t *prefabs_dict;
 
   Light lights[MAX_LIGHTS];
   int num_lights;
@@ -121,6 +136,9 @@ Model *assets_get_model(Assets *self, const char *name);
 Assets *create_and_load_assets(void);
 
 void assets_load_scripts(Assets *self, JanetTable *env);
+
+void assets_load_prefabs(Assets *self);
+void assets_load_assets_from_prefabs(Assets *self);
 
 // Used for hotloading and dynamic recomp
 void update_assets(Assets *self);

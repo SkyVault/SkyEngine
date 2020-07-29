@@ -100,6 +100,7 @@ typedef struct {
 } Ed;
 
 Ed *create_editor();
+void delete_editor(Ed *self);
 
 void push_message(Ed *self, const char *mesg);
 

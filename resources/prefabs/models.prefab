@@ -1,0 +1,8 @@
+demoCube [ model cube texture notexture ]
+crate [ model cube texture crate ]
+stairs [ model Environment/stairs texture brickTexture ]
+scralapus [ model Creatures/scralapus texture scralapus ]
+terrain [ model terrain texture grass_1 ]
+house [ model testhouse ]
+rocks [ model rocks1 ]
+monkey [ model monkey ]

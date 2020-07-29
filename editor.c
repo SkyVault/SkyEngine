@@ -49,7 +49,21 @@ Ed *create_editor() {
 
   editor->state = EDITOR_STATE_NONE;
 
-  editor->maps = GetDirectoryFiles("resources/maps/", &editor->num_maps);
+  editor->maps = malloc(sizeof(char*)*512);
+  int mi = 0;
+
+  char** maps = GetDirectoryFiles("resources/maps/", &editor->num_maps);
+
+  const int n = editor->num_maps;
+  for (int i = 0; i < n; i++) {
+      if (strcmp(maps[i], ".") == 0 ||
+          strcmp(maps[i], "..") == 0) {
+          editor->num_maps--;
+      } else {
+          editor->maps[mi++] = maps[i];
+      }
+  }
+
   editor->which_marker = MARKER_PLAYER_START;
   editor->console_y = 0.0f;
   editor->do_console = false;
@@ -67,6 +81,11 @@ Ed *create_editor() {
   atexit(on_exit);
 
   return editor;
+}
+
+void delete_editor(Ed *self) {
+    ClearDirectoryFiles();
+    free(self->maps);
 }
 
 void push_message(Ed *self, const char *mesg) {

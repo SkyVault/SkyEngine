@@ -136,9 +136,43 @@ EntId ACTOR_BLOCK_C(Game* game, float x, float y, float z, float vx, float vy) {
     return self->id;
 }
 
+EntId ACTOR_SCRALAPUS_C(Game* game, float x, float y, float z, float vx, float vy) {
+    EntStruct* self = create_and_get_ent(game->ecs);
+
+    add_comp(game->ecs, self, Transform, .translation = (Vector3){x, 0.0f, z},
+             .rotation = QuaternionIdentity(),
+             .scale = (Vector3){CUBE_SIZE, CUBE_SIZE, CUBE_SIZE});
+
+    static Model* model = NULL;
+
+    if (model == NULL)
+        model = *(map_get(game->assets->models_dict, "scralapus"));
+
+    add_comp_obj(game->ecs, self, Model, *model);
+    add_comp(game->ecs, self, Actor, .type = ACTOR_BLOCK);
+
+    {
+        Model* model = get_comp(game->ecs, self, Model);
+        model->materials[0].maps[MAP_DIFFUSE].color = (Color){255, 255, 0, 255};
+        model->materials[0].shader = game->assets->shaders[SHADER_PHONG_LIGHTING];
+    }
+
+    return self->id;
+    return -1;
+}
+
 EntId ACTOR_NUM_ENTITY_TYPES_C(Game* game, float x, float y, float z, float vx,
                                float vy) {
     return -1;
+}
+
+void assemblers_init() {
+    assemblers_dict = malloc(sizeof(map_void_t));
+    map_init(assemblers_dict);
+
+    for (int i = 0; i < ACTOR_NUM_ENTITY_TYPES; i++) {
+        map_set(assemblers_dict, assemblers_names[i], assemblers[i]);
+    }
 }
 
 EntId assemble(int which, Game* game, float x, float y, float z, float vx,

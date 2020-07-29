@@ -13,6 +13,7 @@
     I(ACTOR_GIRL_2)         \
     I(ACTOR_GIRL_3)         \
     I(ACTOR_GIRL_4)         \
+    I(ACTOR_SCRALAPUS)      \
     I(ACTOR_END_TARGET)     \
     I(ACTOR_BLOCK)          \
     I(ACTOR_NUM_ENTITY_TYPES)

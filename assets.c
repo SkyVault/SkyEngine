@@ -23,6 +23,9 @@ Assets *create_and_load_assets(void) {
   ass->models_dict = malloc(sizeof(map_void_t));
   map_init(ass->models_dict);
 
+  ass->prefabs_dict = malloc(sizeof(map_void_t));
+  map_init(ass->prefabs_dict);
+
   for (int i = 0; i < SCRIPTS_NUM_SCRIPTS; i++) {
     ass->scripts[i] = NULL;
   }
@@ -58,6 +61,7 @@ Assets *create_and_load_assets(void) {
   ass->textures[TEX_GRASS_1] = LoadTexture("resources/textures/grass_1.png");
 
   ass->textures[TEX_SCRALAPUS] = LoadTexture("resources/textures/scralapus.png");
+  ass->textures[TEX_BRICKS] = LoadTexture("resources/textures/brickTexture.png");
 
   ass->textures[TEX_BARREL] = LoadTexture("resources/textures/barrel.png");
 
@@ -135,50 +139,144 @@ Assets *create_and_load_assets(void) {
   ass->models[4] = default_wall_5;
   ass->models[5] = default_wall_6;
 
-  //{
-  // Model barrel = LoadModel("resources/models/barrel.obj");
-  // barrel.materials[0].maps[MAP_DIFFUSE].texture =
-  // ass->textures[TEX_BARREL];
-  // barrel.materials[0].shader = ass->shaders[SHADER_PHONG_LIGHTING];
-  // ass->models[6] = barrel;
-  // Dict_add(ass->models_dict, "barrel", alloc_model_from(barrel));
-  //}
-
-  {
-    Model monkey = LoadModel("resources/models/monkey.obj");
-    monkey.materials[0].shader = ass->shaders[SHADER_PHONG_LIGHTING];
-    map_set(ass->models_dict, "monkey", alloc_model_from(monkey));
-  }
-
-  {
-    Model monkey = LoadModel("resources/models/testhouse.glb");
-    monkey.materials[0].shader = ass->shaders[SHADER_PHONG_LIGHTING];
-    map_set(ass->models_dict, "testhouse", alloc_model_from(monkey));
-  }
-
-  {
-    Model m = LoadModel("resources/models/rocks1.obj");
-    m.materials[0].shader = ass->shaders[SHADER_PHONG_LIGHTING];
-    map_set(ass->models_dict, "rocks1", alloc_model_from(m));
-  }
-
-  {
-    Model terrain_m = LoadModel("resources/models/terrain.obj");
-    terrain_m.materials[0].maps[MAP_DIFFUSE].texture =
-        ass->textures[TEX_GRASS_1];
-    terrain_m.materials[0].shader = ass->shaders[SHADER_PHONG_LIGHTING];
-    map_set(ass->models_dict, "terrain", alloc_model_from(terrain_m));
-  }
-
-  {
-    Model scralapus = LoadModel("resources/models/Creatures/scralapus.obj");
-    scralapus.materials[0].maps[MAP_DIFFUSE].texture =
-        ass->textures[TEX_SCRALAPUS];
-    scralapus.materials[0].shader = ass->shaders[SHADER_PHONG_LIGHTING];
-    map_set(ass->models_dict, "scralapus", alloc_model_from(scralapus));
-  }
+  assets_load_prefabs(ass);
+  assets_load_assets_from_prefabs(ass);
 
   return ass;
+}
+
+bool at_eof(char** it, const char* end) {
+    return (*(it)) >= end;
+}
+
+void skip_ws(char** it, const char* end) {
+    while (!at_eof(it, end) && isspace((*(*it)))) {
+        (*it)++;
+    }
+}
+
+void inc(char** it) { (*(it))++;       }
+char chr(char** it) { return (*(*it)); }
+
+const char* get_word(char** it, const char* end) {
+    char* start = (*it);
+    while (!at_eof(it, end) && chr(it) != '[' && chr(it) != ']' && !isspace(chr(it))) {
+        inc(it);
+    }
+    return FormatText("%.*s", (int)((*it)-start), start);
+}
+
+bool verify_prefab(Assets *self, Prefab* prefab) {
+    return true;
+}
+
+void parse_prefab(Assets *self, char** it, const char* end) {
+    skip_ws(it, end);
+    if (at_eof(it, end)) return;
+
+    const char* name = get_word(it, end);
+
+    Prefab* prefab = malloc(sizeof(Prefab));
+    *prefab = (Prefab) {
+        .name = malloc(strlen(name) + 1),
+        .model = NULL,
+        .texture = NULL,
+        .tags = 0,
+    };
+    strcpy(prefab->name, name);
+    prefab->name[strlen(name)] = '\0';
+
+    skip_ws(it, end);
+
+    if (chr(it) == '[') {
+        inc(it);
+        while (!at_eof(it, end)) {
+            skip_ws(it, end);
+            const char *key = get_word(it, end);
+            if (strlen(key) == 0) break;
+            skip_ws(it, end);
+            const char *value = get_word(it, end);
+            if (strlen(value) == 0) break;
+
+            if (strcmp(key, "model") == 0) {
+                prefab->model = malloc(strlen(value) + 1);
+                strcpy(prefab->model, value);
+                prefab->model[strlen(value)] = '\0';
+            } else if (strcmp(key, "texture") == 0) {
+                prefab->texture = malloc(strlen(value) + 1);
+                strcpy(prefab->texture, value);
+                prefab->texture[strlen(value)] = '\0';
+            } else {
+                printf("Prefab::Error:: unknown prefab key [%s]\n", key);
+                return;
+            }
+
+            skip_ws(it, end);
+            if (chr(it) == ']') {
+                inc(it);
+                break;
+            }
+        }
+    }
+
+    if (verify_prefab(self, prefab)) {
+        map_set(self->prefabs_dict, prefab->name, prefab);
+        printf("Loaded Prefab: [%s]\n", prefab->name);
+    } else {
+        free(prefab->name);
+        free(prefab->model);
+        free(prefab->texture);
+        free(prefab);
+        return;
+    }
+}
+
+void assets_load_prefabs(Assets *self) {
+    char* models_prefab_text = LoadFileText("resources/prefabs/models.prefab");
+
+    if (models_prefab_text == NULL) {
+        printf("Failed to read prefab file\n");
+        return;
+    }
+
+    char *it = models_prefab_text;
+    char *end = it + strlen(models_prefab_text);
+
+    int n = 0;
+    while (!at_eof(&it, end)) {
+        parse_prefab(self, &it, end);
+
+        if (n++ > 100) break;
+    }
+
+    free(models_prefab_text);
+}
+
+void assets_load_assets_from_prefabs(Assets *self) {
+    // for each prefab, check to see if the resource is already
+    // loaded, if it is loaded then don't reload
+
+    const char *key;
+    map_iter_t iter = map_iter(self->prefabs_dict);
+    while ((key = map_next(self->prefabs_dict, &iter))) {
+        Prefab *prefab = (*(Prefab **)map_get(self->prefabs_dict, key));
+        if (prefab == NULL) continue;
+        
+        if (map_get(self->models_dict, prefab->name) == NULL) {
+            //TODO(Dustin): Handle primitive objects
+            Model model = LoadModel(FormatText("resources/models/%s.obj", prefab->model));
+            if (prefab->texture) {
+                model.materials[0].maps[MAP_DIFFUSE].texture =
+                    LoadTexture(FormatText("resources/textures/%s.png", prefab->texture));
+                SetTextureFilter(model.materials[0].maps[MAP_DIFFUSE].texture, FILTER_POINT);
+            }
+            model.materials[0].shader = self->shaders[SHADER_PHONG_LIGHTING];
+            map_set(self->models_dict, prefab->name, alloc_model_from(model));
+        } else {
+            // already loaded
+            printf("Model [%s] is already loaded, skipping...\n", prefab->name);
+        }
+    }
 }
 
 Model *assets_get_model(Assets *self, const char *name) {

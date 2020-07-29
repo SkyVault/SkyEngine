@@ -448,6 +448,8 @@ int main() {
   JanetTable *env = janet_core_env(NULL);
   janet_dostring(env, "(print `Initializing Janet`)", "main", NULL);
 
+  assemblers_init();
+
   // Define the camera to look into our 3d world (position, target, up
   // vector)
   Camera camera = {0};
