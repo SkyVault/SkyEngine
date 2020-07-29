@@ -73,13 +73,6 @@ void zero_out_region(Region *self) {
   self->num_props = 0;
   self->num_spawns = 0;
   self->num_exits = 0;
-
-  for (int layer = 0; layer < MAX_NUM_LAYERS; layer++) {
-    for (int i = 0; i < MAX_MAP_WIDTH * MAX_MAP_HEIGHT; i++) {
-      self->walls[layer][i].active = 0;
-      self->walls[layer][i].model = 0;
-    }
-  }
 }
 
 Node *load_node_tree(Assets *assets, JanetTable *node_table) {
@@ -199,9 +192,6 @@ void load_region_from_script(Region *result, const char *path, Game *game) {
   JanetArray *start_arr = janet_unwrap_array(
       janet_table_get(result_table, janet_ckeywordv("start")));
 
-  JanetArray *layers_arr = janet_unwrap_array(
-      janet_table_get(result_table, janet_ckeywordv("layers")));
-
   JanetArray *props_arr = janet_unwrap_array(
       janet_table_get(result_table, janet_ckeywordv("props")));
 
@@ -249,7 +239,6 @@ void load_region_from_script(Region *result, const char *path, Game *game) {
     result->player_z = 5.5f;
   }
 
-  result->num_layers = MAX_NUM_LAYERS;
   result->num_props = 0;
 
   result->num_exits = 0;
@@ -340,77 +329,6 @@ void load_region_from_script(Region *result, const char *path, Game *game) {
       const JanetString *dest_path = janet_unwrap_string(exit_arr->data[5]);
 
       add_exit(result, (Vector3){x, y, z}, self_id, dest_id, dest_path);
-    }
-  }
-
-  for (int layer = 0; layer < layers_arr->count; layer++) {
-    JanetTable *layer_table = janet_unwrap_table(layers_arr->data[layer]);
-
-    const char *jdata = janet_unwrap_string(
-        janet_table_get(layer_table, janet_ckeywordv("data")));
-
-    const size_t len = strlen(jdata);
-
-    char *data = malloc(len + 1);
-    data[len] = '\0';
-
-    for (int i = 0; i < len; i++)
-      data[i] = jdata[i];
-
-    char *it = data;
-    char *end = it + strlen(data);
-    while (it != end && it != NULL && isspace(*it))
-      ++it;
-
-    int x = 0;
-    int y = 0;
-    while (it != end) {
-      if (*it == '\n') {
-        ++it;
-        y++;
-        x = 0;
-        continue;
-      }
-
-      if (y >= result->height)
-        break;
-
-      char ch = *it;
-
-      Vector3 pos = (Vector3){
-          .x = (float)x * CUBE_SIZE, .y = 0.f, .z = (float)y * CUBE_SIZE};
-
-      switch (ch) {
-      case '|':
-        create_z_door(pos, game);
-        break;
-      case '-':
-        create_x_door(pos, game);
-        break;
-      case ' ':
-      case '.':
-        break;
-
-      case 'X':
-        result->player_x = pos.x + CUBE_SIZE / 2;
-        result->player_z = pos.z + CUBE_SIZE / 2;
-        break;
-      case 'E': {
-        assemble(ACTOR_END_TARGET, game, pos.x + CUBE_SIZE / 2, 0,
-                 pos.z + CUBE_SIZE / 2, 0, 0);
-        break;
-      }
-      default: {
-        char buff[] = {ch, '\0'};
-        int i = atoi(buff) - 1;
-        result->walls[layer][x + y * result->width].model = i;
-        result->walls[layer][x + y * result->width].active = 1;
-        break;
-      }
-      }
-
-      ++x;
-      ++it;
     }
   }
 

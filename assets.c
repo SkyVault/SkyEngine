@@ -223,9 +223,9 @@ void parse_prefab(Assets *self, char** it, const char* end) {
         map_set(self->prefabs_dict, prefab->name, prefab);
         printf("Loaded Prefab: [%s]\n", prefab->name);
     } else {
-        free(prefab->name);
-        free(prefab->model);
-        free(prefab->texture);
+        if (prefab->name) free(prefab->name);
+        if (prefab->model) free(prefab->model);
+        if (prefab->texture) free(prefab->texture);
         free(prefab);
         return;
     }
@@ -245,8 +245,6 @@ void assets_load_prefabs(Assets *self) {
     int n = 0;
     while (!at_eof(&it, end)) {
         parse_prefab(self, &it, end);
-
-        if (n++ > 100) break;
     }
 
     free(models_prefab_text);

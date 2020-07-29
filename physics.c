@@ -15,37 +15,7 @@ void update_physics(Region* map, EcsWorld* ecs, Game* game, EntId ent) {
     Transform* trans = get_comp(ecs, self, Transform);
 
     // Collision checking
-    float tot_h = map->height * CUBE_SIZE;
-    float tot_w = map->width * CUBE_SIZE;
-    for (int y = 0; y < map->height; y++) {
-        for (int x = 0; x < map->width; x++) {
-            bool active = map->walls[0][x + y * map->width].active;
 
-            if (game->noclip) continue;
-
-            if (active) {
-                Rectangle wall = (Rectangle){x * CUBE_SIZE, y * CUBE_SIZE,
-                                             CUBE_SIZE, CUBE_SIZE};
-                Rectangle body = (Rectangle){trans->translation.x - 0.5f,
-                                             trans->translation.z - 0.5f,
-                                             CUBE_SIZE, CUBE_SIZE};
-
-                Vector2 pos = {trans->translation.x, trans->translation.z};
-
-                if (CheckCollisionCircleRec(
-                        (Vector2){body.x + physics->velocity.x * dt, body.y},
-                        0.2f, wall)) {
-                    physics->velocity.x = 0.f;
-                }
-
-                if (CheckCollisionCircleRec(
-                        (Vector2){body.x, body.y + physics->velocity.z * dt},
-                        0.2f, wall)) {
-                    physics->velocity.z = 0;
-                }
-            }
-        }
-    }
 
     trans->translation.x += physics->velocity.x * dt;
     trans->translation.y += physics->velocity.y * dt;

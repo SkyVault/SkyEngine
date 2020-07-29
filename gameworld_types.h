@@ -40,9 +40,6 @@ typedef struct {
 
 typedef struct {
     int current_map;
-    int num_layers;
-
-    Wall walls[MAX_NUM_LAYERS][MAX_MAP_WIDTH * MAX_MAP_HEIGHT];
 
     Model floor_tile_models[1];
     Model models[MAX_MODELS];

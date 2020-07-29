@@ -1255,24 +1255,6 @@ void serialize_map(Ed *editor, Region *map, Game *game, const char *path) {
       game->assets->sun.direction.x, game->assets->sun.direction.y,
       game->assets->sun.direction.z);
 
-  sb_append(sb, "    :layers @[");
-
-  for (int layer = 0; layer < MAX_NUM_LAYERS; layer++) {
-    sb_append(sb, "\n      @{ :data ``");
-
-    for (int y = 0; y < map->height; y++) {
-      for (int x = 0; x < map->width; x++) {
-        Wall wall = map->walls[layer][x + y * map->width];
-        if (wall.active) {
-          sb_appendf(sb, "%d", wall.model + 1);
-        } else {
-          sb_append(sb, ".");
-        }
-      }
-    }
-    sb_append(sb, "`` }");
-  }
-
   sb_append(sb, "]\n   :props @[");
 
   for (int prop = 0; prop < map->num_props; prop++) {
