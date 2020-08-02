@@ -7,9 +7,15 @@ EntId ACTOR_PLAYER_C(Game* game, float x, float y, float z, float vx,
     EntId player_id = create_ent(game->ecs);
     EntStruct* player = get_ent(game->ecs, player_id);
 
-    add_comp(game->ecs, player, Transform, .translation = (Vector3){x, y, z});
+    add_comp(game->ecs, player, Transform,
+             .translation = (Vector3){x, y, z},
+             .scale = (Vector3){1, 2, 1},
+             .rotation = QuaternionIdentity());
     add_comp(game->ecs, player, Player, .n = 0);
     add_comp_obj(game->ecs, player, Physics, create_physics());
+
+    add_comp_obj(game->ecs, player, Model,
+                 LoadModelFromMesh(game->assets->meshes[MESH_CUBE]));
 
     return player_id;
 }
@@ -139,17 +145,18 @@ EntId ACTOR_BLOCK_C(Game* game, float x, float y, float z, float vx, float vy) {
 EntId ACTOR_SCRALAPUS_C(Game* game, float x, float y, float z, float vx, float vy) {
     EntStruct* self = create_and_get_ent(game->ecs);
 
-    add_comp(game->ecs, self, Transform, .translation = (Vector3){x, 0.0f, z},
+    add_comp(game->ecs, self, Transform, .translation = (Vector3){x, y, z},
              .rotation = QuaternionIdentity(),
-             .scale = (Vector3){CUBE_SIZE, CUBE_SIZE, CUBE_SIZE});
+             .scale = (Vector3){1, 2, 1});
 
     static Model* model = NULL;
 
+    // TODO(Dustin): Request that the prefab is loaded
     if (model == NULL)
-        model = *(map_get(game->assets->models_dict, "scralapus"));
+        model = *(map_get(game->assets->models_dict, "monkey"));
 
     add_comp_obj(game->ecs, self, Model, *model);
-    add_comp(game->ecs, self, Actor, .type = ACTOR_BLOCK);
+    add_comp_obj(game->ecs, self, Physics, create_physics());
 
     {
         Model* model = get_comp(game->ecs, self, Model);

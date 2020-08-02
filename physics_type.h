@@ -9,6 +9,7 @@ typedef struct {
 
     float gravity_scale;
     float bounce_factor;
+    float ground_angle;
 
     bool grounded;
 } Physics;

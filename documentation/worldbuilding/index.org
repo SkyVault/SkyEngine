@@ -1,0 +1,17 @@
+# World Design Document
+
+## The people
+
+[[file:peoples.org][The Order of the Machine]]
+
+## The magic system
+
+## Items and Weapons
+
+[[file:weapons.org][The Weapon System]]
+
+[[file:weapons.org::##%20Swords][Swords]]
+[[file:weapons.org::##%20Pikes][Pikes]]
+[[file:weapons.org::##%20Daggers][Daggers]]
+[[file:weapons.org::##%20Guns][Guns]]
+[[file:weapons.org::##%20Bows/Crossbows][Bow/Crossbow]]

@@ -4,8 +4,10 @@
 #include <math.h>
 #include <stdlib.h>
 
+#include "world_interaction.h"
 #include "ecs.h"
 #include "game.h"
+#include "utils.h"
 #include "gameworld_types.h"
 #include "physics_type.h"
 #include "raylib.h"

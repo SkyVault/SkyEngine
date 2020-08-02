@@ -2,6 +2,11 @@
 
 Much like a wad file, we could package game content into a zip file.
 
+## Name of the game
+
+* Hellheim
+* SkyVault
+
 ## File structure
 
 world.fun /

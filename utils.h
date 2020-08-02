@@ -5,6 +5,7 @@
 #include <stdint.h>
 #include <stdio.h>
 #include <stdlib.h>
+#include "raymath.h"
 
 #define MACROSTR(k) #k
 #define TO_STR(x) MACROSTR(x),
@@ -37,5 +38,21 @@ static char buffer[BUFFER_SIZE] = {'\0'};
 
 const char *GetLog();
 void Log(const char *fmt, ...);
+
+static Matrix transform_to_matrix(Transform t) {
+  Matrix m = MatrixIdentity();
+  m = MatrixMultiply(m, MatrixScale(t.scale.x, t.scale.y, t.scale.z));
+  m = MatrixMultiply(m, QuaternionToMatrix(t.rotation));
+  m = MatrixMultiply(m, MatrixTranslate(t.translation.x, t.translation.y, t.translation.z));
+  return m;
+}
+
+static BoundingBox transform_bounding_box(BoundingBox in, Transform t) {
+    Matrix m = transform_to_matrix(t);
+    BoundingBox out;
+    out.min = Vector3Transform(in.min, m);
+    out.max = Vector3Transform(in.max, m);
+    return out;
+}
 
 #endif  // BENIS_UTILS_H

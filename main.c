@@ -116,12 +116,11 @@ void update_and_render_menu_scene(MainMenuState *state, Game *game,
   do_fire(state);
 
   BeginDrawing();
-  ClearBackground((Color){255, 155, 155, 255});
+  ClearBackground((Color){100, 155, 155, 255});
 
   const float height = FIRE_HEIGHT * 4;
 
   // Draw fun fire thingy
-
   BeginTextureMode(state->target);
   ClearBackground((Color){0, 0, 0, 0});
   for (int x = 0; x < FIRE_WIDTH; x++) {
@@ -130,10 +129,8 @@ void update_and_render_menu_scene(MainMenuState *state, Game *game,
 
       if (!do_exit_modal && GetTime() < 20.0f) {
         float c = (float)i / 36.0f;
-        if (c > 1.0f)
-          c = 1.0f;
-        if (c < 0.0f)
-          c = 0.0f;
+        if (c > 1.0f) c = 1.0f;
+        if (c < 0.0f) c = 0.0f;
         Vector4 v = (Vector4){1, 1, 1, c};
         Color color = VEC4_TO_COLOR(v);
         DrawRectangle(x, FIRE_HEIGHT - y, 1, 1, color);
@@ -338,8 +335,8 @@ void update_and_render_game_scene_with_editor(Game *game, EcsWorld *ecs,
     update_player(ecs, assets, game, i);
     update_doors(ecs, i);
     update_behaviours(game, ecs, i);
-    update_timed_destroy(ecs, i);
     update_physics(map, ecs, game, i);
+    update_timed_destroy(ecs, i);
   }
 
   update_region(map, game);
@@ -377,6 +374,9 @@ void update_and_render_game_scene_with_editor(Game *game, EcsWorld *ecs,
     for (int i = 0; i < ecs->max_num_entities; i++) {
       if (!is_ent_alive(ecs, i))
         continue;
+
+      //TODO(Dustin): Move this from the draw function
+
       draw_billboard_ent(gfx, camera, ecs, i);
       draw_models(gfx, ecs, i);
     }
@@ -450,8 +450,6 @@ int main() {
 
   assemblers_init();
 
-  // Define the camera to look into our 3d world (position, target, up
-  // vector)
   Camera camera = {0};
   camera.position = (Vector3){1.0f, ACTOR_HEIGHT, 1.0f};
   camera.target = (Vector3){0.0f, 0.0f, 0.0f};
@@ -489,11 +487,13 @@ int main() {
 
   init_gui();
 
-  game->map = create_region_from_script("resources/maps/edit.janet", game);
+  game->map = create_region_from_script("resources/maps/map1.janet", game);
   Region *map = game->map;
 
   assemble(ACTOR_PLAYER, game, map->player_x, (ACTOR_HEIGHT - GLOBAL_SCALE),
            map->player_z, 0, 0);
+
+  //assemble(ACTOR_SCRALAPUS, game, 10, 10, 10, 0, 0);
 
   update_game(game);
   EnableCursor();

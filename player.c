@@ -77,7 +77,7 @@ void throw_orange(EcsWorld *ecs, Vector3 pos, float angle, float yaw,
   physics->velocity.z = sinf(angle) * 800.0f * GetFrameTime();
   physics->velocity.y = 15.0f * yaw + 900.0f * GetFrameTime();
   physics->friction = 0.5f;
-  physics->gravity_scale = 0.8f;
+  physics->gravity_scale = 1.0f;
   physics->bounce_factor = 0.8f;
 }
 
@@ -122,6 +122,8 @@ void update_player(EcsWorld *ecs, Assets *ass, Game *game, EntId id) {
   Physics *physics = get_comp(ecs, self, Physics);
   Player *player = get_comp(ecs, self, Player);
 
+  // physics->gravity_scale = 0.0f;
+
   const float angle = PI * 2 - CAMERA.angle.x - PI / 2;
 
   player->rotation = angle;
@@ -134,6 +136,19 @@ void update_player(EcsWorld *ecs, Assets *ass, Game *game, EntId id) {
 
     if (IsMouseButtonPressed(MOUSE_RIGHT_BUTTON)) {
       throw_pineapple(ecs, transform->translation, angle, CAMERA.angle.y, ass);
+    }
+
+    if (IsKeyDown(KEY_SPACE) && physics->grounded) {
+        physics->velocity.y = 3200 * GetFrameTime();
+        physics->grounded = false;
+    }
+
+    if (!physics->grounded) {
+        if (physics->velocity.y > 0) {
+            physics->gravity_scale = 0.8f;
+        } else {
+            physics->gravity_scale = 1.0f;
+        }
     }
   }
 
@@ -225,7 +240,7 @@ void update_player(EcsWorld *ecs, Assets *ass, Game *game, EntId id) {
     return;
   }
 
-  camera->position = transform->translation;
+  camera->position = Vector3Add(transform->translation, (Vector3){0, 0.75f, 0});
 
   camera->target.x = camera->position.x - m_transform.m12;
   camera->target.y = camera->position.y - m_transform.m13;

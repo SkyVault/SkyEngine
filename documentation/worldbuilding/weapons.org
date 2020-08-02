@@ -1,0 +1,21 @@
+# The Weapons
+
+## The Weapon System
+
+### Weapon types
+
+* Sword
+* Pikes
+* Dagger
+* Gun
+* Bow/Crossbow
+
+## Swords
+
+## Pikes
+
+## Daggers
+
+## Guns
+
+## Bows/Crossbows
