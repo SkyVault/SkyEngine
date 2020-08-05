@@ -12,8 +12,11 @@
 #define CUBE_SIZE GLOBAL_SCALE
 #define CUBE_HEIGHT (CUBE_SIZE * 2)
 
-#define MAX_MAP_WIDTH (100)
-#define MAX_MAP_HEIGHT (100)
+#define WORLD_WIDTH (50)
+#define WORLD_HEIGHT (50)
+
+#define REGION_WIDTH (50)
+#define REGION_HEIGHT (50)
 
 #define MAX_NUM_LAYERS (10)
 #define MAX_MODELS (100)
@@ -67,5 +70,9 @@ typedef struct {
         size_t len;
     } path;
 } Region;
+
+typedef struct {
+    Region *grid[WORLD_WIDTH][WORLD_HEIGHT];
+} GameWorld;
 
 #endif  // BENIS_MAP_DEF_H

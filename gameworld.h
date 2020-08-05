@@ -34,10 +34,17 @@ static const Prop prop_types[] = {
 
 Region *create_region_from_script(const char *path, Game *game);
 
+GameWorld *create_game_world();
+
+// Loads the entities and the gameworld regions and everything to start a new game.
+void load_game_world_new_start(GameWorld *self);
+
 void load_region_from_script(Region *self, const char *path, Game *game);
 
 void reset_region_to_zero(Region *self, Game *game);
 void reload_region(Region *self, Game *game);
+
+Region *get_region(GameWorld *world, Vector3 translation);
 
 void update_region(Region *self, Game *game);
 void render_region(Region *self, GfxState *gfx, Game *game);

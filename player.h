@@ -14,6 +14,9 @@
 #include "raymath.h"
 #include "renderer.h"
 
+#define PLAYER_START_JUMP_STRENGTH 3200.0f
+#define PLAYER_START_GRAVITY_SCALE 0.8f
+
 typedef struct {
     int n;
 

@@ -68,6 +68,20 @@ bool is_number(const char *str) {
   return true;
 }
 
+GameWorld *create_game_world() {
+  GameWorld *result = malloc(sizeof(GameWorld)); 
+  memset(result->grid, 0, WORLD_WIDTH*WORLD_HEIGHT*sizeof(Region*)); 
+  return result;
+}
+
+// Loads the entities and the gameworld regions and everything to start a new game.
+
+// **** NEW GAME **** //
+void load_game_world_new_start(GameWorld *self) {
+
+}
+// ******************** //
+
 void zero_out_region(Region *self) {
   self->num_models = 0;
   self->num_props = 0;
@@ -225,9 +239,9 @@ void load_region_from_script(Region *result, const char *path, Game *game) {
     result->height = janet_unwrap_integer(size_arr->data[1]);
   } else {
     printf("Region(%s)::load Missing size, going with the default (%d %d)",
-           path, MAX_MAP_WIDTH, MAX_MAP_HEIGHT);
-    result->width = MAX_MAP_WIDTH;
-    result->height = MAX_MAP_HEIGHT;
+           path, REGION_WIDTH, REGION_HEIGHT);
+    result->width = REGION_WIDTH;
+    result->height = REGION_HEIGHT;
   }
 
   if (start_arr) {
@@ -354,7 +368,7 @@ void render_region(Region *self, GfxState *gfx, Game *game) {
 
   //  Rendering all of the props
   for (int pi = 0; pi < self->num_props; pi++) {
-    draw_prop(gfx, game, self->props[pi]);
+    draw_prop(gfx, game->assets, self->props[pi]);
   }
 
   draw_root_node(gfx, self->scene_root);
@@ -377,6 +391,10 @@ void reset_region_to_zero(Region *self, Game *game) {
   // Clean up the exits path string
   for (int i = 0; i < self->num_exits; i++)
     free(self->exits[i].dest_path);
+}
+
+Region *get_region(GameWorld *world, Vector3 translation) {
+    
 }
 
 void reload_region(Region *self, Game *game) {

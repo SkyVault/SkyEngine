@@ -122,8 +122,6 @@ void update_player(EcsWorld *ecs, Assets *ass, Game *game, EntId id) {
   Physics *physics = get_comp(ecs, self, Physics);
   Player *player = get_comp(ecs, self, Player);
 
-  // physics->gravity_scale = 0.0f;
-
   const float angle = PI * 2 - CAMERA.angle.x - PI / 2;
 
   player->rotation = angle;
@@ -139,17 +137,9 @@ void update_player(EcsWorld *ecs, Assets *ass, Game *game, EntId id) {
     }
 
     if (IsKeyDown(KEY_SPACE) && physics->grounded) {
-        physics->velocity.y = 3200 * GetFrameTime();
+        physics->velocity.y = PLAYER_START_JUMP_STRENGTH * GetFrameTime();
         physics->grounded = false;
-    }
-
-    if (!physics->grounded) {
-        if (physics->velocity.y > 0) {
-            physics->gravity_scale = 0.8f;
-        } else {
-            physics->gravity_scale = 1.0f;
-        }
-    }
+    } 
   }
 
   if (IsKeyPressed(KEY_ESCAPE)) {

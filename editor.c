@@ -166,6 +166,18 @@ void update_editor(Ed *self, Region *map, Game *game) {
 
   game->editor_open = self->open;
 
+  // don't apply gravity to the player in editor mode
+  EntId id = get_first_with(game->ecs, Player);
+  if (id >= 0) {
+    EntStruct *player = get_ent(game->ecs, id);
+    if (game->editor_open) {
+      get_comp(game->ecs, player, Physics)->gravity_scale = 0.0f;
+    } else { 
+      get_comp(game->ecs, player, Physics)->gravity_scale = PLAYER_START_GRAVITY_SCALE;
+    }
+  }
+
+
   // if (IsKeyPressed(KEY_E)) {
   //     self->state = EDITOR_STATE_EXPORT_MODAL;
   // }
@@ -392,6 +404,18 @@ void render_editor(Ed *self, GfxState *gfx, Region *map, Game *game) {
 
   draw_node_tree_bounding_boxes(map->scene_root);
 
+  // Draw region grid
+  for (int y = 0; y < WORLD_HEIGHT; y++) {
+      for (int x = 0; x < WORLD_WIDTH; x++) {
+          DrawLine3D((Vector3){-REGION_WIDTH/2 + x * REGION_WIDTH, 0, -REGION_HEIGHT/2 + y * REGION_HEIGHT},
+                     (Vector3){-REGION_WIDTH/2 + x * REGION_WIDTH, 0, -REGION_HEIGHT/2 + y * REGION_HEIGHT + REGION_HEIGHT},
+                     RED);
+          DrawLine3D((Vector3){-REGION_WIDTH/2 + x * REGION_WIDTH, 0, -REGION_HEIGHT/2 + y * REGION_HEIGHT},
+                     (Vector3){-REGION_WIDTH/2 + x * REGION_WIDTH + REGION_WIDTH, 0, -REGION_HEIGHT/2 + y * REGION_HEIGHT},
+                     RED);
+      }
+  }
+
   // Draw debug shapes
   for (int i = 0; i < map->num_spawns; i++) {
     Texture2D tex = game->assets->textures[TEX_GIRL_1 + self->model];
@@ -404,9 +428,6 @@ void render_editor(Ed *self, GfxState *gfx, Region *map, Game *game) {
     DrawBillboardRec(*game->camera, tex,
                      (Rectangle){0, 0, tex.width, tex.height}, s.position, 1.0,
                      (Color){255, 255, 255, 130});
-
-    // draw_billboard(gfx, s.position, tex,
-    //                (Rectangle){0, 0, tex.width, tex.height}, 1.0f);
   }
 
   for (int light_i = 0; light_i < game->assets->num_lights; light_i++) {
@@ -545,7 +566,7 @@ void render_editor(Ed *self, GfxState *gfx, Region *map, Game *game) {
     } else {
       Prop prop = prop_types[self->model];
       prop.position = loc;
-      draw_prop(gfx, game, prop);
+      draw_prop(gfx, game->assets, prop);
 
       if (IsMouseButtonPressed(MOUSE_LEFT_BUTTON) && !IsMouseOnUiElement()) {
         map->props[map->num_props++] = prop;
@@ -1255,7 +1276,7 @@ void serialize_map(Ed *editor, Region *map, Game *game, const char *path) {
       game->assets->sun.direction.x, game->assets->sun.direction.y,
       game->assets->sun.direction.z);
 
-  sb_append(sb, "]\n   :props @[");
+  sb_append(sb, "   :props @[");
 
   for (int prop = 0; prop < map->num_props; prop++) {
     Prop p = map->props[prop];

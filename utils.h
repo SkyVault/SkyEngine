@@ -7,6 +7,16 @@
 #include <stdlib.h>
 #include "raymath.h"
 
+#define ENGINE_NAME "Vault Engine"
+#define VAULT_TITLE "The " ENGINE_NAME "!"
+#define COMPANY_NAME "Joy Vault"
+
+#define VAULT_VERSION_MAJOR "0"
+#define VAULT_VERSION_MINOR "1"
+#define VAULT_VERSION_PATCH "15"
+#define VAULT_VERSION                                                          \
+  VAULT_VERSION_MAJOR "." VAULT_VERSION_MINOR "." VAULT_VERSION_PATCH
+
 #define MACROSTR(k) #k
 #define TO_STR(x) MACROSTR(x),
 #define TO_ENUM(x) x,

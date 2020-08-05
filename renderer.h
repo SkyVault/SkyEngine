@@ -8,9 +8,9 @@
 #define RESOLUTION_ASPECT                                                      \
   (((float)RESOLUTION_HEIGHT) / ((float)RESOLUTION_WIDTH))
 
+#include "assets.h"
 #include "billboard.h"
 #include "ecs.h"
-#include "game.h"
 #include "gameworld_types.h"
 #include "node.h"
 #include "prop.h"
@@ -89,7 +89,7 @@ void draw_gui_model(GfxState *gfx, Model *model, Rectangle where,
 void draw_billboard(GfxState *gfx, Vector3 position, Texture texture,
                     Rectangle region, float scale);
 
-void draw_prop(GfxState *gfx, Game *game, Prop prop);
+void draw_prop(GfxState *gfx, Assets* assets, Prop prop);
 
 void begin_rendering(GfxState *gfx);
 void end_rendering(GfxState *gfx);

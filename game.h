@@ -5,37 +5,26 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+#include "game_types.h"
+#include "scene.h"
 #include "assets.h"
 #include "ecs.h"
 #include "gameworld_types.h"
 #include "rlights.h"
+#include "particles.h"
+#include "main_menu.h"
+#include "game_scene.h"
 
-enum State { STATE_RUNNING, STATE_PAUSED, STATE_QUITTING };
-enum Scenes { SCENE_MAIN_MENU, SCENE_GAME, SCENE_EDIT, SCENE_SETTINGS };
+Game* create_game(JanetTable* env);
 
-typedef struct {
-    Assets* assets;
-    Camera* camera;
-    EcsWorld* ecs;
-    Region* map;
+void update_game(Game *game);
+void render_game(Game *game);
 
-    JanetTable* env;
+void push_scene(Game *self, Scene scene);
+void pop_scene(Game *self);
+void goto_scene(Game *self, Scene scene);
 
-    Model skybox;
-
-    bool lock_camera;
-    bool editor_open;
-
-    int state;
-    int scene;
-
-    bool noclip;
-} Game;
-
-Game* create_game(Assets* assets, Camera* camera, EcsWorld* ent_world,
-                  JanetTable* env);
-
-void update_game(Game* game);
+void goto_scene_using_id(Game *self);
 
 Game* game_get_static_ref();
 

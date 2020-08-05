@@ -42,7 +42,7 @@ void draw_billboard_ent(GfxState *gfx, Camera *camera, EcsWorld *ecs,
   }
 }
 
-void draw_prop(GfxState *gfx, Game *game, Prop prop) {
+void draw_prop(GfxState *gfx, Assets *assets, Prop prop) {
   if (gfx->num_transparent_drawables < MAX_NUMBER_OF_DRAWABLES) {
     gfx->transparent_drawables[gfx->num_transparent_drawables++] = (Drawable){
         .type = DrawType_Billboard,
@@ -54,7 +54,7 @@ void draw_prop(GfxState *gfx, Game *game, Prop prop) {
                 .rotation = QuaternionIdentity(),
                 .scale = (Vector3){1, 1, 1},
             },
-        .billboard = (Billboard){.texture = game->assets->textures[TEX_PROPS],
+        .billboard = (Billboard){.texture = assets->textures[TEX_PROPS],
                                  .material = {0},
                                  .scale = prop.scale},
         .diffuse = WHITE,

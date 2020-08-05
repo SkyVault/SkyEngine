@@ -7,7 +7,7 @@
 
 #include "assembler.h"
 #include "world_interaction.h"
-#include "game.h"
+#include "game_types.h"
 #include "gameworld.h"
 #include "node.h"
 
